@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Receipt } from 'lucide-react';
+import { ChevronDown, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Receipt, Wallet, Umbrella, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
@@ -8,6 +8,7 @@ interface Transaction {
   id: number;
   user_id: number;
   transaction_type: string;
+  transaction_source?: string;
   amount: number;
   description?: string;
   created_at: string;
@@ -21,11 +22,13 @@ interface CollapsibleTransactionListProps {
 }
 
 type FilterType = 'all' | 'income' | 'expenses';
+type AccountType = 'all' | 'main_wallet' | 'dark_days' | 'budget_card';
 
 export default function CollapsibleTransactionList({ transactions }: CollapsibleTransactionListProps) {
   const { selectedCurrency } = useCurrencyStore();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [accountFilter, setAccountFilter] = useState<AccountType>('all');
 
   // Helper to determine if transaction is income
   const isIncomeTransaction = (t: Transaction): boolean => {
@@ -79,29 +82,45 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
     return false;
   };
 
-  // Categorize transactions
-  const incomeTransactions = transactions.filter(isIncomeTransaction);
-  const expenseTransactions = transactions.filter(isExpenseTransaction);
+  // Apply account filter first
+  const accountFilteredTransactions = accountFilter === 'all' 
+    ? transactions 
+    : transactions.filter(t => (t.transaction_source || 'main_wallet') === accountFilter);
 
-  // Filter transactions based on active filter
+  // Categorize transactions
+  const incomeTransactions = accountFilteredTransactions.filter(isIncomeTransaction);
+  const expenseTransactions = accountFilteredTransactions.filter(isExpenseTransaction);
+
+  // Filter transactions based on active filter (layered on top of account filter)
   const filteredTransactions =
     activeFilter === 'income'
       ? incomeTransactions
       : activeFilter === 'expenses'
       ? expenseTransactions
-      : transactions;
+      : accountFilteredTransactions;
 
   const totalIncome = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
   const totalExpenses = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
 
+  const getAccountLabel = (account: AccountType) => {
+    switch (account) {
+      case 'main_wallet': return 'Main Account';
+      case 'dark_days': return 'Dark Days';
+      case 'budget_card': return 'Budget Cards';
+      default: return '';
+    }
+  };
+
   const getSummaryText = () => {
+    const accountPrefix = accountFilter !== 'all' ? `${getAccountLabel(accountFilter)} • ` : '';
+    
     if (activeFilter === 'income') {
-      return `${incomeTransactions.length} income transaction${incomeTransactions.length !== 1 ? 's' : ''} • ${formatCurrency(totalIncome, selectedCurrency)}`;
+      return `${accountPrefix}${incomeTransactions.length} income • ${formatCurrency(totalIncome, selectedCurrency)}`;
     }
     if (activeFilter === 'expenses') {
-      return `${expenseTransactions.length} expense transaction${expenseTransactions.length !== 1 ? 's' : ''} • ${formatCurrency(totalExpenses, selectedCurrency)}`;
+      return `${accountPrefix}${expenseTransactions.length} expenses • ${formatCurrency(totalExpenses, selectedCurrency)}`;
     }
-    return `${transactions.length} transaction${transactions.length !== 1 ? 's' : ''} • ${incomeTransactions.length} income, ${expenseTransactions.length} expenses`;
+    return `${accountPrefix}${accountFilteredTransactions.length} total • ${incomeTransactions.length} income, ${expenseTransactions.length} expenses`;
   };
 
   const getTransactionIcon = (transaction: Transaction) => {
@@ -180,7 +199,7 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
                   )}
                 >
                   <Receipt className="h-4 w-4" />
-                  All ({transactions.length})
+                  All ({accountFilteredTransactions.length})
                 </motion.button>
 
                 <motion.button
@@ -212,6 +231,72 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
                   <TrendingDown className="h-4 w-4" />
                   Expenses ({expenseTransactions.length})
                 </motion.button>
+              </div>
+              
+              {/* Account type filter */}
+              <div className="mt-3 pt-3 border-t border-gray-200">
+                <p className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Account Type</p>
+                <div className="flex gap-2 flex-wrap">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setAccountFilter('all')}
+                    className={cn(
+                      'px-3 py-1.5 rounded-lg font-medium text-xs transition-all flex items-center gap-1.5',
+                      accountFilter === 'all'
+                        ? 'bg-violet-100 text-violet-700 border border-violet-300'
+                        : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                    )}
+                  >
+                    <Receipt className="h-3.5 w-3.5" />
+                    All Accounts
+                  </motion.button>
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setAccountFilter('main_wallet')}
+                    className={cn(
+                      'px-3 py-1.5 rounded-lg font-medium text-xs transition-all flex items-center gap-1.5',
+                      accountFilter === 'main_wallet'
+                        ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                        : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                    )}
+                  >
+                    <Wallet className="h-3.5 w-3.5" />
+                    Main Account
+                  </motion.button>
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setAccountFilter('dark_days')}
+                    className={cn(
+                      'px-3 py-1.5 rounded-lg font-medium text-xs transition-all flex items-center gap-1.5',
+                      accountFilter === 'dark_days'
+                        ? 'bg-purple-100 text-purple-700 border border-purple-300'
+                        : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                    )}
+                  >
+                    <Umbrella className="h-3.5 w-3.5" />
+                    Dark Days
+                  </motion.button>
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setAccountFilter('budget_card')}
+                    className={cn(
+                      'px-3 py-1.5 rounded-lg font-medium text-xs transition-all flex items-center gap-1.5',
+                      accountFilter === 'budget_card'
+                        ? 'bg-orange-100 text-orange-700 border border-orange-300'
+                        : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                    )}
+                  >
+                    <CreditCard className="h-3.5 w-3.5" />
+                    Budget Cards
+                  </motion.button>
+                </div>
               </div>
             </div>
 
