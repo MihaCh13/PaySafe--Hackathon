@@ -216,15 +216,6 @@ export default function DarkDaysPocketPage() {
             Secure emergency fund with multi-layer protection
           </p>
         </div>
-        {!activePocket && (
-          <Button
-            onClick={() => setCreateDialogOpen(true)}
-            className="bg-gradient-to-r from-gray-900 to-gray-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Create Pocket
-          </Button>
-        )}
       </div>
 
       {/* Main Content */}
@@ -313,15 +304,8 @@ export default function DarkDaysPocketPage() {
             <div className="text-6xl">🏦</div>
             <h2 className="text-2xl font-bold text-gray-900">No DarkDays Pocket Yet</h2>
             <p className="text-gray-600 max-w-md mx-auto">
-              Create your secure emergency fund to protect yourself from unexpected expenses.
+              No DarkDays Pocket has been set up for your account.
             </p>
-            <Button
-              onClick={() => setCreateDialogOpen(true)}
-              className="bg-gradient-to-r from-gray-900 to-gray-700"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create DarkDays Pocket
-            </Button>
           </div>
         </div>
       )}
