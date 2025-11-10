@@ -1,0 +1,34 @@
+Please populate the test account data for the user with email “StudentKlombaTest.com” in the UniPay project environment.
+
+Specifically:
+
+1. **Transfers**:  
+   - Create several dated transfers where other user accounts send money *to* the “StudentKlombaTest.com” account.  
+   - Also create transfers *from* “StudentKlombaTest.com* to other accounts.  
+   - Include both incoming and outgoing transfers, with dates in the past (e.g., last 3‑6 months) to reflect history.
+
+2. **Budget Cards**:  
+   - Add multiple budget cards for the “StudentKlombaTest.com” account (e.g., Card1: “Food & Drink”, Card2: “Entertainment”, Card3: “Savings Card”).  
+   - Assign each card a starting balance and some transactions history.
+
+3. **Activity / Transactions**:  
+   - For the “StudentKlombaTest.com” account, generate a series of past transactions: income, outgoing transfers, payments, reminders (scheduled upcoming payments).  
+   - Ensure these appear in the Activity section and match the calendar view with correct dates and color‑coding.
+
+4. **Goals & Savings**:  
+   - Add some savings goals under this account (e.g., “Laptop Fund”, “Travel Fund”), with progress % and target amounts.  
+   - Add a “Dark Days Pocket” savings bucket if applicable, with auto‑save percentage and initial balance.
+
+5. **Marketplace Listings**:  
+   - Create marketplace entries for this account (as seller and/or buyer) in various categories.  
+   - Include listings that are single‐purchase and some recurring offers.
+
+6. **Loans Section**:  
+   - Under “Loans”, populate all four categories:  
+     - “Pending Requests” (requests sent/received)  
+     - “Owed to Me”  
+     - “I Owe”  
+     - “History”  
+   - For example: “StudentKlombaTest.com” requests a loan from Account A for $250 with subject “Semester books”, another account B owes them $150 for “Library membership”, etc.
+
+Please generate these test data entries programmatically (seed scripts or data inserts) and ensure they are included in the repository environment so that when someone clones the project, they will see the full test dataset for “StudentKlombaTest.com” account across all modules (Transfers, Budget Cards, Goals, Marketplace, Loans, Activity). Return a summary of what was created, file paths and instructions on how to run it.
