@@ -4,6 +4,14 @@
 UniPay is a digital wallet application designed for students, integrating financial services with lifestyle features. Its core purpose is to provide secure digital payments, subscription management, student discounts, savings goal tracking, and peer-to-peer lending and marketplace functionalities. UniPay aims to be an essential financial tool, offering convenience, security, customized benefits, and fostering financial literacy and independence.
 
 ## Recent Changes
+**November 10, 2025 - Comprehensive Test Data Seeders Created**
+- Created comprehensive seeder for StudentKlombaTest@test.com account with full feature coverage
+- Populated test data across all modules: Transfers, Budget Cards, Goals, Dark Days Pocket, Marketplace, Loans
+- Created extended user seeder for 19 total test accounts with transaction history
+- Generated 85 historical transactions spanning 6 months across multiple accounts
+- Seeded 61 merchant partners for ISIC discounts
+- All test accounts use password: "password123" and PIN: "1234"
+
 **November 10, 2025 - GitHub Import Complete**
 - Successfully imported full codebase from https://github.com/MihaCh13/PaySafe--Hackathon
 - Configured Replit environment with Node.js 20 and Python 3.11
