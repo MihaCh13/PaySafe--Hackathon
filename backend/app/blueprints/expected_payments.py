@@ -49,6 +49,7 @@ def create_expected_payment():
     transaction = Transaction(
         user_id=user_id,
         transaction_type='payment',
+        transaction_source='main_wallet',
         amount=amount,
         status='scheduled',
         description=title,
@@ -183,6 +184,7 @@ def generate_recurring_payments():
             new_payment = Transaction(
                 user_id=user_id,
                 transaction_type=base_payment.transaction_type,
+                transaction_source=base_payment.transaction_source or 'main_wallet',
                 amount=base_payment.amount,
                 status='scheduled',
                 description=base_payment.description,
@@ -209,6 +211,7 @@ def generate_recurring_payments():
                 new_payment = Transaction(
                     user_id=user_id,
                     transaction_type=base_payment.transaction_type,
+                    transaction_source=base_payment.transaction_source or 'main_wallet',
                     amount=base_payment.amount,
                     status='scheduled',
                     description=base_payment.description,

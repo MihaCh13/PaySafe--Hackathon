@@ -43,6 +43,7 @@ def topup_wallet():
         transaction = Transaction(
             user_id=user_id,
             transaction_type='topup',
+            transaction_source='main_wallet',
             amount=amount_decimal,
             status='completed',
             receiver_id=user_id,
@@ -112,6 +113,7 @@ def transfer_money():
         sender_transaction = Transaction(
             user_id=sender_id,
             transaction_type='transfer_sent',
+            transaction_source='main_wallet',
             amount=amount,
             status='completed',
             sender_id=sender_id,
@@ -123,6 +125,7 @@ def transfer_money():
         receiver_transaction = Transaction(
             user_id=receiver.id,
             transaction_type='transfer_received',
+            transaction_source='main_wallet',
             amount=amount,
             status='completed',
             sender_id=sender_id,

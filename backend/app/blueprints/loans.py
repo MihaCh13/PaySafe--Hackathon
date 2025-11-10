@@ -215,6 +215,7 @@ def repay_loan(loan_id):
         borrower_transaction = Transaction(
             user_id=user_id,
             transaction_type='loan_repayment',
+            transaction_source='main_wallet',
             amount=float(amount),
             status='completed',
             description=f'Loan repayment to {User.query.get(loan.lender_id).username}',
@@ -232,6 +233,7 @@ def repay_loan(loan_id):
         lender_transaction = Transaction(
             user_id=loan.lender_id,
             transaction_type='loan_repayment_received',
+            transaction_source='main_wallet',
             amount=float(amount),
             status='completed',
             description=f'Loan repayment from {User.query.get(user_id).username}',
@@ -311,6 +313,7 @@ def approve_loan_request(loan_id):
         lender_transaction = Transaction(
             user_id=lender_id,
             transaction_type='loan_disbursement',
+            transaction_source='main_wallet',
             amount=float(loan.amount),
             status='completed',
             description=f'Loan approved and given to {loan.borrower.username}',
@@ -328,6 +331,7 @@ def approve_loan_request(loan_id):
         borrower_transaction = Transaction(
             user_id=loan.borrower_id,
             transaction_type='loan_received',
+            transaction_source='main_wallet',
             amount=float(loan.amount),
             status='completed',
             description=f'Loan request approved by {loan.lender.username}',
@@ -439,6 +443,7 @@ def cancel_loan(loan_id):
         lender_transaction = Transaction(
             user_id=loan.lender_id,
             transaction_type='loan_cancelled_refund',
+            transaction_source='main_wallet',
             amount=float(loan.amount),
             status='completed',
             description=f'Loan cancellation refund from {User.query.get(loan.borrower_id).username}',
@@ -456,6 +461,7 @@ def cancel_loan(loan_id):
         borrower_transaction = Transaction(
             user_id=loan.borrower_id,
             transaction_type='loan_cancelled_return',
+            transaction_source='main_wallet',
             amount=float(loan.amount),
             status='completed',
             description=f'Loan cancellation - returned to {User.query.get(loan.lender_id).username}',

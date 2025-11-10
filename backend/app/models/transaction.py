@@ -8,6 +8,7 @@ class Transaction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     
     transaction_type = db.Column(db.String(50), nullable=False)
+    transaction_source = db.Column(db.String(20), default='main_wallet')
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     currency = db.Column(db.String(3), default='USD')
     
@@ -32,6 +33,7 @@ class Transaction(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'transaction_type': self.transaction_type,
+            'transaction_source': self.transaction_source or 'main_wallet',
             'amount': float(self.amount),
             'currency': self.currency,
             'status': self.status,

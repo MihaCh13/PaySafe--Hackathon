@@ -399,7 +399,8 @@ def process_monthly_payment(subscription_id):
     # Create transaction record
     transaction = Transaction(
         user_id=current_user_id,
-        type='subscription_payment',
+        transaction_type='subscription_payment',
+        transaction_source='main_wallet',
         amount=subscription.monthly_cost,
         description=f'Monthly payment for {subscription.service_name}',
         status='completed'

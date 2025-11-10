@@ -81,6 +81,7 @@ def deposit_to_pocket(pocket_id):
     transaction = Transaction(
         user_id=user_id,
         transaction_type='savings_deposit',
+        transaction_source='dark_days',
         amount=amount_decimal,
         status='completed',
         description=f'Deposit to {pocket.name}',
@@ -153,6 +154,7 @@ def withdraw_from_pocket(pocket_id):
     transaction = Transaction(
         user_id=user_id,
         transaction_type='savings_withdrawal',
+        transaction_source='dark_days',
         amount=amount_decimal,
         status='completed',
         description=f'{"Emergency withdrawal" if emergency_data else "Withdrawal"} from {pocket.name}',

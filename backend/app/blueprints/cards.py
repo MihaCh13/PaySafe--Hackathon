@@ -413,6 +413,7 @@ def allocate_funds(card_id):
         transaction = Transaction(
             user_id=user_id,
             transaction_type='budget_allocation',
+            transaction_source='budget_card',
             amount=float(amount_decimal),
             status='completed',
             description=f'Allocated ${amount_decimal:.2f} to {card.card_name}',
@@ -461,6 +462,7 @@ def spend_from_card(card_id):
         transaction = Transaction(
             user_id=user_id,
             transaction_type='budget_expense',
+            transaction_source='budget_card',
             amount=float(amount_decimal),
             status='completed',
             description=description,
@@ -527,6 +529,7 @@ def withdraw_from_card(card_id):
         transaction = Transaction(
             user_id=user_id,
             transaction_type='budget_withdrawal',
+            transaction_source='budget_card',
             amount=float(amount_decimal),
             status='completed',
             description=f'Withdrawn ${amount_decimal:.2f} from {card.card_name} back to wallet',
@@ -601,6 +604,7 @@ def process_payment(card_id):
         transaction = Transaction(
             user_id=user_id,
             transaction_type='card_payment',
+            transaction_source='main_wallet',
             amount=float(amount_decimal),
             status='completed',
             description=description,

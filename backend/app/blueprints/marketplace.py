@@ -119,6 +119,7 @@ def create_order():
         purchase_transaction = Transaction(
             user_id=user_id,
             transaction_type='purchase',
+            transaction_source='main_wallet',
             amount=float(price_decimal),
             status='completed',
             description=f'Purchased: {listing.title}',
@@ -144,6 +145,7 @@ def create_order():
         sale_transaction = Transaction(
             user_id=listing.seller_id,
             transaction_type='sale',
+            transaction_source='main_wallet',
             amount=float(price_decimal),
             status='completed',
             description=f'Sold: {listing.title}',
