@@ -43,7 +43,7 @@ export default function TransactionsPage() {
   const stats = {
     total_income: statsData?.total_income || 0,
     total_expenses: statsData?.total_expenses || 0,
-    transaction_count: transactionsData?.total || 0,
+    transaction_count: statsData?.transaction_count || 0,
   };
 
   const groupTransactionsByDate = () => {
