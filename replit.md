@@ -4,6 +4,15 @@
 UniPay is a digital wallet application designed for students, integrating financial services with lifestyle features. Its core purpose is to provide secure digital payments, subscription management, student discounts, savings goal tracking, and peer-to-peer lending and marketplace functionalities. UniPay aims to be an essential financial tool, offering convenience, security, customized benefits, and fostering financial literacy and independence.
 
 ## Recent Changes
+**November 11, 2025 - Budget Cards/Subscriptions Calendar Integration & Duplicate Prevention**
+- **Upcoming Payment Calendar Display**: When a subscription is added to a budget card, the system automatically creates a scheduled transaction (status='scheduled') for the next billing date
+- **Yellow Calendar Markers**: Scheduled subscription payments appear in the Activity calendar with yellow color (#FACC15) for easy visual identification of upcoming payments
+- **Smart Lifecycle Management**: Scheduled transactions are automatically managed - created on subscription add, deleted on subscription pause/delete, recreated on subscription resume
+- **Duplicate Prevention - Backend**: 409 conflict error prevents adding the same subscription service twice to a card (checks service_name + is_active)
+- **Duplicate Prevention - Frontend**: "Add Subscription" button automatically disables and shows "Already Added" text for services already subscribed
+- **Immediate Calendar Sync**: All subscription mutations invalidate transactions query, ensuring calendar updates instantly without page refresh
+- **Transaction Integration**: Scheduled subscription payments use transaction_source='budget_card' and transaction_type='subscription_payment' for complete tracking consistency
+
 **November 11, 2025 - Comprehensive Transaction Source Tracking Implemented**
 - **Database Schema**: Added `transaction_source` field to Transaction model with enum values: 'main_wallet', 'dark_days', 'budget_card'
 - **Backend Coverage**: Updated ALL 21 transaction creation endpoints across 7 blueprints (savings, cards, wallet, loans, marketplace, subscriptions, expected_payments) to populate transaction_source
