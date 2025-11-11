@@ -45,7 +45,7 @@ export default function TransfersPage() {
   const { data: transactionsData } = useQuery({
     queryKey: ['transactions'],
     queryFn: async () => {
-      const response = await transactionsAPI.getTransactions();
+      const response = await transactionsAPI.getTransactions(1, 100);
       return response.data;
     },
   });
