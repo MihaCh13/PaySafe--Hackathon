@@ -104,7 +104,10 @@ export default function TransfersPage() {
   };
 
   const recentTransfers = transactionsData?.transactions?.filter(
-    (tx: any) => tx.transaction_type === 'transfer_sent' || tx.transaction_type === 'transfer_received'
+    (tx: any) => 
+      tx.transaction_type === 'transfer_sent' || 
+      tx.transaction_type === 'transfer_received' ||
+      tx.transaction_type === 'transfer'
   ).slice(0, 10) || [];
 
   const containerVariants = {
@@ -205,10 +208,17 @@ export default function TransfersPage() {
           ) : (
             <div className="space-y-3">
               {recentTransfers.map((transfer: any) => {
-                const isSent = transfer.transaction_type === 'transfer_sent';
-                const counterparty = isSent 
-                  ? transfer.description?.replace('Transfer to ', '') || `user_${transfer.receiver_id}`
-                  : transfer.description?.replace('Transfer from ', '') || `user_${transfer.sender_id}`;
+                const isSent = transfer.transaction_type === 'transfer_sent' || 
+                               (transfer.transaction_type === 'transfer' && transfer.user_id === transfer.sender_id) ||
+                               (transfer.transaction_type === 'transfer' && transfer.amount < 0);
+                
+                let counterparty = `user_${isSent ? transfer.receiver_id : transfer.sender_id}`;
+                if (transfer.description) {
+                  counterparty = transfer.description
+                    .replace('Transfer to ', '')
+                    .replace('Transfer from ', '')
+                    .replace(' [HISTORICAL_GEN_2025]', '');
+                }
                 
                 return (
                   <div
@@ -240,7 +250,7 @@ export default function TransfersPage() {
                     <p className={`font-bold ${
                       isSent ? 'text-red-600' : 'text-green-600'
                     }`}>
-                      {isSent ? '-' : '+'}{formatCurrency(transfer.amount, selectedCurrency)}
+                      {isSent ? '-' : '+'}{formatCurrency(Math.abs(transfer.amount), selectedCurrency)}
                     </p>
                   </div>
                 );
