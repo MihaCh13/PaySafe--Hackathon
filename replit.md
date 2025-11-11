@@ -4,6 +4,17 @@
 UniPay is a digital wallet application designed for students, integrating financial services with lifestyle features. Its core purpose is to provide secure digital payments, subscription management, student discounts, savings goal tracking, and peer-to-peer lending and marketplace functionalities. UniPay aims to be an essential financial tool, offering convenience, security, customized benefits, and fostering financial literacy and independence.
 
 ## Recent Changes
+**November 11, 2025 - Comprehensive Transaction Source Tracking Implemented**
+- **Database Schema**: Added `transaction_source` field to Transaction model with enum values: 'main_wallet', 'dark_days', 'budget_card'
+- **Backend Coverage**: Updated ALL 21 transaction creation endpoints across 7 blueprints (savings, cards, wallet, loans, marketplace, subscriptions, expected_payments) to populate transaction_source
+- **Transaction Source Assignment**: Dark Days deposits/withdrawals → 'dark_days', Budget Card allocations/spends → 'budget_card', all other transactions → 'main_wallet'
+- **Frontend Filtering**: Implemented layered account-type filtering UI in CollapsibleTransactionList with Account Type buttons (Main Account, Dark Days, Budget Cards) that work in combination with income/expense filters
+- **Transaction Categorization**: Updated type helpers to include all 19 transaction types (added: loan_cancelled_refund, subscription_payment, loan_cancelled_return)
+- **Card Number Safety**: Enhanced virtual card number generation with collision detection, retry logic, and timestamp-based fallback
+- **Bug Fixes**: Fixed subscriptions.py bug using incorrect field name 'type' instead of 'transaction_type'
+- **Backward Compatibility**: Proper fallback handling for legacy transactions without transaction_source (defaults to 'main_wallet')
+- **Validation**: Application tested end-to-end with no backend/frontend errors, all API endpoints responding correctly
+
 **November 10, 2025 - Comprehensive Test Data Seeders Created**
 - Created comprehensive seeder for StudentKlombaTest@test.com account with full feature coverage
 - Populated test data across all modules: Transfers, Budget Cards, Goals, Dark Days Pocket, Marketplace, Loans
