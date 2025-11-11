@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models import MarketplaceListing, MarketplaceOrder, Wallet, Transaction, User
+from app.utils.validators import MarketplaceListingSchema, sanitize_html, validate_base64_image
+from marshmallow import ValidationError
 from datetime import datetime
 from decimal import Decimal
 
@@ -39,21 +41,51 @@ def create_listing():
     user_id = int(get_jwt_identity())
     data = request.get_json()
     
+    # Validate input using Marshmallow schema
+    try:
+        schema = MarketplaceListingSchema()
+        validated_data = schema.load(data)
+    except ValidationError as e:
+        current_app.logger.warning(f"Marketplace listing validation failed for user {user_id}: {e.messages}")
+        return jsonify({'error': 'Validation failed', 'details': e.messages}), 400
+    
+    # Sanitize text fields
+    title = sanitize_html(validated_data['title'])
+    description = sanitize_html(validated_data['description'])
+    university = sanitize_html(data.get('university', '')) if data.get('university') else None
+    faculty = sanitize_html(data.get('faculty', '')) if data.get('faculty') else None
+    course = sanitize_html(data.get('course', '')) if data.get('course') else None
+    condition = sanitize_html(data.get('condition', '')) if data.get('condition') else None
+    
+    # Validate images (base64 encoded)
+    images = data.get('images', [])
+    validated_images = []
+    if images:
+        for idx, img in enumerate(images):
+            if isinstance(img, str) and img:  # Only validate non-empty strings
+                is_valid, error_msg = validate_base64_image(img)
+                if not is_valid:
+                    current_app.logger.warning(f"Invalid image {idx} for listing by user {user_id}: {error_msg}")
+                    return jsonify({'error': f'Invalid image {idx + 1}: {error_msg}'}), 400
+                validated_images.append(img)
+    
     listing = MarketplaceListing(
         seller_id=user_id,
-        title=data.get('title'),
-        description=data.get('description'),
-        category=data.get('category'),
-        price=data.get('price'),
-        university=data.get('university'),
-        faculty=data.get('faculty'),
-        course=data.get('course'),
-        condition=data.get('condition'),
-        images=data.get('images', [])
+        title=title,
+        description=description,
+        category=validated_data['category'],
+        price=validated_data['price'],
+        university=university,
+        faculty=faculty,
+        course=course,
+        condition=condition,
+        images=validated_images  # Now validated!
     )
     
     db.session.add(listing)
     db.session.commit()
+    
+    current_app.logger.info(f"Marketplace listing created: {title} by user {user_id}")
     
     return jsonify({
         'message': 'Listing created successfully',

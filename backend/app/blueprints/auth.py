@@ -1,46 +1,56 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from app.extensions import db
+from app.extensions import db, limiter
 from app.models import User, Wallet
+from app.utils.validators import RegisterSchema, LoginSchema, sanitize_html
+from marshmallow import ValidationError
 
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
+@limiter.limit("3 per minute")  # Prevent spam registration
 def register():
     data = request.get_json()
     
-    if not data or not data.get('email') or not data.get('password') or not data.get('username'):
-        current_app.logger.warning(f"Registration attempt with missing fields - email: {bool(data.get('email') if data else False)}, password: {bool(data.get('password') if data else False)}, username: {bool(data.get('username') if data else False)}")
-        return jsonify({'error': 'Missing required fields'}), 400
+    # Validate input using Marshmallow schema
+    try:
+        schema = RegisterSchema()
+        validated_data = schema.load(data)
+    except ValidationError as e:
+        current_app.logger.warning(f"Registration validation failed: {e.messages}")
+        return jsonify({'error': 'Validation failed', 'details': e.messages}), 400
     
-    pin = data.get('pin')
-    if not pin:
-        current_app.logger.warning(f"Registration attempt without PIN")
-        return jsonify({'error': 'PIN is required'}), 400
+    # Sanitize text inputs (but NOT password or PIN)
+    email = validated_data['email'].lower().strip()
+    username = sanitize_html(validated_data['username'].strip())
     
-    if not str(pin).isdigit() or len(str(pin)) != 4:
-        current_app.logger.warning(f"Registration attempt with invalid PIN format: {pin}")
-        return jsonify({'error': 'PIN must be exactly 4 digits'}), 400
-    
-    if User.query.filter_by(email=data['email']).first():
-        current_app.logger.warning(f"Registration attempt with already registered email: {data['email']}")
+    if User.query.filter_by(email=email).first():
+        current_app.logger.warning(f"Registration attempt with already registered email: {email}")
         return jsonify({'error': 'Email already registered'}), 400
     
-    if User.query.filter_by(username=data['username']).first():
-        current_app.logger.warning(f"Registration attempt with already taken username: {data['username']}")
+    if User.query.filter_by(username=username).first():
+        current_app.logger.warning(f"Registration attempt with already taken username: {username}")
         return jsonify({'error': 'Username already taken'}), 400
     
+    # Sanitize optional text fields
+    phone = sanitize_html(validated_data.get('phone', '')) if validated_data.get('phone') else None
+    first_name = sanitize_html(validated_data.get('first_name', '')) if validated_data.get('first_name') else None
+    last_name = sanitize_html(validated_data.get('last_name', '')) if validated_data.get('last_name') else None
+    university = sanitize_html(validated_data.get('university', '')) if validated_data.get('university') else None
+    faculty = sanitize_html(validated_data.get('faculty', '')) if validated_data.get('faculty') else None
+    
     user = User(  # type: ignore
-        email=data['email'],
-        username=data['username'],
-        phone=data.get('phone'),
-        first_name=data.get('first_name'),
-        last_name=data.get('last_name'),
-        university=data.get('university'),
-        faculty=data.get('faculty')
+        email=email,
+        username=username,
+        phone=phone,
+        first_name=first_name,
+        last_name=last_name,
+        university=university,
+        faculty=faculty
     )
-    user.set_password(data['password'])
-    user.set_pin(pin)
+    # Password and PIN are NOT sanitized - they're hashed
+    user.set_password(validated_data['password'])
+    user.set_pin(validated_data['pin'])
     
     db.session.add(user)
     db.session.flush()
@@ -61,25 +71,32 @@ def register():
     }), 201
 
 @auth_bp.route('/login', methods=['POST'])
+@limiter.limit("5 per minute")  # Prevent brute force attacks
 def login():
     data = request.get_json()
     
-    if not data or not data.get('email') or not data.get('password'):
-        current_app.logger.warning(f"Login attempt with missing credentials - data: {bool(data)}, email: {bool(data.get('email') if data else False)}, password: {bool(data.get('password') if data else False)}")
-        return jsonify({'error': 'Missing email or password'}), 400
+    # Validate input using Marshmallow schema
+    try:
+        schema = LoginSchema()
+        validated_data = schema.load(data)
+    except ValidationError as e:
+        current_app.logger.warning(f"Login validation failed: {e.messages}")
+        return jsonify({'error': 'Validation failed', 'details': e.messages}), 400
     
-    user = User.query.filter_by(email=data['email']).first()
+    email = validated_data['email'].lower().strip()
+    
+    user = User.query.filter_by(email=email).first()
     
     if not user:
-        current_app.logger.warning(f"Login attempt for non-existent user: {data['email']}")
+        current_app.logger.warning(f"Login attempt for non-existent user: {email}")
         return jsonify({'error': 'Invalid email or password'}), 401
 
-    if not user.check_password(data['password']):
-        current_app.logger.warning(f"Failed login attempt with invalid password for user: {data['email']}")
+    if not user.check_password(validated_data['password']):
+        current_app.logger.warning(f"Failed login attempt with invalid password for user: {email}")
         return jsonify({'error': 'Invalid email or password'}), 401
     
     if not user.is_active:
-        current_app.logger.warning(f"Login attempt for deactivated account: {data['email']}")
+        current_app.logger.warning(f"Login attempt for deactivated account: {email}")
         return jsonify({'error': 'Account is deactivated'}), 403
     
     current_app.logger.info(f"Successful login for user: {user.email}")

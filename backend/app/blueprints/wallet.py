@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models import User, Wallet, Transaction
+from app.utils.validators import TransferSchema, TopUpSchema, sanitize_html
+from marshmallow import ValidationError
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
@@ -27,11 +29,17 @@ def topup_wallet():
     try:
         user_id = int(get_jwt_identity())
         data = request.get_json()
-        amount = data.get('amount')
-        method = data.get('method', 'bank_transfer')
         
-        if not amount or float(amount) <= 0:
-            return jsonify({'error': 'Invalid amount'}), 400
+        # Validate input using Marshmallow schema
+        try:
+            schema = TopUpSchema()
+            validated_data = schema.load(data)
+        except ValidationError as e:
+            current_app.logger.warning(f"Top-up validation failed for user {user_id}: {e.messages}")
+            return jsonify({'error': 'Validation failed', 'details': e.messages}), 400
+        
+        amount = validated_data['amount']
+        method = validated_data['method']
         
         amount_decimal = Decimal(str(amount))
         
@@ -74,20 +82,24 @@ def topup_wallet():
 def transfer_money():
     sender_id = int(get_jwt_identity())
     data = request.get_json()
-    receiver_username = data.get('receiver_username')
-    amount = data.get('amount')
-    description = data.get('description', '')
     
-    if not receiver_username or not amount:
-        return jsonify({'error': 'Missing required fields'}), 400
-    
+    # Validate input using Marshmallow schema
     try:
-        amount = Decimal(str(amount))
-    except (ValueError, TypeError, InvalidOperation):
-        return jsonify({'error': 'Invalid amount format'}), 400
+        # Map receiver_username to recipient for schema validation
+        validation_data = {
+            'recipient': data.get('receiver_username'),
+            'amount': data.get('amount'),
+            'description': data.get('description', '')
+        }
+        schema = TransferSchema()
+        validated_data = schema.load(validation_data)
+    except ValidationError as e:
+        current_app.logger.warning(f"Transfer validation failed for user {sender_id}: {e.messages}")
+        return jsonify({'error': 'Validation failed', 'details': e.messages}), 400
     
-    if amount <= 0:
-        return jsonify({'error': 'Invalid amount'}), 400
+    receiver_username = sanitize_html(validated_data['recipient'])
+    amount = Decimal(str(validated_data['amount']))
+    description = sanitize_html(validated_data.get('description', '')) if validated_data.get('description') else ''
     
     receiver = User.query.filter_by(username=receiver_username).first()
     if not receiver:

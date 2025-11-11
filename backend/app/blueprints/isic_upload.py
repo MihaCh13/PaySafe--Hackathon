@@ -1,13 +1,14 @@
 import base64
 import io
 from datetime import datetime
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.user import User
 from app.models.virtual_card import VirtualCard
 from app.models.isic_card_metadata import ISICCardMetadata
 from app.models.isic_profile import ISICProfile
+from app.utils.validators import validate_base64_image, sanitize_html
 
 isic_upload_bp = Blueprint('isic_upload', __name__, url_prefix='/api/isic')
 
@@ -65,15 +66,17 @@ def upload_card_metadata():
         
         screenshot_url = None
         if upload_screenshot and screenshot_base64:
-            try:
-                if not screenshot_base64.startswith('data:image'):
-                    screenshot_base64 = f"data:image/png;base64,{screenshot_base64}"
-                
-                screenshot_url = screenshot_base64
-                print(f"Screenshot saved to database (base64)")
-            except Exception as e:
-                print(f"Error processing screenshot: {e}")
-                screenshot_url = None
+            # Validate screenshot base64
+            if not screenshot_base64.startswith('data:image'):
+                screenshot_base64 = f"data:image/png;base64,{screenshot_base64}"
+            
+            is_valid, error_msg = validate_base64_image(screenshot_base64)
+            if not is_valid:
+                current_app.logger.warning(f"Invalid ISIC screenshot for user {current_user_id}: {error_msg}")
+                return jsonify({'error': f'Invalid screenshot: {error_msg}'}), 400
+            
+            screenshot_url = screenshot_base64
+            current_app.logger.info(f"Screenshot validated and saved for user {current_user_id}")
         
         existing_user_metadata = ISICCardMetadata.query.filter_by(
             user_id=current_user_id

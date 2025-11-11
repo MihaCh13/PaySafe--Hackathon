@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models import Loan, LoanRepayment, User, Wallet, Transaction
+from app.utils.validators import LoanRequestSchema, sanitize_html
+from marshmallow import ValidationError
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
@@ -98,11 +100,15 @@ def create_loan_request():
     borrower_id = int(get_jwt_identity())
     data = request.get_json()
     
-    lender_username = data.get('lender_username')
+    # Validate input using Marshmallow schema
+    try:
+        schema = LoanRequestSchema()
+        validated_data = schema.load(data)
+    except ValidationError as e:
+        current_app.logger.warning(f"Loan request validation failed for user {borrower_id}: {e.messages}")
+        return jsonify({'error': 'Validation failed', 'details': e.messages}), 400
     
-    # Validate amount before conversion
-    if not data.get('amount'):
-        return jsonify({'error': 'Amount is required'}), 400
+    lender_username = sanitize_html(data.get('lender_username', '')) if data.get('lender_username') else None
     
     try:
         amount_decimal = Decimal(str(data['amount']))
