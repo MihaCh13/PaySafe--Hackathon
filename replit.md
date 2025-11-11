@@ -5,6 +5,46 @@ UniPay is a digital wallet application designed for students, integrating financ
 
 ## Recent Changes
 
+### November 11, 2025 - Sprint 2: Performance & Data Integrity (COMPLETE)
+**Security hardening and performance optimization for production readiness.**
+
+#### Database Optimization (C-8) ✅
+- Added 23 database indexes on foreign keys and frequently queried columns via Alembic migration (748f170551f2)
+- Performance improvements on:
+  - Transactions: user_id, sender_id, receiver_id, card_id, transaction_type, status (6 indexes)
+  - Loans: lender_id, borrower_id, status (3 indexes)
+  - Marketplace: seller_id, buyer_id, listing_id, category, university, is_available, is_sold, status (8 indexes)
+  - Virtual Cards: user_id, card_purpose (2 indexes)
+  - Goals, Subscriptions, Savings Pockets, Loan Repayments (4 indexes)
+- Significant performance gains on JOIN queries and WHERE clauses with foreign keys
+
+#### Budget Card Validation (C-6) ✅
+- Enhanced `VirtualCard.spend()` and `VirtualCard.can_spend()` to enforce both allocated budget AND monthly spending limits
+- Clear error messages showing available vs. required amounts
+- Prevents overspending beyond configured financial controls
+
+#### Deadlock Prevention (C-7) ✅
+- Implemented deterministic wallet locking across all wallet-to-wallet operations
+- `lock_wallets_deterministic()` helper ensures consistent lock order (ascending user_id)
+- Eliminates circular wait conditions in concurrent transactions
+- Applied to 5 critical endpoints:
+  - Marketplace orders (cross-purchases)
+  - Wallet transfers (peer-to-peer)
+  - Loan repayments
+  - Loan approvals
+  - Loan cancellations
+- Documented single-phase escrow flow with `escrow_released=True`
+
+#### P2P Lending Validation (C-12) ✅
+- Enhanced balance validation with detailed error messages
+- Shows available vs. required amounts for repayments and loan approvals
+- Added logging for failed operations
+- Applied deterministic wallet locking to prevent deadlocks
+
+**Production Readiness:** Architect-approved. Recommend integration/concurrency testing in staging before production deployment.
+
+---
+
 ### November 11, 2025 - QR Code Payment Feature
 - Implemented secure QR code payment system in Top Up and Transfers pages
 - Added QR code display with auto-expiry (5 minutes)
