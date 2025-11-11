@@ -166,7 +166,7 @@ class TransferSchema(Schema):
     description = fields.Str(required=False, allow_none=True)
     
     @validates('recipient')
-    def validate_recipient(self, value):
+    def validate_recipient(self, value, **kwargs):
         # Sanitize recipient username
         sanitized = sanitize_html(value)
         if not sanitized or len(sanitized.strip()) == 0:
@@ -175,13 +175,13 @@ class TransferSchema(Schema):
             raise ValidationError("Recipient username too long")
     
     @validates('amount')
-    def validate_amount_field(self, value):
+    def validate_amount_field(self, value, **kwargs):
         valid, error_msg = validate_amount(value)
         if not valid:
             raise ValidationError(error_msg)
     
     @validates('description')
-    def validate_description(self, value):
+    def validate_description(self, value, **kwargs):
         if value and len(value) > 200:
             raise ValidationError("Description too long (max 200 characters)")
 
@@ -192,7 +192,7 @@ class TopUpSchema(Schema):
     method = fields.Str(required=True)
     
     @validates('amount')
-    def validate_amount_field(self, value):
+    def validate_amount_field(self, value, **kwargs):
         if value <= 0:
             raise ValidationError("Amount must be positive")
         if value < 5:
@@ -201,7 +201,7 @@ class TopUpSchema(Schema):
             raise ValidationError("Maximum top-up is $10,000 per transaction")
     
     @validates('method')
-    def validate_method(self, value):
+    def validate_method(self, value, **kwargs):
         valid_methods = ['card', 'bank', 'qr']
         if value.lower() not in valid_methods:
             raise ValidationError(f"Invalid payment method. Must be one of: {valid_methods}")
@@ -220,19 +220,19 @@ class RegisterSchema(Schema):
     faculty = fields.Str(required=False, allow_none=True)
     
     @validates('username')
-    def validate_username_field(self, value):
+    def validate_username_field(self, value, **kwargs):
         if not validate_username(value):
             raise ValidationError("Username must be 3-30 characters, alphanumeric, underscore, or dash only")
     
     @validates('password')
-    def validate_password(self, value):
+    def validate_password(self, value, **kwargs):
         if len(value) < 8:
             raise ValidationError("Password must be at least 8 characters")
         if len(value) > 100:
             raise ValidationError("Password too long")
     
     @validates('pin')
-    def validate_pin_field(self, value):
+    def validate_pin_field(self, value, **kwargs):
         valid, error_msg = validate_pin(value)
         if not valid:
             raise ValidationError(error_msg)
@@ -244,7 +244,7 @@ class LoginSchema(Schema):
     password = fields.Str(required=True)
     
     @validates('password')
-    def validate_password(self, value):
+    def validate_password(self, value, **kwargs):
         if not value or len(value) == 0:
             raise ValidationError("Password is required")
 
@@ -257,7 +257,7 @@ class MarketplaceListingSchema(Schema):
     category = fields.Str(required=True)
     
     @validates('title')
-    def validate_title(self, value):
+    def validate_title(self, value, **kwargs):
         sanitized = sanitize_html(value)
         if not sanitized or len(sanitized.strip()) == 0:
             raise ValidationError("Title is required")
@@ -265,7 +265,7 @@ class MarketplaceListingSchema(Schema):
             raise ValidationError("Title too long (max 100 characters)")
     
     @validates('description')
-    def validate_description(self, value):
+    def validate_description(self, value, **kwargs):
         sanitized = sanitize_html(value)
         if not sanitized or len(sanitized.strip()) == 0:
             raise ValidationError("Description is required")
@@ -273,7 +273,7 @@ class MarketplaceListingSchema(Schema):
             raise ValidationError("Description too long (max 1000 characters)")
     
     @validates('price')
-    def validate_price(self, value):
+    def validate_price(self, value, **kwargs):
         valid, error_msg = validate_amount(value)
         if not valid:
             raise ValidationError(error_msg)
@@ -281,7 +281,7 @@ class MarketplaceListingSchema(Schema):
             raise ValidationError("Minimum price is $1")
     
     @validates('category')
-    def validate_category(self, value):
+    def validate_category(self, value, **kwargs):
         valid_categories = ['textbooks', 'electronics', 'furniture', 'clothing', 'other']
         if value.lower() not in valid_categories:
             raise ValidationError(f"Invalid category. Must be one of: {valid_categories}")
@@ -294,7 +294,7 @@ class LoanRequestSchema(Schema):
     repayment_date = fields.DateTime(required=False, allow_none=True)
     
     @validates('amount')
-    def validate_amount_field(self, value):
+    def validate_amount_field(self, value, **kwargs):
         valid, error_msg = validate_amount(value)
         if not valid:
             raise ValidationError(error_msg)
@@ -304,7 +304,7 @@ class LoanRequestSchema(Schema):
             raise ValidationError("Maximum loan amount is $5,000")
     
     @validates('reason')
-    def validate_reason(self, value):
+    def validate_reason(self, value, **kwargs):
         sanitized = sanitize_html(value)
         if not sanitized or len(sanitized.strip()) == 0:
             raise ValidationError("Reason is required")
