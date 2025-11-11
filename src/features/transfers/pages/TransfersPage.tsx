@@ -205,7 +205,11 @@ export default function TransfersPage() {
           ) : (
             <div className="space-y-3">
               {recentTransfers.map((transfer: any) => {
-                const isSent = transfer.user_id === transfer.sender_id;
+                const isSent = transfer.transaction_type === 'transfer_sent';
+                const counterparty = isSent 
+                  ? transfer.description?.replace('Transfer to ', '') || `user_${transfer.receiver_id}`
+                  : transfer.description?.replace('Transfer from ', '') || `user_${transfer.sender_id}`;
+                
                 return (
                   <div
                     key={transfer.id}
@@ -226,7 +230,7 @@ export default function TransfersPage() {
                       <div>
                         <p className="font-medium">
                           {isSent ? 'Sent to' : 'Received from'}{' '}
-                          <span className="text-violet-600">@{transfer.description?.split(' ')[2] || 'user'}</span>
+                          <span className="text-violet-600">@{counterparty}</span>
                         </p>
                         <p className="text-sm text-gray-500">
                           {new Date(transfer.created_at).toLocaleDateString()}

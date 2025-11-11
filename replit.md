@@ -4,6 +4,13 @@
 UniPay is a digital wallet application designed for students, integrating financial services with lifestyle features. Its core purpose is to provide secure digital payments, subscription management, student discounts, savings goal tracking, and peer-to-peer lending and marketplace functionalities. UniPay aims to be an essential financial tool, offering convenience, security, customized benefits, and fostering financial literacy and independence.
 
 ## Recent Changes
+**November 11, 2025 - Critical Bug Fixes: Recent Transfers Display & Subscription Calendar Backfill**
+- **Recent Transfers Fix**: Fixed display logic in TransfersPage.tsx where transfers weren't showing due to incorrect `isSent` detection (was comparing user_id === sender_id, now checks transaction_type === 'transfer_sent')
+- **Improved Counterparty Extraction**: Enhanced username extraction from transfer descriptions with better fallback handling
+- **Subscription Calendar Backfill**: Created reproducible backfill script (`backend/scripts/backfill_subscription_scheduled_transactions.py`) to generate scheduled transactions for existing subscriptions created before calendar integration feature
+- **Backfill Script Usage**: Run `cd backend && python scripts/backfill_subscription_scheduled_transactions.py` to create yellow calendar markers for legacy subscriptions
+- **Calendar Integration Verified**: Confirmed scheduled subscription transactions with display_color='#FACC15' correctly appear as yellow markers in Activity calendar
+
 **November 11, 2025 - Budget Cards/Subscriptions Calendar Integration & Duplicate Prevention**
 - **Upcoming Payment Calendar Display**: When a subscription is added to a budget card, the system automatically creates a scheduled transaction (status='scheduled') for the next billing date
 - **Yellow Calendar Markers**: Scheduled subscription payments appear in the Activity calendar with yellow color (#FACC15) for easy visual identification of upcoming payments
