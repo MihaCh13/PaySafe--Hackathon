@@ -1,0 +1,59 @@
+Please extend the Calendar functionality in the Activity section with an interactive feature for managing upcoming (expected) payments.
+This feature should allow users to add, edit, and manage expected payments directly from specific dates in the calendar view.
+
+Functional Requirements:
+
+Add “Add Expected Payment” option:
+
+When a user clicks on a date (past or future), a small modal or pop-up should appear with an option labeled “Add Expected Payment”.
+
+This allows the user to define a future payment that is expected on that specific date.
+
+Payment Details Form:
+The pop-up should include:
+
+Title/Description (e.g., “Dorm Rent”, “Electricity Bill”, “Spotify Subscription”)
+
+Amount (positive number)
+
+Category/Type (e.g., Housing, Utilities, Subscription, Other)
+
+Frequency options:
+
+One-time (default)
+
+Repeat monthly (on the same date each month)
+
+Repeat weekly (on the same weekday)
+
+Optional Notes field.
+
+Display & Visualization:
+
+Once saved, the date in the calendar should be highlighted according to the color legend for upcoming payments (🟡 yellow).
+
+Hovering or clicking the highlighted date should show a quick summary (title + amount).
+
+If multiple expected payments exist for the same date, show a compact summary (e.g., “3 payments scheduled”) and expand on click.
+
+Synchronization:
+
+Expected payments should be stored persistently, just like regular transactions.
+
+If the expected date passes, they should automatically move to the “past” section and appear as completed or pending confirmation in the transaction history.
+
+UX/UI Suggestion:
+
+Keep the design clean and aligned with the rest of the dashboard (rounded corners, soft shadows, minimal fields).
+
+Ideally, allow adding expected payments via both the calendar click and a dedicated button near the top of the Activity section for convenience.
+
+Example use cases:
+
+Adding a monthly rent payment on the 21st of each month.
+
+Scheduling a one-time water bill for November 17.
+
+Setting up a recurring Spotify subscription charge on the 15th of each month.
+
+After implementing, please make sure all newly added expected payments appear properly highlighted in the calendar and can be edited or deleted by the user.

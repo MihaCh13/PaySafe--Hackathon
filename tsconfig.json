@@ -1,0 +1,23 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "watchOptions": {
+    "excludeDirectories": [
+      ".pythonlibs",
+      "**/node_modules"
+    ]
+  },
+  "exclude": [
+    "**/node_modules",
+    ".pythonlibs"
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

@@ -1,0 +1,105 @@
+Project name: UniPay — Student Digital Wallet
+
+Build a full-stack web app using Flask (Python backend) and Vite + React (frontend).
+The project will simulate a modern digital wallet for students, combining core payment functions with unique features designed for student life.
+Use Tailwind CSS for styling and provide a simple but modern UI suitable for a live demo during a hackathon.
+
+🔹 Core Functionalities (MVP)
+
+Authentication (email / social login)
+
+Allow users to sign up and log in with email, password, or simulated social login.
+
+Use Flask session or mock JWT tokens for authentication.
+
+Include simple validation and logout.
+
+Digital Wallet with Balance and Transactions
+
+Each user has a main wallet with current balance.
+
+Enable mock transfer of funds (send/receive) between users.
+
+Display full transaction history (date, amount, type, status).
+
+Include “Add Funds” simulation (bank transfer, card, QR).
+
+Virtual Cards (basic + subscription cards)
+
+Each user can generate virtual debit cards.
+
+Support a second card type: Subscription Card.
+
+Allow adding predefined subscriptions (Spotify, Netflix, YouTube Premium, etc.) and custom ones.
+
+Automatic recurring payments every period (simulated).
+
+Status: active, paused, awaiting payment.
+
+Show total spent, next payment date, and reminders for failed or upcoming payments.
+
+DarkDays Pocket (Secure Savings Sub-Wallet)
+
+A separate locked “savings pocket” for emergencies.
+
+Automatically transfers a chosen percentage (e.g. 20%) from income into this pocket.
+
+Locked with 2-layer security (PIN + confirm popup).
+
+Only balance viewable, withdrawal requires unlock.
+
+Option “Emergency Unlock”.
+
+Generate monthly report: “You saved X in Y months.”
+
+ISIC Student Discount Integration (Mock)
+
+Simulate connecting a student’s ISIC profile.
+
+On each transaction, detect known merchant names (e.g., “KFC”, “McDonald’s”, “Storytel”) from a mock DB.
+
+If a match is found → display message “You have a student discount here!”
+
+Add “Show ISIC Card” button in UI.
+
+Create both Online (by domain) and Physical (by merchant ID) mock detections.
+
+Financial Goals Tracker (Piggy Goals)
+
+Allow users to create multiple saving goals (e.g., “Laptop Fund”).
+
+Manual transfers from main wallet to each goal.
+
+Progress bar + percentage display.
+
+Notify when goal is reached (“Unlocked Goal!” animation with confetti).
+
+Simple P2P Lending Between Students
+
+Users can request or offer small loans (simulated).
+
+Add borrower/lender info, amount, and due date.
+
+Keep a “Debt Tracker” showing who owes whom and how much.
+
+Allow marking loans as “Repaid” and track repayment history.
+
+Include reminder notifications for due loans.
+
+🔹 Technical Requirements
+
+Backend: Flask REST API (Python 3.10+), structured with routes/, models/, controllers/, and db.py.
+
+Database: SQLite for simplicity.
+
+Frontend: Vite + React, styled with Tailwind CSS.
+
+Routing (frontend): Login, Dashboard, Wallet, Subscriptions, DarkDays, ISIC, Goals, Loans.
+
+Provide mock endpoints and JSON data for demo use (no real payments).
+
+Include at least one pre-seeded demo user for live demo (e.g., student@unipay.com, password 1234).
+
+Use Flask Blueprints for modularity (auth_routes.py, wallet_routes.py, etc.).
+
+Run with one "Run" button in Replit — no manual build or external setup.

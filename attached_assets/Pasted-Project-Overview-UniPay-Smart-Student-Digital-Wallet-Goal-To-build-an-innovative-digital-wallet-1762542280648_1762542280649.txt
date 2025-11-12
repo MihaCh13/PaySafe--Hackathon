@@ -1,0 +1,91 @@
+Project Overview — UniPay: Smart Student Digital Wallet
+
+Goal:
+To build an innovative digital wallet tailored for students, combining essential financial services with lifestyle-oriented features — such as subscriptions, student discounts, savings, goal tracking, and peer-to-peer lending.
+
+Tech stack:
+Backend → Flask (Python)
+Frontend → React + Vite
+Template → ScaffoldUnifiedFlaskViteReact
+
+:small_blue_diamond: Core Features (MVP)
+
+Authentication: Sign up and log in via email, phone, or social accounts.
+
+Digital Wallet: Account balance, incoming/outgoing transfers, and top-up options (bank transfer, card, QR).
+
+Virtual Cards: Digital payment cards for managing spending and linking subscriptions.
+
+Transaction History: Full history of payments with date, type, and counterparty.
+
+Real-Time Transfers: Send and receive money instantly between users.
+
+Push Notifications: Alerts for payments, logins, and balance changes.
+
+Basic Security: PIN protection and confirmation for sensitive actions.
+
+:small_blue_diamond: Main Advanced Features (Core Focus)
+:one: Subscription Cards
+
+A new type of virtual card for managing recurring subscriptions (Netflix, Spotify, YouTube Premium, etc.).
+
+Includes a catalog of predefined services and support for custom subscriptions.
+
+Automatic monthly deductions, payment history, and notifications for upcoming or failed payments.
+
+:two: DarkDays Pocket (Secure Wallet)
+
+A locked savings pocket or sub-wallet with multi-layer protection (PIN + password/auth popup).
+
+Automatically saves a percentage of income (e.g., 20%) on a chosen schedule (weekly, monthly, fixed date).
+
+“Emergency Unlock” option and analytics showing total savings progress.
+
+:three: ISIC Discount Integration
+
+Link student ISIC profile to access verified partner discounts.
+
+Detect partner merchants by Merchant Name, NFC tag, or online domain match.
+
+Notifications such as “You have a student discount here!” during checkout.
+
+NFC support and auto-apply discounts for online payments when available.
+
+:small_blue_diamond: Additional Features (Secondary Priority)
+:four: Student Marketplace
+
+An internal “OLX for students” marketplace for selling lecture notes, coursework, and projects.
+
+Filter by university, faculty, course, or discipline.
+
+Escrow payment system — funds are released only after delivery.
+
+:five: Finance Timeline
+
+Calendar-based transaction view.
+
+Color-coded events: income, expenses, upcoming payments and others.
+
+Clicking a day shows detailed operations for that date.
+
+:six: Piggy Goals
+
+Create savings goals with progress bars and percentage completion.
+
+Support multiple active goals.
+
+Gamification: visual effects like confetti when a goal is reached (“Goal Unlocked!”).
+
+:seven: P2P Lending (Borrow/Lend System)
+
+Send loan requests via QR code, username, or contacts.
+
+Built-in “Debt Tracker” to monitor who owes whom, how much, and since when.
+
+Automatic reminders for borrowers and full repayment history.
+
+:bulb: Summary
+
+UniPay is a next-generation student wallet that merges the comfort of digital banking with smart, social, and educational tools.
+It empowers students to manage their finances, track subscriptions, save intelligently, and even lend money securely to peers.
+The project aims to deliver a functional, secure, and engaging full-stack web app using Flask (backend) and React + Vite (frontend).

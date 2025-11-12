@@ -1,0 +1,173 @@
+{
+  "1": {
+    "username": "admin",
+    "email": "admin@test.com",
+    "initial_balance": 0.0,
+    "total_credits": 1856.27,
+    "total_debits": 1119.97,
+    "final_balance": 736.3,
+    "transaction_count": 10
+  },
+  "2": {
+    "username": "student",
+    "email": "student@test.com",
+    "initial_balance": 0.0,
+    "total_credits": 561.72,
+    "total_debits": 490.33,
+    "final_balance": 71.39,
+    "transaction_count": 6
+  },
+  "3": {
+    "username": "demo",
+    "email": "demo@test.com",
+    "initial_balance": 0.0,
+    "total_credits": 1043.55,
+    "total_debits": 745.78,
+    "final_balance": 297.77,
+    "transaction_count": 8
+  },
+  "4": {
+    "username": "testuser",
+    "email": "test@student.com",
+    "initial_balance": 1142.35,
+    "total_credits": 765.0,
+    "total_debits": 788.39,
+    "final_balance": 1118.96,
+    "transaction_count": 6
+  },
+  "5": {
+    "username": "demouser",
+    "email": "demo@student.com",
+    "initial_balance": 639.28,
+    "total_credits": 260.56,
+    "total_debits": 471.51,
+    "final_balance": 428.33,
+    "transaction_count": 4
+  },
+  "6": {
+    "username": "alice",
+    "email": "alice@student.com",
+    "initial_balance": 1399.77,
+    "total_credits": 1367.77,
+    "total_debits": 1201.38,
+    "final_balance": 1566.16,
+    "transaction_count": 7
+  },
+  "7": {
+    "username": "bob",
+    "email": "bob@student.com",
+    "initial_balance": 521.09,
+    "total_credits": 316.76,
+    "total_debits": 630.43,
+    "final_balance": 207.42,
+    "transaction_count": 5
+  },
+  "8": {
+    "username": "eve",
+    "email": "eve@student.com",
+    "initial_balance": 1472.94,
+    "total_credits": 1817.89,
+    "total_debits": 837.88,
+    "final_balance": 2452.95,
+    "transaction_count": 8
+  },
+  "9": {
+    "username": "frank",
+    "email": "frank@student.com",
+    "initial_balance": 987.12,
+    "total_credits": 798.65,
+    "total_debits": 722.4,
+    "final_balance": 1063.37,
+    "transaction_count": 7
+  },
+  "10": {
+    "username": "Miha.Ch",
+    "email": "misheto05@gmail.com",
+    "initial_balance": 1288.45,
+    "total_credits": 1228.23,
+    "total_debits": 973.68,
+    "final_balance": 1543.0,
+    "transaction_count": 8
+  },
+  "11": {
+    "username": "Plampie",
+    "email": "plamigeor.135@gmail.com",
+    "initial_balance": 747.81,
+    "total_credits": 639.93,
+    "total_debits": 391.77,
+    "final_balance": 995.97,
+    "transaction_count": 6
+  },
+  "12": {
+    "username": "Sami",
+    "email": "sami@gmail.com",
+    "initial_balance": 1311.66,
+    "total_credits": 1458.55,
+    "total_debits": 1438.03,
+    "final_balance": 1332.18,
+    "transaction_count": 6
+  },
+  "13": {
+    "username": "plampie",
+    "email": "plammygeor@gmail.com",
+    "initial_balance": 807.34,
+    "total_credits": 490.68,
+    "total_debits": 933.19,
+    "final_balance": 364.83,
+    "transaction_count": 5
+  },
+  "14": {
+    "username": "demo2",
+    "email": "demo2@student.com",
+    "initial_balance": 1433.25,
+    "total_credits": 1429.07,
+    "total_debits": 1481.24,
+    "final_balance": 1381.08,
+    "transaction_count": 8
+  },
+  "15": {
+    "username": "charlie",
+    "email": "charlie@student.com",
+    "initial_balance": 850.0,
+    "total_credits": 1668.06,
+    "total_debits": 693.95,
+    "final_balance": 1824.11,
+    "transaction_count": 5
+  },
+  "16": {
+    "username": "diana",
+    "email": "diana@student.com",
+    "initial_balance": 1100.0,
+    "total_credits": 925.78,
+    "total_debits": 507.51,
+    "final_balance": 1518.27,
+    "transaction_count": 6
+  },
+  "17": {
+    "username": "george",
+    "email": "george@student.com",
+    "initial_balance": 650.0,
+    "total_credits": 271.63,
+    "total_debits": 790.15,
+    "final_balance": 131.48,
+    "transaction_count": 5
+  },
+  "18": {
+    "username": "helen",
+    "email": "helen@student.com",
+    "initial_balance": 920.0,
+    "total_credits": 868.0,
+    "total_debits": 757.23,
+    "final_balance": 1030.77,
+    "transaction_count": 4
+  },
+  "19": {
+    "username": "ivan",
+    "email": "ivan@student.com",
+    "initial_balance": 1250.0,
+    "total_credits": 526.24,
+    "total_debits": 1328.11,
+    "final_balance": 448.13,
+    "transaction_count": 8
+  }
+}

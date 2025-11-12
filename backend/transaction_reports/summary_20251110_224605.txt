@@ -1,0 +1,161 @@
+======================================================================
+UniPay Transaction History Generation Summary
+======================================================================
+
+Generation Date: 2025-11-10T22:46:05.212540
+Generator Tag: HISTORICAL_GEN_2025
+Mode: LIVE
+
+Total Transactions Created: 85
+Total Accounts Affected: 19
+Skipped Items: 17
+
+Per-Account Summary:
+----------------------------------------------------------------------
+
+admin (admin@test.com):
+  Initial Balance: $0.00
+  Total Credits:   +$1856.27
+  Total Debits:    -$1119.97
+  Final Balance:   $736.30
+  Transactions:    10
+
+student (student@test.com):
+  Initial Balance: $0.00
+  Total Credits:   +$561.72
+  Total Debits:    -$490.33
+  Final Balance:   $71.39
+  Transactions:    6
+
+demo (demo@test.com):
+  Initial Balance: $0.00
+  Total Credits:   +$1043.55
+  Total Debits:    -$745.78
+  Final Balance:   $297.77
+  Transactions:    8
+
+testuser (test@student.com):
+  Initial Balance: $1142.35
+  Total Credits:   +$765.00
+  Total Debits:    -$788.39
+  Final Balance:   $1118.96
+  Transactions:    6
+
+demouser (demo@student.com):
+  Initial Balance: $639.28
+  Total Credits:   +$260.56
+  Total Debits:    -$471.51
+  Final Balance:   $428.33
+  Transactions:    4
+
+alice (alice@student.com):
+  Initial Balance: $1399.77
+  Total Credits:   +$1367.77
+  Total Debits:    -$1201.38
+  Final Balance:   $1566.16
+  Transactions:    7
+
+bob (bob@student.com):
+  Initial Balance: $521.09
+  Total Credits:   +$316.76
+  Total Debits:    -$630.43
+  Final Balance:   $207.42
+  Transactions:    5
+
+eve (eve@student.com):
+  Initial Balance: $1472.94
+  Total Credits:   +$1817.89
+  Total Debits:    -$837.88
+  Final Balance:   $2452.95
+  Transactions:    8
+
+frank (frank@student.com):
+  Initial Balance: $987.12
+  Total Credits:   +$798.65
+  Total Debits:    -$722.40
+  Final Balance:   $1063.37
+  Transactions:    7
+
+Miha.Ch (misheto05@gmail.com):
+  Initial Balance: $1288.45
+  Total Credits:   +$1228.23
+  Total Debits:    -$973.68
+  Final Balance:   $1543.00
+  Transactions:    8
+
+Plampie (plamigeor.135@gmail.com):
+  Initial Balance: $747.81
+  Total Credits:   +$639.93
+  Total Debits:    -$391.77
+  Final Balance:   $995.97
+  Transactions:    6
+
+Sami (sami@gmail.com):
+  Initial Balance: $1311.66
+  Total Credits:   +$1458.55
+  Total Debits:    -$1438.03
+  Final Balance:   $1332.18
+  Transactions:    6
+
+plampie (plammygeor@gmail.com):
+  Initial Balance: $807.34
+  Total Credits:   +$490.68
+  Total Debits:    -$933.19
+  Final Balance:   $364.83
+  Transactions:    5
+
+demo2 (demo2@student.com):
+  Initial Balance: $1433.25
+  Total Credits:   +$1429.07
+  Total Debits:    -$1481.24
+  Final Balance:   $1381.08
+  Transactions:    8
+
+charlie (charlie@student.com):
+  Initial Balance: $850.00
+  Total Credits:   +$1668.06
+  Total Debits:    -$693.95
+  Final Balance:   $1824.11
+  Transactions:    5
+
+diana (diana@student.com):
+  Initial Balance: $1100.00
+  Total Credits:   +$925.78
+  Total Debits:    -$507.51
+  Final Balance:   $1518.27
+  Transactions:    6
+
+george (george@student.com):
+  Initial Balance: $650.00
+  Total Credits:   +$271.63
+  Total Debits:    -$790.15
+  Final Balance:   $131.48
+  Transactions:    5
+
+helen (helen@student.com):
+  Initial Balance: $920.00
+  Total Credits:   +$868.00
+  Total Debits:    -$757.23
+  Final Balance:   $1030.77
+  Transactions:    4
+
+ivan (ivan@student.com):
+  Initial Balance: $1250.00
+  Total Credits:   +$526.24
+  Total Debits:    -$1328.11
+  Final Balance:   $448.13
+  Transactions:    8
+
+
+Skipped Items:
+----------------------------------------------------------------------
+  • insufficient_balance: frank - $869.19
+  • insufficient_balance: student - $367.91
+  • insufficient_balance: student - $355.44
+  • insufficient_balance: admin - $939.76
+  • insufficient_balance: admin - $467.28
+  • insufficient_balance: george - $378.51
+  • insufficient_balance: charlie - $342.04
+  • insufficient_balance: admin - $264.33
+  • insufficient_balance: student - $133.35
+  • insufficient_balance: admin - $328.35

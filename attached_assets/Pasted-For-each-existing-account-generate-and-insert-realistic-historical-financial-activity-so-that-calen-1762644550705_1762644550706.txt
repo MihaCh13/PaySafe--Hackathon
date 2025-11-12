@@ -1,0 +1,85 @@
+For each existing account, generate and insert realistic historical financial activity so that calendar views, account statements and dashboard banking cards show consistent past transactions and updated balances.
+
+Scope
+
+Use only existing accounts — do not create new user accounts.
+
+Apply history for every account provided in the list.
+
+Time range & volume
+
+Populate activity covering the past 6 months (relative to today) by default.
+
+Create approximately 3–4 transactions per week total, distributed across accounts. Ensure every active account receives at least a few transactions across the period (aim for 1–10 per account).
+
+Distribute transactions across weekdays and weekends; some days may have none, some days may have several.
+
+Transaction types
+
+Internal transfers: money moved between two existing accounts (use real sender and receiver accounts from the system).
+
+Inbound payments (income): funds credited to an account from an external source (label as external income).
+
+Outbound payments (expense): funds debited from an account to an external payee (label as external expense).
+
+Mix types so history looks natural (e.g., some accounts receive mostly incomes, some mostly expenses, some both).
+
+Amounts and realism
+
+Use amounts that are plausible relative to the account balances: typical transactions between $5 and $500, with occasional larger amounts up to $1,000.
+
+Ensure every generated debit has a matching credit (for internal transfers). For external flows, record clear notes that the counterparty is external.
+
+Avoid producing negative balances unless overdrafts are explicitly supported by the system; if a debit would overdraw an account, choose a different payer or skip/reschedule that transaction.
+
+Precise timestamps & calendar integration
+
+Each transaction must include a precise timestamp (date and time).
+
+Ensure every generated transaction appears as an event in the calendar on its date/time with a clear label (example labels: “Sent $45.00 to demo@test.com
+ — Transfer”, “Received $120.00 from alice@student.com
+ — Income”, “Paid $20.00 for Coffee — Expense”).
+
+Clicking a calendar event must open or link to the transaction detail view.
+
+Write to authoritative sources & consistency
+
+Insert the transactions into the system’s authoritative place for transaction history so all interfaces (statements, dashboard cards, calendar, APIs) reflect the changes. Do not only write to temporary or test-only storage.
+
+Recompute and persist account balances so the dashboard cards and account views show balances consistent with the newly created history.
+
+If the system uses caching, read-replicas, or other layers, ensure caches are invalidated or data is refreshed so updates are visible immediately.
+
+Auditability & reversibility
+
+Tag every generated record distinctly (e.g., include a clear generator tag or marker) so generated items can be identified and removed if necessary.
+
+Keep an audit trail for each inserted transaction recording: a unique transaction identifier, affected account(s), amount, type (internal/inbound/outbound), timestamp, human- or agent-actor who performed the insertion, and the generator tag.
+
+Provide a reversible plan or a way to remove the generated transactions (for example: a script or filter that deletes only records with the generator tag).
+
+Idempotency
+
+Ensure the process is idempotent or guarded so repeated runs do not duplicate transactions. Check for existing generated records before inserting duplicates.
+
+Outputs & verification
+
+After completion produce a machine-readable export (CSV or JSON) containing every created transaction with these readable fields: unique transaction identifier, date_time, debit account (or “external”), credit account (or “external”), amount, currency, type (transfer/income/expense), short description, generator tag.
+
+Also provide a per-account summary: account identifier, starting balance before inserts, total debits added, total credits added, ending balance after inserts.
+
+Provide a short human-readable report summarizing: total transactions created, number of accounts affected, any skipped items and why, and confirmation that calendar and dashboard views now show the history.
+
+Safety & production
+
+Do not run writes against a production environment without explicit, documented confirmation from an authorized person. If allowed to run in production, require an explicit confirmation flag.
+
+If running in a non-production or staging environment, proceed but still log all changes and produce the reversible cleanup plan.
+
+Presentation requirements
+
+Calendar events must show readable labels and link to transaction details.
+
+Account statements and dashboard cards must reflect the new balances and list the recent transactions in chronological order.
+
+The generated history should look natural: varying amounts, a mix of transaction types, occasional larger transactions, and realistic timestamps.

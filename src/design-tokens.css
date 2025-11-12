@@ -1,0 +1,302 @@
+/**
+ * UniPay Design System - Light Pastel Theme
+ * Student-friendly, soft, and airy visual design
+ */
+
+:root {
+  /* ============================================
+     COLOR PALETTE - Pastel & Light
+     ============================================ */
+  
+  /* Primary Colors - Soft Lavender & Pastel Blue */
+  --color-primary-light: 258 70% 85%;
+  --color-primary: 258 70% 78%;
+  --color-primary-hover: 258 70% 66%;
+  --color-primary-active: 258 70% 52%;
+  --color-primary-button: 258 70% 58%;
+  
+  --color-secondary-light: 210 75% 88%;
+  --color-secondary: 210 75% 82%;
+  --color-secondary-hover: 210 75% 70%;
+  --color-secondary-active: 210 75% 62%;
+  --color-secondary-button: 210 75% 60%;
+  
+  /* Accent Colors - Status & Emphasis */
+  --color-success-light: 150 55% 85%;
+  --color-success: 150 55% 70%;
+  --color-success-hover: 150 55% 58%;
+  --color-success-button: 150 55% 32%;
+  
+  --color-warning-light: 40 90% 85%;
+  --color-warning: 40 90% 75%;
+  --color-warning-hover: 40 90% 65%;
+  --color-warning-button: 40 90% 32%;
+  --color-warning-text: 40 90% 28%;
+  
+  --color-danger-light: 5 80% 85%;
+  --color-danger: 5 80% 72%;
+  --color-danger-hover: 5 80% 62%;
+  --color-danger-button: 5 80% 45%;
+  
+  /* Backgrounds - Very Light & Airy */
+  --color-background: 280 60% 97%;
+  --color-surface-1: 280 60% 99%;
+  --color-surface-2: 255 50% 96%;
+  --color-surface-3: 270 40% 94%;
+  
+  /* Text Colors - Readable with Good Contrast */
+  --color-text-primary: 250 35% 20%;
+  --color-text-secondary: 250 25% 35%;
+  --color-text-muted: 250 20% 50%;
+  --color-text-disabled: 250 15% 65%;
+  
+  /* Borders & Dividers */
+  --color-border-light: 255 35% 93%;
+  --color-border: 255 35% 88%;
+  --color-border-strong: 255 35% 75%;
+  
+  /* Special Gradients */
+  --gradient-primary: linear-gradient(135deg, hsl(258 70% 78%) 0%, hsl(210 75% 82%) 100%);
+  --gradient-card: linear-gradient(135deg, hsl(280 60% 99%) 0%, hsl(255 50% 96%) 100%);
+  --gradient-hero: linear-gradient(135deg, hsl(258 70% 85%) 0%, hsl(210 75% 88%) 100%);
+  
+  /* ============================================
+     TYPOGRAPHY - Fluid & Responsive
+     ============================================ */
+  
+  --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-family-display: 'Outfit', 'Inter', sans-serif;
+  
+  /* Fluid Font Sizes - Scale across viewports (320px - 1440px) */
+  --font-size-xs: clamp(0.688rem, 0.65rem + 0.19vw, 0.75rem);          /* 11-12px */
+  --font-size-sm: clamp(0.813rem, 0.76rem + 0.26vw, 0.875rem);         /* 13-14px */
+  --font-size-base: clamp(0.938rem, 0.88rem + 0.29vw, 1rem);           /* 15-16px */
+  --font-size-lg: clamp(1rem, 0.93rem + 0.35vw, 1.125rem);             /* 16-18px */
+  --font-size-xl: clamp(1.125rem, 1.02rem + 0.53vw, 1.375rem);         /* 18-22px */
+  --font-size-2xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.625rem);          /* 20-26px */
+  --font-size-3xl: clamp(1.5rem, 1.24rem + 1.3vw, 2.125rem);           /* 24-34px */
+  --font-size-4xl: clamp(1.875rem, 1.39rem + 2.42vw, 3rem);            /* 30-48px */
+  --font-size-5xl: clamp(2.25rem, 1.55rem + 3.5vw, 3.75rem);           /* 36-60px */
+  --font-size-6xl: clamp(2.625rem, 1.67rem + 4.77vw, 4.5rem);          /* 42-72px */
+  
+  /* Heading Sizes - Semantic Scale */
+  --font-size-h1: var(--font-size-5xl);
+  --font-size-h2: var(--font-size-4xl);
+  --font-size-h3: var(--font-size-3xl);
+  --font-size-h4: var(--font-size-2xl);
+  --font-size-h5: var(--font-size-xl);
+  --font-size-h6: var(--font-size-lg);
+  
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* ============================================
+     SPACING SYSTEM - Fluid & Responsive
+     ============================================ */
+  
+  /* Fixed Small Spaces - No scaling needed */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;  /* 2px */
+  --space-1: 0.25rem;     /* 4px */
+  --space-1-5: 0.375rem;  /* 6px */
+  --space-2: 0.5rem;      /* 8px */
+  --space-2-5: 0.625rem;  /* 10px */
+  
+  /* Fluid Spaces - Scale with viewport */
+  --space-3: clamp(0.625rem, 0.58rem + 0.23vw, 0.75rem);         /* 10-12px */
+  --space-3-5: clamp(0.75rem, 0.68rem + 0.35vw, 0.875rem);       /* 12-14px */
+  --space-4: clamp(0.875rem, 0.78rem + 0.48vw, 1.125rem);        /* 14-18px */
+  --space-5: clamp(1rem, 0.89rem + 0.55vw, 1.25rem);             /* 16-20px */
+  --space-6: clamp(1.25rem, 1.09rem + 0.8vw, 1.625rem);          /* 20-26px */
+  --space-7: clamp(1.375rem, 1.18rem + 0.97vw, 1.75rem);         /* 22-28px */
+  --space-8: clamp(1.5rem, 1.24rem + 1.3vw, 2.125rem);           /* 24-34px */
+  --space-9: clamp(1.75rem, 1.44rem + 1.55vw, 2.375rem);         /* 28-38px */
+  --space-10: clamp(2rem, 1.64rem + 1.8vw, 2.875rem);            /* 32-46px */
+  --space-11: clamp(2.25rem, 1.79rem + 2.3vw, 3.125rem);         /* 36-50px */
+  --space-12: clamp(2.5rem, 2.04rem + 2.3vw, 3.625rem);          /* 40-58px */
+  --space-14: clamp(2.875rem, 2.24rem + 3.17vw, 4.125rem);       /* 46-66px */
+  --space-16: clamp(3rem, 2.34rem + 3.3vw, 4.5rem);              /* 48-72px */
+  --space-20: clamp(3.5rem, 2.64rem + 4.3vw, 5.5rem);            /* 56-88px */
+  --space-24: clamp(4rem, 2.89rem + 5.55vw, 6.5rem);             /* 64-104px */
+  --space-28: clamp(4.5rem, 3.14rem + 6.8vw, 7.5rem);            /* 72-120px */
+  --space-32: clamp(5rem, 3.39rem + 8.05vw, 8.5rem);             /* 80-136px */
+  --space-36: clamp(5.5rem, 3.64rem + 9.3vw, 9.5rem);            /* 88-152px */
+  --space-40: clamp(6rem, 3.89rem + 10.55vw, 10.5rem);           /* 96-168px */
+  --space-44: clamp(6.5rem, 4.14rem + 11.8vw, 11.5rem);          /* 104-184px */
+  --space-48: clamp(7rem, 4.39rem + 13.05vw, 12.5rem);           /* 112-200px */
+  --space-52: clamp(7.5rem, 4.64rem + 14.3vw, 13.5rem);          /* 120-216px */
+  --space-56: clamp(8rem, 4.89rem + 15.55vw, 14.5rem);           /* 128-232px */
+  --space-60: clamp(8.5rem, 5.14rem + 16.8vw, 15.5rem);          /* 136-248px */
+  --space-64: clamp(9rem, 5.39rem + 18.05vw, 16.5rem);           /* 144-264px */
+  --space-72: clamp(10rem, 5.89rem + 20.55vw, 18.5rem);          /* 160-296px */
+  --space-80: clamp(11rem, 6.39rem + 23.05vw, 20.5rem);          /* 176-328px */
+  --space-96: clamp(13rem, 7.39rem + 28.05vw, 24.5rem);          /* 208-392px */
+  
+  /* Extended Spaces - Custom project sizes with fluid scaling */
+  --space-18: clamp(3.25rem, 2.49rem + 3.8vw, 4.875rem);        /* 52-78px */
+  --space-22: clamp(3.75rem, 2.79rem + 4.8vw, 5.875rem);        /* 60-94px */
+  --space-88: clamp(14rem, 7.89rem + 30.55vw, 26rem);           /* 224-416px */
+  --space-100: clamp(16rem, 8.89rem + 35.55vw, 29.5rem);        /* 256-472px */
+  --space-112: clamp(18rem, 9.89rem + 40.55vw, 33rem);          /* 288-528px */
+  --space-128: clamp(21rem, 11.39rem + 48.05vw, 38.5rem);       /* 336-616px */
+  
+  /* Component-Specific Spaces */
+  --space-section: var(--space-12);     /* Section vertical spacing */
+  --space-card: var(--space-6);         /* Card internal padding */
+  --space-card-gap: var(--space-5);     /* Gap between cards */
+  
+  /* ============================================
+     BORDER RADIUS - Soft & Rounded
+     ============================================ */
+  
+  --radius-xs: 0.5rem;   /* 8px */
+  --radius-sm: 0.75rem;  /* 12px */
+  --radius-md: 1rem;     /* 16px */
+  --radius-lg: 1.25rem;  /* 20px */
+  --radius-xl: 1.5rem;   /* 24px */
+  --radius-2xl: 2rem;    /* 32px */
+  --radius-pill: 9999px;
+  
+  /* ============================================
+     SHADOWS - Soft & Subtle
+     ============================================ */
+  
+  --shadow-xs: 0 1px 2px 0 hsl(258 60% 30% / 0.05);
+  --shadow-sm: 0 4px 10px 0 hsl(258 60% 30% / 0.08);
+  --shadow-md: 0 8px 24px 0 hsl(258 60% 30% / 0.10);
+  --shadow-lg: 0 16px 40px 0 hsl(258 60% 30% / 0.12);
+  --shadow-xl: 0 24px 60px 0 hsl(258 60% 30% / 0.15);
+  
+  /* Colored Shadows for Emphasis */
+  --shadow-primary: 0 8px 24px 0 hsl(258 70% 78% / 0.25);
+  --shadow-success: 0 8px 24px 0 hsl(150 55% 70% / 0.25);
+  --shadow-warning: 0 8px 24px 0 hsl(40 90% 75% / 0.25);
+  --shadow-danger: 0 8px 24px 0 hsl(5 80% 72% / 0.25);
+  
+  /* ============================================
+     TRANSITIONS & ANIMATIONS
+     ============================================ */
+  
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 400ms ease-in-out;
+  
+  --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* ============================================
+     Z-INDEX SCALE
+     ============================================ */
+  
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-fixed: 1200;
+  --z-modal-backdrop: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-tooltip: 1600;
+}
+
+/* ============================================
+   ACCESSIBILITY FOCUS STATES
+   ============================================ */
+:root {
+  --focus-ring-color: hsl(258 70% 78% / 0.5);
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+}
+
+/* Global focus-visible styles for better accessibility */
+*:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.gradient-card {
+  background: var(--gradient-card);
+}
+
+.gradient-hero {
+  background: var(--gradient-hero);
+}
+
+.shadow-soft {
+  box-shadow: var(--shadow-sm);
+}
+
+.shadow-soft-hover:hover {
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-base);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - Fluid System
+   ============================================ */
+
+/* Typography and spacing now use clamp() for fluid scaling
+   No media queries needed - scales smoothly across all viewports */
+
+/* Utility Classes for Responsive Typography */
+.text-display {
+  font-size: var(--font-size-6xl);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+}
+
+.text-h1 {
+  font-size: var(--font-size-h1);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+}
+
+.text-h2 {
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+}
+
+.text-h3 {
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-semibold);
+}
+
+.text-h4 {
+  font-size: var(--font-size-h4);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-semibold);
+}
+
+.text-h5 {
+  font-size: var(--font-size-h5);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-medium);
+}
+
+.text-h6 {
+  font-size: var(--font-size-h6);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-medium);
+}

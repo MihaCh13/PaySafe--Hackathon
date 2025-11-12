@@ -1,0 +1,134 @@
+======================================================================
+UniPay Transaction History Generation Summary
+======================================================================
+
+Generation Date: 2025-11-08T23:33:07.986708
+Generator Tag: HISTORICAL_GEN_2025
+Mode: LIVE
+
+Total Transactions Created: 85
+Total Accounts Affected: 16
+Skipped Items: 4
+
+Per-Account Summary:
+----------------------------------------------------------------------
+
+testuser (test@student.com):
+  Initial Balance: $1142.35
+  Total Credits:   +$1765.22
+  Total Debits:    -$381.24
+  Final Balance:   $2526.33
+  Transactions:    5
+
+demouser (demo@student.com):
+  Initial Balance: $639.28
+  Total Credits:   +$0.00
+  Total Debits:    -$418.06
+  Final Balance:   $221.22
+  Transactions:    2
+
+alice (alice@student.com):
+  Initial Balance: $1399.77
+  Total Credits:   +$1003.71
+  Total Debits:    -$422.65
+  Final Balance:   $1980.83
+  Transactions:    7
+
+bob (bob@student.com):
+  Initial Balance: $521.09
+  Total Credits:   +$1531.55
+  Total Debits:    -$1205.33
+  Final Balance:   $847.31
+  Transactions:    11
+
+eve (eve@student.com):
+  Initial Balance: $1472.94
+  Total Credits:   +$2522.81
+  Total Debits:    -$2273.91
+  Final Balance:   $1721.84
+  Transactions:    14
+
+frank (frank@student.com):
+  Initial Balance: $987.12
+  Total Credits:   +$1330.54
+  Total Debits:    -$361.27
+  Final Balance:   $1956.39
+  Transactions:    6
+
+Miha.Ch (misheto05@gmail.com):
+  Initial Balance: $1288.45
+  Total Credits:   +$1714.49
+  Total Debits:    -$49.05
+  Final Balance:   $2953.89
+  Transactions:    7
+
+Plampie (plamigeor.135@gmail.com):
+  Initial Balance: $747.81
+  Total Credits:   +$442.13
+  Total Debits:    -$622.91
+  Final Balance:   $567.03
+  Transactions:    3
+
+Sami (sami@gmail.com):
+  Initial Balance: $1311.66
+  Total Credits:   +$377.04
+  Total Debits:    -$1270.72
+  Final Balance:   $417.98
+  Transactions:    9
+
+plampie (plammygeor@gmail.com):
+  Initial Balance: $807.34
+  Total Credits:   +$165.27
+  Total Debits:    -$589.01
+  Final Balance:   $383.60
+  Transactions:    6
+
+demo2 (demo2@student.com):
+  Initial Balance: $1433.25
+  Total Credits:   +$1207.09
+  Total Debits:    -$792.24
+  Final Balance:   $1848.10
+  Transactions:    7
+
+demo5 (demo5@test.com):
+  Initial Balance: $934.22
+  Total Credits:   +$1143.16
+  Total Debits:    -$1113.81
+  Final Balance:   $963.57
+  Transactions:    11
+
+admin (admin@test.com):
+  Initial Balance: $1298.73
+  Total Credits:   +$1082.74
+  Total Debits:    -$1703.10
+  Final Balance:   $678.37
+  Transactions:    10
+
+student (student@test.com):
+  Initial Balance: $1003.56
+  Total Credits:   +$825.26
+  Total Debits:    -$1441.43
+  Final Balance:   $387.39
+  Transactions:    6
+
+demo (demo@test.com):
+  Initial Balance: $1068.99
+  Total Credits:   +$962.35
+  Total Debits:    -$656.43
+  Final Balance:   $1374.91
+  Transactions:    7
+
+testuser123 (test123@test.com):
+  Initial Balance: $1024.84
+  Total Credits:   +$1088.89
+  Total Debits:    -$1902.33
+  Final Balance:   $211.40
+  Transactions:    8
+
+
+Skipped Items:
+----------------------------------------------------------------------
+  • insufficient_balance: Plampie - $714.57
+  • insufficient_balance: plampie - $385.84
+  • insufficient_balance: plampie - $342.22
+  • insufficient_balance: plampie - $692.12
