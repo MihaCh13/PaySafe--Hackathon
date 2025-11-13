@@ -272,16 +272,16 @@ export default function TransfersPage() {
               className="w-full"
               onClick={handleScanClick}
             >
-              <ScanLine className="h-4 w-4 mr-2" />
-              Scan QR code to send
+              <ScanLine className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span>Scan QR code to send</span>
             </Button>
 
             <Button
-              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 transition-opacity"
+              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:opacity-90 transition-opacity"
               onClick={() => setSendDialogOpen(true)}
             >
-              <Send className="h-4 w-4 mr-2" />
-              Send money by username
+              <Send className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span>Send money by username</span>
             </Button>
 
             <Button
@@ -289,8 +289,8 @@ export default function TransfersPage() {
               className="w-full"
               onClick={() => setIbanDialogOpen(true)}
             >
-              <CreditCard className="h-4 w-4 mr-2" />
-              Send money by bank account
+              <CreditCard className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span>Send money by bank account</span>
             </Button>
           </CardContent>
         </MotionCard>
@@ -318,8 +318,8 @@ export default function TransfersPage() {
               className="w-full"
               onClick={() => setShowQRDialog(true)}
             >
-              <QrCode className="h-4 w-4 mr-2" />
-              Show your QR code
+              <QrCode className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span>Show your QR code</span>
             </Button>
             
             <p className="text-sm text-gray-500 text-center">
