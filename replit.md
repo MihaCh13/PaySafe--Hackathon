@@ -5,6 +5,22 @@ UniPay is a digital wallet application designed for students, integrating financ
 
 ## Recent Changes
 
+### November 13, 2025 - Repository Synchronization & Team Workflow Setup
+**Merged personal and organization GitHub repositories and configured team workflow.**
+
+- **Repository Merge**: Successfully merged both personal repository (PaySafe--Hackathon) and organization repository (CYBER-GIRLS/UniPay-NewVersion) into the main Replit project
+- **Git Remote Configuration**: Reconfigured git remotes for team collaboration:
+  - `origin` → Organization repo (https://github.com/CYBER-GIRLS/UniPay-NewVersion) - **Primary team repository**
+  - `personal` → Personal repo (https://github.com/MihaCh13/PaySafe--Hackathon) - Personal backup
+- **Improved Configuration**: Adopted enhanced configurations from organization repo:
+  - `.replit`: Added database integration support (python_database:1.0.0)
+  - `backend/config.py`: Implemented dynamic CORS configuration with automatic Replit domain detection via `_build_cors_origins()` helper function
+  - Enhanced SocketIO CORS security by restricting to same origins
+- **Conflict Resolution**: All merge conflicts resolved, preserving the best features from both repositories
+- **Team Workflow**: Organization repository is now the main collaboration hub for all team members
+
+---
+
 ### November 11, 2025 - Sprint 2: Performance & Data Integrity (COMPLETE)
 **Security hardening and performance optimization for production readiness.**
 
