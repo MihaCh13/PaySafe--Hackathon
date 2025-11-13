@@ -277,7 +277,7 @@ export default function TransfersPage() {
             </Button>
 
             <Button
-              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
+              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 transition-opacity"
               onClick={() => setSendDialogOpen(true)}
             >
               <Send className="h-4 w-4 mr-2" />
@@ -286,7 +286,7 @@ export default function TransfersPage() {
 
             <Button
               variant="outline"
-              className="w-full border-violet-200 hover:bg-violet-50 dark:border-violet-800 dark:hover:bg-violet-950"
+              className="w-full"
               onClick={() => setIbanDialogOpen(true)}
             >
               <CreditCard className="h-4 w-4 mr-2" />
