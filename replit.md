@@ -3,119 +3,6 @@
 ## Overview
 UniPay is a digital wallet application designed for students, integrating financial services with lifestyle features. Its core purpose is to provide secure digital payments, subscription management, student discounts, savings goal tracking, and peer-to-peer lending and marketplace functionalities. UniPay aims to be an essential financial tool, offering convenience, security, customized benefits, and fostering financial literacy and independence.
 
-## Recent Changes
-
-### November 13, 2025 - Account Data Migration (CRITICAL)
-**Migrated all hackathon demo data from StudentKlombaTest@test.com to test@student.com.**
-
-- **Migration Completed**: All data from StudentKlombaTest account successfully transferred to test@student.com
-- **New Login Credentials**:
-  - Email: `test@student.com`
-  - Password: `password123`
-  - PIN: `1234`
-- **Data Migrated**:
-  - ✅ 27 transactions (transfers, expenses, income, payments)
-  - ✅ 4 budget cards (Food & Drink, Entertainment, Savings, Transport)
-  - ✅ 3 savings goals (Laptop Fund, Travel Fund, Emergency Fund)
-  - ✅ 1 Dark Days pocket ($750 balance with 20% auto-save)
-  - ✅ 4 marketplace listings (textbooks, electronics, furniture)
-  - ✅ 8 loans (pending, active, completed, cancelled)
-  - ✅ Wallet balance: $2,500
-- **Technical Implementation**:
-  - Created safe migration script (`backend/migrate_account_to_test_auto.py`)
-  - Handled foreign key constraints properly (manually deleted loans before user deletion)
-  - Preserved all relationships by only changing user credentials, not IDs
-  - Verified data integrity post-migration via SQL queries
-- **Result**: test@student.com now contains full hackathon demo experience with complete transaction history, budget cards, savings, marketplace, and loans
-
----
-
-### November 13, 2025 - Transfers Page UI Reorganization
-**Reorganized Transfers page layout with new button structure and IBAN transfer placeholder.**
-
-- **Send Money Block Updates**:
-  - Added "Scan QR code to send" button (moved from Receive Money block)
-  - Renamed existing button to "Send money by username"
-  - Added new "Send money by bank account" button with IBAN dialog
-  - Button order: Scan QR → Username → Bank Account
-- **Receive Money Block Updates**:
-  - Renamed "Show QR" to "Show your QR code"
-  - Removed "Scan QR to Send" button (moved to Send Money block)
-  - Simplified layout to focus on receiving
-- **New IBAN Transfer Feature**:
-  - Added IBAN/bank account transfer dialog
-  - Includes recipient name (optional), IBAN number, and amount fields
-  - Placeholder implementation with informative message
-  - Ready for backend integration when bank transfers are supported
-- **Consistent Styling**: All buttons follow app's design system with gradient primary actions and outline secondary actions
-
----
-
-### November 13, 2025 - Repository Synchronization & Team Workflow Setup
-**Merged personal and organization GitHub repositories and configured team workflow.**
-
-- **Repository Merge**: Successfully merged both personal repository (PaySafe--Hackathon) and organization repository (CYBER-GIRLS/UniPay-NewVersion) into the main Replit project
-- **Git Remote Configuration**: Reconfigured git remotes for team collaboration:
-  - `origin` → Organization repo (https://github.com/CYBER-GIRLS/UniPay-NewVersion) - **Primary team repository**
-  - `personal` → Personal repo (https://github.com/MihaCh13/PaySafe--Hackathon) - Personal backup
-- **Improved Configuration**: Adopted enhanced configurations from organization repo:
-  - `.replit`: Added database integration support (python_database:1.0.0)
-  - `backend/config.py`: Implemented dynamic CORS configuration with automatic Replit domain detection via `_build_cors_origins()` helper function
-  - Enhanced SocketIO CORS security by restricting to same origins
-- **Conflict Resolution**: All merge conflicts resolved, preserving the best features from both repositories
-- **Team Workflow**: Organization repository is now the main collaboration hub for all team members
-
----
-
-### November 11, 2025 - Sprint 2: Performance & Data Integrity (COMPLETE)
-**Security hardening and performance optimization for production readiness.**
-
-#### Database Optimization (C-8) ✅
-- Added 23 database indexes on foreign keys and frequently queried columns via Alembic migration (748f170551f2)
-- Performance improvements on:
-  - Transactions: user_id, sender_id, receiver_id, card_id, transaction_type, status (6 indexes)
-  - Loans: lender_id, borrower_id, status (3 indexes)
-  - Marketplace: seller_id, buyer_id, listing_id, category, university, is_available, is_sold, status (8 indexes)
-  - Virtual Cards: user_id, card_purpose (2 indexes)
-  - Goals, Subscriptions, Savings Pockets, Loan Repayments (4 indexes)
-- Significant performance gains on JOIN queries and WHERE clauses with foreign keys
-
-#### Budget Card Validation (C-6) ✅
-- Enhanced `VirtualCard.spend()` and `VirtualCard.can_spend()` to enforce both allocated budget AND monthly spending limits
-- Clear error messages showing available vs. required amounts
-- Prevents overspending beyond configured financial controls
-
-#### Deadlock Prevention (C-7) ✅
-- Implemented deterministic wallet locking across all wallet-to-wallet operations
-- `lock_wallets_deterministic()` helper ensures consistent lock order (ascending user_id)
-- Eliminates circular wait conditions in concurrent transactions
-- Applied to 5 critical endpoints:
-  - Marketplace orders (cross-purchases)
-  - Wallet transfers (peer-to-peer)
-  - Loan repayments
-  - Loan approvals
-  - Loan cancellations
-- Documented single-phase escrow flow with `escrow_released=True`
-
-#### P2P Lending Validation (C-12) ✅
-- Enhanced balance validation with detailed error messages
-- Shows available vs. required amounts for repayments and loan approvals
-- Added logging for failed operations
-- Applied deterministic wallet locking to prevent deadlocks
-
-**Production Readiness:** Architect-approved. Recommend integration/concurrency testing in staging before production deployment.
-
----
-
-### November 11, 2025 - QR Code Payment Feature
-- Implemented secure QR code payment system in Top Up and Transfers pages
-- Added QR code display with auto-expiry (5 minutes)
-- Added bank transfer details dialog with copy-to-clipboard functionality
-- Uses `itsdangerous` signed tokens (not JWT) to prevent bearer token leakage
-- Backend endpoints: `GET /wallet/qr-payment-token`, `POST /wallet/verify-qr-token`
-- Enhanced Transfers page with QR scanner integration using `html5-qrcode`
-- Architect-verified security implementation ensuring tokens cannot be used for API authentication
-
 ## User Preferences
 No specific user preferences recorded yet. This section will be updated as development progresses.
 
@@ -152,6 +39,7 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 *   **ISIC Discounts:** Integration for student card-based discounts.
 *   **Security Settings:** PIN management, visual-only features for email verification, 2FA, active sessions, rate limiting, and session timeout.
 *   **Notifications:** Comprehensive toast notification system and optimized UI dialogs for various screen sizes.
+*   **Profile Photo Upload:** Secure profile photo upload with validation, secure storage, and automatic cleanup.
 
 ### System Design Choices
 *   **Database Schema:** Core entities include Users, Wallets, Transactions, VirtualCards, Subscriptions, SavingsPockets, Goals, Marketplace (Listings, Orders), Loans, Repayments, and ISIC models.

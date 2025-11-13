@@ -13,6 +13,7 @@ interface User {
   phone?: string;
   is_verified?: boolean;
   created_at?: string;
+  profile_photo_url?: string;
 }
 
 interface AuthState {

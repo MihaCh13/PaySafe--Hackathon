@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from config import config
 from app.extensions import db, jwt, socketio, cors, migrate, limiter
 import logging
@@ -112,5 +112,11 @@ def create_app(config_name='development'):
     @app.route('/api/health')
     def health_check():
         return {'status': 'ok', 'message': 'UniPay API is running'}
+    
+    @app.route('/uploads/<path:filename>')
+    def uploaded_file(filename):
+        """Serve uploaded files (profile photos, etc.)"""
+        uploads_dir = os.path.join(app.root_path, '..', 'uploads')
+        return send_from_directory(uploads_dir, filename)
     
     return app
