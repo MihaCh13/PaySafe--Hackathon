@@ -5,6 +5,27 @@ UniPay is a digital wallet application designed for students, integrating financ
 
 ## Recent Changes
 
+### November 13, 2025 - Transfers Page UI Reorganization
+**Reorganized Transfers page layout with new button structure and IBAN transfer placeholder.**
+
+- **Send Money Block Updates**:
+  - Added "Scan QR code to send" button (moved from Receive Money block)
+  - Renamed existing button to "Send money by username"
+  - Added new "Send money by bank account" button with IBAN dialog
+  - Button order: Scan QR → Username → Bank Account
+- **Receive Money Block Updates**:
+  - Renamed "Show QR" to "Show your QR code"
+  - Removed "Scan QR to Send" button (moved to Send Money block)
+  - Simplified layout to focus on receiving
+- **New IBAN Transfer Feature**:
+  - Added IBAN/bank account transfer dialog
+  - Includes recipient name (optional), IBAN number, and amount fields
+  - Placeholder implementation with informative message
+  - Ready for backend integration when bank transfers are supported
+- **Consistent Styling**: All buttons follow app's design system with gradient primary actions and outline secondary actions
+
+---
+
 ### November 13, 2025 - Repository Synchronization & Team Workflow Setup
 **Merged personal and organization GitHub repositories and configured team workflow.**
 
