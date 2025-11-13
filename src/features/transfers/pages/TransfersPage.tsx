@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowUpRight, ArrowDownLeft, Send, Users, Calendar, QrCode, ScanLine, X } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Send, Users, Calendar, QrCode, ScanLine, X, CreditCard } from 'lucide-react';
 import { walletAPI, transactionsAPI } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
@@ -289,7 +289,7 @@ export default function TransfersPage() {
               className="w-full border-violet-200 hover:bg-violet-50 dark:border-violet-800 dark:hover:bg-violet-950"
               onClick={() => setIbanDialogOpen(true)}
             >
-              <ArrowUpRight className="h-4 w-4 mr-2" />
+              <CreditCard className="h-4 w-4 mr-2" />
               Send money by bank account
             </Button>
           </CardContent>
