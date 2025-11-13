@@ -6,11 +6,11 @@
 
 @layer base {
   :root {
-    /* Background Colors - Light & Airy */
+    /* Background Colors - Deep Space Dark Theme */
     --background: var(--color-background);
     --foreground: var(--color-text-primary);
     
-    /* Surface & Card Colors */
+    /* Surface & Card Colors - Midnight Canvas */
     --card: var(--color-surface-1);
     --card-foreground: var(--color-text-primary);
     
@@ -18,47 +18,47 @@
     --popover: var(--color-surface-1);
     --popover-foreground: var(--color-text-primary);
     
-    /* Primary Colors - Soft Pastel Purple/Lavender */
+    /* Primary Colors - Purple Nova */
     --primary: var(--color-primary-button);
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 222 100% 98%;
     
-    /* Secondary Colors - Pastel Blue */
-    --secondary: var(--color-secondary-light);
-    --secondary-foreground: var(--color-text-primary);
+    /* Secondary Colors - Aqua Pulse */
+    --secondary: var(--color-secondary-button);
+    --secondary-foreground: 223 58% 6%;
     
     /* Muted Colors */
     --muted: var(--color-surface-2);
     --muted-foreground: var(--color-text-muted);
     
     /* Accent Colors */
-    --accent: var(--color-primary-light);
+    --accent: var(--color-accent-blue);
     --accent-foreground: var(--color-text-primary);
     
-    /* Destructive/Error Colors - Soft Coral */
+    /* Destructive/Error Colors */
     --destructive: var(--color-danger-button);
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 222 100% 98%;
     
-    /* Success Colors - Soft Mint Green */
+    /* Success Colors */
     --success: var(--color-success-button);
-    --success-foreground: 0 0% 100%;
+    --success-foreground: 222 100% 98%;
     
-    /* Warning Colors - Soft Apricot */
+    /* Warning Colors */
     --warning: var(--color-warning-button);
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 223 58% 6%;
     
     /* Border Colors */
     --border: var(--color-border);
     --input: var(--color-border);
     
-    /* Ring/Focus Colors */
-    --ring: var(--color-primary);
+    /* Ring/Focus Colors - Aqua Pulse */
+    --ring: var(--color-cyan);
     
     /* Border Radius - More Rounded for Friendliness */
     --radius: var(--radius-md);
     
-    /* Chart Colors - Pastel Palette */
+    /* Chart Colors - Neon Gradient Palette */
     --chart-1: var(--color-primary);
-    --chart-2: var(--color-secondary);
+    --chart-2: var(--color-cyan);
     --chart-3: var(--color-success);
     --chart-4: var(--color-warning);
     --chart-5: var(--color-danger);
@@ -129,7 +129,7 @@
     scroll-behavior: smooth;
   }
   
-  /* Custom scrollbar - Pastel Theme */
+  /* Custom scrollbar - Neon Gradient Theme */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -141,13 +141,13 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--color-primary-light));
+    background: linear-gradient(180deg, hsl(var(--color-primary)) 0%, hsl(var(--color-cyan)) 100%);
     border-radius: var(--radius-sm);
     transition: background var(--transition-base);
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--color-primary));
+    background: linear-gradient(180deg, hsl(var(--color-primary-hover)) 0%, hsl(var(--color-cyan-hover)) 100%);
   }
 }
 
