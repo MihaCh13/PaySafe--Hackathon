@@ -189,10 +189,10 @@ export default function ProfilePage() {
       <MotionCard variants={itemVariants} className="border-0 shadow-sm">
         <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <Avatar className="h-24 w-24 border-4 border-violet-100">
+            <Avatar className="h-24 w-24 border-4 border-violet-100" key={user?.profile_photo_url || 'no-photo'}>
               {user?.profile_photo_url ? (
                 <AvatarImage 
-                  src={user.profile_photo_url} 
+                  src={`${user.profile_photo_url}?t=${Date.now()}`} 
                   alt={`${user.first_name} ${user.last_name}`}
                 />
               ) : null}
