@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const registerSchema = z.object({
@@ -84,8 +83,12 @@ export default function RegisterPage() {
       >
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-primary">
-              <Wallet className="h-7 w-7 text-white" strokeWidth={2.5} />
+            <div className="h-12 w-12 rounded-2xl flex items-center justify-center">
+              <img 
+                src="/assets/logo.png" 
+                alt="UniPay Logo" 
+                className="h-full w-full object-contain"
+              />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               UniPay

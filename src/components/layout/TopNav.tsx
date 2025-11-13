@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bell, User, LogOut, ChevronDown, Wallet } from 'lucide-react';
+import { Bell, User, LogOut, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,9 +39,13 @@ export default function TopNav() {
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-primary"
+              className="h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-xl sm:rounded-2xl flex items-center justify-center"
             >
-              <Wallet className="h-5 w-5 sm:h-5.5 sm:w-5.5 md:h-6 md:w-6 text-white" strokeWidth={2.5} />
+              <img 
+                src="/assets/logo.png" 
+                alt="UniPay Logo" 
+                className="h-full w-full object-contain"
+              />
             </motion.div>
             <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               UniPay

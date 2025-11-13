@@ -13,6 +13,9 @@ UniPay is structured as a single-page application (SPA) with a clear separation 
 ### UI/UX Decisions
 The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation, a fully responsive collapsible left sidebar, a modern color palette with violet/indigo gradients and pastel accents, card-based layouts, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
 
+**Branding:**
+*   **Logo:** Custom neon wallet logo stored at `public/assets/logo.png`. The logo appears across all pages including TopNav (dashboard), Login, and Register pages, replacing the previous Lucide React Wallet icon.
+
 **Key UI/UX Features:**
 *   **Responsive Collapsible Sidebar:** Universally available, responsive widths, touch-friendly controls, smooth Framer Motion animations, persistent state via Zustand, and full accessibility.
 *   **Dialog/Popup Scrolling Pattern:** Standardized scrollable pattern for all dialogs to ensure proper viewport fitting.
