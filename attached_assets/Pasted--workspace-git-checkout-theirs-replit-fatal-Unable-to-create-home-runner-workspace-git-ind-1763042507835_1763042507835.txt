@@ -1,0 +1,39 @@
+~/workspace$ git checkout --theirs .replit
+fatal: Unable to create '/home/runner/workspace/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+~/workspace$ rm /home/runner/workspace/.git/index.lock
+~/workspace$ # Stage all resolved files
+git add .
+
+# Complete the merge
+git commit -m "Merged organization repository with resolved conflicts"
+[main 2ac5e6e] Merged organization repository with resolved conflicts
+~/workspace$ git remote rename origin personal
+Renaming remote references: 100% (3/3), done.
+~/workspace$ git remote rename org origin
+Renaming remote references: 100% (3/3), done.
+~/workspace$ git remote -v
+gitsafe-backup  git://gitsafe:5418/backup.git (fetch)
+gitsafe-backup  git://gitsafe:5418/backup.git (push)
+origin  https://github.com/CYBER-GIRLS/UniPay-NewVersion (fetch)
+origin  https://github.com/CYBER-GIRLS/UniPay-NewVersion (push)
+personal    https://github.com/MihaCh13/PaySafe--Hackathon.git (fetch)
+personal    https://github.com/MihaCh13/PaySafe--Hackathon.git (push)
+repl-9549ad22-e11f-4936-bd94-22854fee8cc3   9549ad22-e11f-4936-bd94-22854fee8cc3@ssh.v1.replit.dev:. (fetch)
+repl-9549ad22-e11f-4936-bd94-22854fee8cc3   9549ad22-e11f-4936-bd94-22854fee8cc3@ssh.v1.replit.dev:. (push)
+~/workspace$ git push origin main
+Enumerating objects: 379, done.
+Counting objects: 100% (379/379), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (280/280), done.
+Writing objects: 100% (300/300), 1.41 MiB | 5.91 MiB/s, done.
+Total 300 (delta 233), reused 21 (delta 5), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (233/233), completed with 53 local objects.
+To https://github.com/CYBER-GIRLS/UniPay-NewVersion
+   b34a3b4..2ac5e6e  main -> main
+~/workspace$ 
