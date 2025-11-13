@@ -5,6 +5,31 @@ UniPay is a digital wallet application designed for students, integrating financ
 
 ## Recent Changes
 
+### November 13, 2025 - Account Data Migration (CRITICAL)
+**Migrated all hackathon demo data from StudentKlombaTest@test.com to test@student.com.**
+
+- **Migration Completed**: All data from StudentKlombaTest account successfully transferred to test@student.com
+- **New Login Credentials**:
+  - Email: `test@student.com`
+  - Password: `password123`
+  - PIN: `1234`
+- **Data Migrated**:
+  - ✅ 27 transactions (transfers, expenses, income, payments)
+  - ✅ 4 budget cards (Food & Drink, Entertainment, Savings, Transport)
+  - ✅ 3 savings goals (Laptop Fund, Travel Fund, Emergency Fund)
+  - ✅ 1 Dark Days pocket ($750 balance with 20% auto-save)
+  - ✅ 4 marketplace listings (textbooks, electronics, furniture)
+  - ✅ 8 loans (pending, active, completed, cancelled)
+  - ✅ Wallet balance: $2,500
+- **Technical Implementation**:
+  - Created safe migration script (`backend/migrate_account_to_test_auto.py`)
+  - Handled foreign key constraints properly (manually deleted loans before user deletion)
+  - Preserved all relationships by only changing user credentials, not IDs
+  - Verified data integrity post-migration via SQL queries
+- **Result**: test@student.com now contains full hackathon demo experience with complete transaction history, budget cards, savings, marketplace, and loans
+
+---
+
 ### November 13, 2025 - Transfers Page UI Reorganization
 **Reorganized Transfers page layout with new button structure and IBAN transfer placeholder.**
 
