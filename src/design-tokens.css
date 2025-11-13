@@ -1,64 +1,85 @@
 /**
- * UniPay Design System - Light Pastel Theme
- * Student-friendly, soft, and airy visual design
+ * UniPay Design System - Neon Gradient Theme
+ * Purple Nova to Aqua Pulse - Modern student wallet design
  */
 
 :root {
   /* ============================================
-     COLOR PALETTE - Pastel & Light
+     COLOR PALETTE - Neon Gradient
      ============================================ */
   
-  /* Primary Colors - Soft Lavender & Pastel Blue */
-  --color-primary-light: 258 70% 85%;
-  --color-primary: 258 70% 78%;
-  --color-primary-hover: 258 70% 66%;
-  --color-primary-active: 258 70% 52%;
-  --color-primary-button: 258 70% 58%;
+  /* Primary Colors - Purple Nova Spectrum */
+  --color-primary-900: 273 88% 40%;        /* Hyper Grape #772EC9 */
+  --color-primary-800: 273 79% 54%;        /* Orbit Violet #933DDF */
+  --color-primary: 273 100% 66%;           /* Purple Nova #B14CFF */
+  --color-primary-light: 273 100% 75%;     /* Lighter Nova */
+  --color-primary-hover: 273 79% 54%;      /* Orbit Violet (hover) */
+  --color-primary-active: 273 88% 40%;     /* Hyper Grape (active) */
+  --color-primary-button: 273 100% 66%;    /* Purple Nova (button) */
   
-  --color-secondary-light: 210 75% 88%;
-  --color-secondary: 210 75% 82%;
-  --color-secondary-hover: 210 75% 70%;
-  --color-secondary-active: 210 75% 62%;
-  --color-secondary-button: 210 75% 60%;
+  /* Cyan Colors - Aqua Pulse Spectrum */
+  --color-cyan-900: 181 100% 43%;          /* Hyper Mint #00E5D4 */
+  --color-cyan: 185 100% 47%;              /* Aqua Pulse #00E7F2 */
+  --color-cyan-light: 185 98% 62%;         /* Glacial Teal #43F9E1 */
+  --color-cyan-hover: 181 100% 43%;        /* Hyper Mint (hover) */
+  
+  /* Secondary/Accent Colors */
+  --color-secondary: 185 100% 47%;         /* Aqua Pulse */
+  --color-secondary-light: 185 98% 62%;    /* Glacial Teal */
+  --color-secondary-hover: 181 100% 43%;   /* Hyper Mint */
+  --color-secondary-active: 181 100% 38%;  /* Darker Mint */
+  --color-secondary-button: 185 100% 47%;  /* Aqua Pulse (button) */
+  
+  /* Accent Glow Colors */
+  --color-accent-magenta: 305 100% 73%;    /* Aurora Magenta #FF73F6 */
+  --color-accent-blue: 192 100% 68%;       /* Halo Blue #5BE3FF */
   
   /* Accent Colors - Status & Emphasis */
-  --color-success-light: 150 55% 85%;
-  --color-success: 150 55% 70%;
-  --color-success-hover: 150 55% 58%;
-  --color-success-button: 150 55% 32%;
+  --color-success-light: 158 71% 88%;      /* Light mint */
+  --color-success: 158 71% 68%;            /* Success Green #48E6A3 */
+  --color-success-hover: 158 71% 58%;      
+  --color-success-button: 158 71% 55%;
   
-  --color-warning-light: 40 90% 85%;
-  --color-warning: 40 90% 75%;
-  --color-warning-hover: 40 90% 65%;
-  --color-warning-button: 40 90% 32%;
-  --color-warning-text: 40 90% 28%;
+  --color-warning-light: 42 100% 88%;      
+  --color-warning: 42 100% 71%;            /* Warning Orange #FFC86B */
+  --color-warning-hover: 42 100% 65%;
+  --color-warning-button: 42 100% 55%;
+  --color-warning-text: 42 90% 35%;
   
-  --color-danger-light: 5 80% 85%;
-  --color-danger: 5 80% 72%;
-  --color-danger-hover: 5 80% 62%;
-  --color-danger-button: 5 80% 45%;
+  --color-danger-light: 349 100% 88%;
+  --color-danger: 349 100% 70%;            /* Danger Pink #FF6B8A */
+  --color-danger-hover: 349 100% 60%;
+  --color-danger-button: 349 100% 55%;
   
-  /* Backgrounds - Very Light & Airy */
-  --color-background: 280 60% 97%;
-  --color-surface-1: 280 60% 99%;
-  --color-surface-2: 255 50% 96%;
-  --color-surface-3: 270 40% 94%;
+  --color-info: 207 100% 68%;              /* Info Blue #59B6FF */
+  --color-info-light: 207 100% 85%;
   
-  /* Text Colors - Readable with Good Contrast */
-  --color-text-primary: 250 35% 20%;
-  --color-text-secondary: 250 25% 35%;
-  --color-text-muted: 250 20% 50%;
-  --color-text-disabled: 250 15% 65%;
+  /* Backgrounds - Deep Space to Midnight Canvas */
+  --color-background: 223 58% 6%;          /* Deep Space #060B18 */
+  --color-surface-1: 225 50% 12%;          /* Midnight Canvas #0E1428 */
+  --color-surface-2: 226 40% 16%;          /* Panel Mist #151C34 */
+  --color-surface-3: 226 40% 21%;          /* Elevated Surface */
+  
+  /* Text Colors - High Contrast */
+  --color-text-primary: 222 100% 98%;      /* Text Primary #F7FAFF */
+  --color-text-secondary: 225 100% 90%;    /* Text Secondary #CBD6FF */
+  --color-text-muted: 225 40% 65%;         /* Text Muted #8B96C5 */
+  --color-text-disabled: 225 30% 45%;
   
   /* Borders & Dividers */
-  --color-border-light: 255 35% 93%;
-  --color-border: 255 35% 88%;
-  --color-border-strong: 255 35% 75%;
+  --color-border-light: 226 40% 25%;
+  --color-border: 226 42% 32%;             /* Borderline #26345E */
+  --color-border-strong: 226 42% 42%;
   
-  /* Special Gradients */
-  --gradient-primary: linear-gradient(135deg, hsl(258 70% 78%) 0%, hsl(210 75% 82%) 100%);
-  --gradient-card: linear-gradient(135deg, hsl(280 60% 99%) 0%, hsl(255 50% 96%) 100%);
-  --gradient-hero: linear-gradient(135deg, hsl(258 70% 85%) 0%, hsl(210 75% 88%) 100%);
+  /* Special Gradients - Brand Identity */
+  --gradient-primary: linear-gradient(128deg, hsl(273 100% 66%) 0%, hsl(185 100% 47%) 55%, hsl(181 100% 43%) 100%);
+  --gradient-hero: linear-gradient(140deg, hsl(223 58% 6%) 0%, hsl(225 50% 12%) 40%);
+  --gradient-card: linear-gradient(135deg, hsl(225 50% 12%) 0%, hsl(226 40% 16%) 100%);
+  --gradient-button: linear-gradient(128deg, hsl(273 100% 66%) 0%, hsl(185 100% 47%) 100%);
+  --gradient-button-hover: linear-gradient(128deg, hsl(273 79% 54%) 0%, hsl(181 100% 43%) 100%);
+  
+  /* Logo Glow Gradient */
+  --gradient-logo: linear-gradient(135deg, hsl(305 100% 73%) 0%, hsl(273 100% 66%) 25%, hsl(185 100% 47%) 75%, hsl(181 100% 43%) 100%);
   
   /* ============================================
      TYPOGRAPHY - Fluid & Responsive
@@ -167,20 +188,25 @@
   --radius-pill: 9999px;
   
   /* ============================================
-     SHADOWS - Soft & Subtle
+     SHADOWS - Neon Glow Effects
      ============================================ */
   
-  --shadow-xs: 0 1px 2px 0 hsl(258 60% 30% / 0.05);
-  --shadow-sm: 0 4px 10px 0 hsl(258 60% 30% / 0.08);
-  --shadow-md: 0 8px 24px 0 hsl(258 60% 30% / 0.10);
-  --shadow-lg: 0 16px 40px 0 hsl(258 60% 30% / 0.12);
-  --shadow-xl: 0 24px 60px 0 hsl(258 60% 30% / 0.15);
+  /* Soft Neutral Shadows */
+  --shadow-xs: 0 2px 4px 0 rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 4px 12px 0 rgba(0, 0, 0, 0.20);
+  --shadow-md: 0 8px 24px 0 rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 16px 40px 0 rgba(0, 0, 0, 0.30);
+  --shadow-xl: 0 24px 60px 0 rgba(0, 0, 0, 0.35);
   
-  /* Colored Shadows for Emphasis */
-  --shadow-primary: 0 8px 24px 0 hsl(258 70% 78% / 0.25);
-  --shadow-success: 0 8px 24px 0 hsl(150 55% 70% / 0.25);
-  --shadow-warning: 0 8px 24px 0 hsl(40 90% 75% / 0.25);
-  --shadow-danger: 0 8px 24px 0 hsl(5 80% 72% / 0.25);
+  /* Neon Glow Shadows */
+  --shadow-primary: 0 0 18px rgba(177, 76, 255, 0.4), 0 8px 24px rgba(177, 76, 255, 0.15);
+  --shadow-cyan: 0 0 18px rgba(0, 231, 242, 0.35), 0 8px 24px rgba(0, 231, 242, 0.12);
+  --shadow-success: 0 0 12px rgba(72, 230, 163, 0.3), 0 8px 20px rgba(72, 230, 163, 0.10);
+  --shadow-warning: 0 0 12px rgba(255, 200, 107, 0.3), 0 8px 20px rgba(255, 200, 107, 0.10);
+  --shadow-danger: 0 0 12px rgba(255, 107, 138, 0.3), 0 8px 20px rgba(255, 107, 138, 0.10);
+  
+  /* Card Glow - Subtle Cyan Edge */
+  --shadow-card: 0 20px 45px -20px rgba(0, 231, 242, 0.25);
   
   /* ============================================
      TRANSITIONS & ANIMATIONS
@@ -211,7 +237,7 @@
    ACCESSIBILITY FOCUS STATES
    ============================================ */
 :root {
-  --focus-ring-color: hsl(258 70% 78% / 0.5);
+  --focus-ring-color: hsl(185 100% 47% / 0.5);   /* Aqua Pulse focus */
   --focus-ring-width: 3px;
   --focus-ring-offset: 2px;
 }
@@ -238,6 +264,20 @@
   background: var(--gradient-hero);
 }
 
+.gradient-button {
+  background: var(--gradient-button);
+  background-size: 200%;
+  transition: background-position var(--transition-base);
+}
+
+.gradient-button:hover {
+  background-position: right center;
+}
+
+.gradient-logo {
+  background: var(--gradient-logo);
+}
+
 .shadow-soft {
   box-shadow: var(--shadow-sm);
 }
@@ -249,6 +289,14 @@
 
 .text-balance {
   text-wrap: balance;
+}
+
+.glow-primary {
+  box-shadow: var(--shadow-primary);
+}
+
+.glow-cyan {
+  box-shadow: var(--shadow-cyan);
 }
 
 /* ============================================
