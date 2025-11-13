@@ -110,11 +110,16 @@ export default function ProfilePage() {
 
       const response = await authAPI.uploadProfilePhoto(formData);
       
+      console.log('Upload response:', response.data);
+      
       // Update user in store
       if (response.data.user) {
+        console.log('Updating user with:', response.data.user);
         updateUser(response.data.user);
         // Update timestamp to force avatar refresh
-        setPhotoTimestamp(Date.now());
+        const newTimestamp = Date.now();
+        setPhotoTimestamp(newTimestamp);
+        console.log('Photo timestamp updated to:', newTimestamp);
       }
 
       toast({
