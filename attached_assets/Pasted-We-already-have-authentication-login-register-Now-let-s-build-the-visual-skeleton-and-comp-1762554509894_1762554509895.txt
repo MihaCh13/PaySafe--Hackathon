@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 We already have authentication (login + register). 
 Now, let’s build the **visual skeleton and component structure** for all core MVP wallet features.
 
@@ -88,3 +89,95 @@ For each feature below:
 - Keep everything modular (one folder per feature)
 - No backend logic yet – just UI components and mock content
 
+=======
+We already have authentication (login + register). 
+Now, let’s build the **visual skeleton and component structure** for all core MVP wallet features.
+
+Goal:
+Create a clean, Revolut-style UI layout using React + Tailwind. 
+Top-left → user avatar + profile/settings dropdown.  
+Main layout → sidebar (menu) + main content panel.  
+Keep it responsive and simple.
+
+---
+
+### 🧩 MVP FUNCTIONALITIES (Frontend focus)
+
+For each feature below:
+- Add a visible **menu item / navigation link**
+- Create a **dedicated folder** under `src/features/<featureName>/`
+- Inside each folder, create:
+  - `index.jsx` (main page / component)
+  - `FeatureCard.jsx` (subcomponent or visual element)
+  - `feature.config.js` (for future logic or mock data)
+- If the feature already exists → check it, keep or refactor for consistency.
+
+---
+
+### 🧭 FEATURES TO INCLUDE
+
+1. **Account (User Profile)**
+   - Folder: `features/account/`
+   - Components: profile info, edit form, avatar, PIN change
+   - Check if profile exists from the current login system
+
+2. **Wallet (Balance + Transfers)**
+   - Folder: `features/wallet/`
+   - Components: balance display, transfer buttons, quick top-up panel
+   - Mock balance card (“BGN 0.00”)
+   - Two buttons: “Send” / “Receive” (non-functional yet)
+
+3. **Cards (Virtual Cards)**
+   - Folder: `features/cards/`
+   - Components: virtual card UI (mock)
+   - Button “Add new card”
+   - Card info: number, expiry, CVV (masked)
+
+4. **Top-up (Bank / Card / QR)**
+   - Folder: `features/topup/`
+   - Components: mock form for top-up, QR generator placeholder
+   - Dropdown: choose source (bank / card)
+   - Amount field, submit button
+
+5. **Transactions**
+   - Folder: `features/transactions/`
+   - Components: table / list of transactions (mock data)
+   - Columns: date, type, amount, status, description
+
+6. **Transfers (Real-time send/receive)**
+   - Folder: `features/transfers/`
+   - Components: mock transfer form (recipient, amount, message)
+   - Mock list of incoming requests
+
+7. **Notifications (Push events)**
+   - Folder: `features/notifications/`
+   - Components: list of recent notifications
+   - Use sample alerts: “Payment received”, “Balance updated”
+   - Prepare placeholder for WebSocket integration
+
+8. **Security (PIN & Auth)**
+   - Folder: `features/security/`
+   - Components: PIN setup / update form
+   - Mock verification popup
+---
+
+### 🎨 UI STYLE
+
+- Use **Tailwind** + **shadcn/ui** for cards, buttons, inputs
+- Inspired by **Revolut dashboard**
+- Minimalistic, glassy panels, rounded corners, shadow-lg
+- Light/dark mode toggle
+- Sidebar menu icons (Home, Wallet, Cards, Subscriptions, Goals, etc.)
+- Each feature page should say: “Feature ready for development” + placeholder mock data
+
+---
+
+### ✅ Objective
+
+- Verify which MVP features already exist (account + auth)
+- Create visual placeholder for all others
+- Ensure sidebar + routing links to each one
+- Keep everything modular (one folder per feature)
+- No backend logic yet – just UI components and mock content
+
+>>>>>>> org/main

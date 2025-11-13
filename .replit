@@ -1,11 +1,10 @@
-modules = ["nodejs-20", "python-3.11", "postgresql-16", "python3"]
+modules = ["nodejs-20", "python-3.11", "postgresql-16"]
 [agent]
 expertMode = true
-integrations = ["flask_stripe:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["cairo", "ffmpeg-full", "file", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "jq", "pkg-config", "qhull", "tcl", "tk"]
+packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "jq", "pkg-config", "qhull", "tcl", "tk"]
 
 [workflows]
 runButton = "Project"
@@ -28,12 +27,17 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "bash -c 'python backend/run.py & npm run dev'"
+args = "python backend/run.py & npm run dev"
 waitForPort = 5000
 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
+exposeLocalhost = true
 
 [[ports]]
 localPort = 39483
