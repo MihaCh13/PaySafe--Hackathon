@@ -308,21 +308,20 @@ export default function TransfersPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-6 space-y-4">
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Share your username:</p>
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-xl font-bold text-violet-600">@{user?.username || 'loading...'}</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowQRDialog(true)}
-                  className="flex items-center gap-2"
-                >
-                  <QrCode className="h-4 w-4" />
-                  Show your QR code
-                </Button>
-              </div>
+              <p className="text-xl font-bold text-violet-600">@{user?.username || 'loading...'}</p>
             </div>
+            
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setShowQRDialog(true)}
+            >
+              <QrCode className="h-4 w-4 mr-2" />
+              Show your QR code
+            </Button>
+            
             <p className="text-sm text-gray-500 text-center">
               Others can send you money using this username or by scanning your QR code
             </p>
