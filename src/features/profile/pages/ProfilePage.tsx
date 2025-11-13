@@ -43,6 +43,7 @@ export default function ProfilePage() {
   const [pinStatus, setPinStatus] = useState<{ hasPin: boolean; isDefaultPin: boolean } | null>(null);
   const [isPinStatusLoading, setIsPinStatusLoading] = useState(true);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [photoTimestamp, setPhotoTimestamp] = useState(Date.now());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchPinStatus = async () => {
@@ -112,6 +113,8 @@ export default function ProfilePage() {
       // Update user in store
       if (response.data.user) {
         updateUser(response.data.user);
+        // Update timestamp to force avatar refresh
+        setPhotoTimestamp(Date.now());
       }
 
       toast({
@@ -189,10 +192,10 @@ export default function ProfilePage() {
       <MotionCard variants={itemVariants} className="border-0 shadow-sm">
         <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <Avatar className="h-24 w-24 border-4 border-violet-100" key={user?.profile_photo_url || 'no-photo'}>
+            <Avatar className="h-24 w-24 border-4 border-violet-100" key={photoTimestamp}>
               {user?.profile_photo_url ? (
                 <AvatarImage 
-                  src={`${user.profile_photo_url}?t=${Date.now()}`} 
+                  src={`${user.profile_photo_url}?t=${photoTimestamp}`} 
                   alt={`${user.first_name} ${user.last_name}`}
                 />
               ) : null}
