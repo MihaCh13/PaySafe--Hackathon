@@ -8,7 +8,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { motion } from 'framer-motion';
 import { CreditCard, Plus, Lock, Unlock, ArrowUpCircle, MinusCircle, Calendar, Pause, Play, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -17,8 +16,10 @@ import { useCurrencyStore, formatCurrency, convertToUSD } from '@/stores/currenc
 import { SubscriptionCardDetailDialog } from '../components/SubscriptionCardDetailDialog';
 import { PaymentCardDetailDialog } from '../components/PaymentCardDetailDialog';
 import { BudgetCardDetailDialog } from '../components/BudgetCardDetailDialog';
-
-const MotionCard = motion.create(Card);
+import { AnimatedSection } from '@/components/animations/AnimatedSection';
+import { AnimatedDiv } from '@/components/animations/AnimatedDiv';
+import { MotionCard } from '@/components/animations/MotionCard';
+import { fadeUp, listItem } from '@/lib/animations';
 
 export default function BudgetCardsPage() {
   const { selectedCurrency } = useCurrencyStore();
@@ -266,8 +267,8 @@ export default function BudgetCardsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center">
+    <AnimatedSection className="space-y-6 max-w-7xl mx-auto" stagger>
+      <AnimatedDiv variants={fadeUp} className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Budget Cards</h1>
           <p className="text-gray-600 mt-1">Manage payment cards and budget trackers</p>
@@ -346,36 +347,36 @@ export default function BudgetCardsPage() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
+      </AnimatedDiv>
 
       {/* Summary */}
       {budgetCards.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
+        <AnimatedDiv variants={fadeUp} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <MotionCard variants={listItem}>
             <CardContent className="pt-6">
               <p className="text-sm text-gray-600">Total Allocated</p>
               <p className="text-2xl font-bold text-violet-600">
                 {formatCurrency(cardsData?.summary?.total_allocated || 0, selectedCurrency)}
               </p>
             </CardContent>
-          </Card>
-          <Card>
+          </MotionCard>
+          <MotionCard variants={listItem}>
             <CardContent className="pt-6">
               <p className="text-sm text-gray-600">Total Spent</p>
               <p className="text-2xl font-bold text-red-600">
                 {formatCurrency(cardsData?.summary?.total_spent || 0, selectedCurrency)}
               </p>
             </CardContent>
-          </Card>
-          <Card>
+          </MotionCard>
+          <MotionCard variants={listItem}>
             <CardContent className="pt-6">
               <p className="text-sm text-gray-600">Remaining</p>
               <p className="text-2xl font-bold text-green-600">
                 {formatCurrency(cardsData?.summary?.total_remaining || 0, selectedCurrency)}
               </p>
             </CardContent>
-          </Card>
-        </div>
+          </MotionCard>
+        </AnimatedDiv>
       )}
 
       <Tabs defaultValue="all" className="w-full">
@@ -387,11 +388,12 @@ export default function BudgetCardsPage() {
         </TabsList>
 
         <TabsContent value="all" className="space-y-4 mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cardsData?.cards?.map((card: any) => (
+          <AnimatedDiv variants={fadeUp} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cardsData?.cards?.map((card: any, index: number) => (
               <MotionCard
                 key={card.id}
-                whileHover={{ y: -4 }}
+                variants={listItem}
+                custom={index}
                 className="overflow-hidden border-2"
                 style={{ borderColor: card.card_purpose === 'budget' ? card.color : '#e5e7eb' }}
               >
@@ -525,13 +527,13 @@ export default function BudgetCardsPage() {
                 </CardContent>
               </MotionCard>
             ))}
-          </div>
+          </AnimatedDiv>
         </TabsContent>
 
         <TabsContent value="payment" className="space-y-4 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {paymentCards.map((card: any) => (
-              <MotionCard key={card.id} whileHover={{ y: -4 }}>
+              <MotionCard key={card.id}>
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
@@ -564,7 +566,6 @@ export default function BudgetCardsPage() {
             {budgetCards.map((card: any) => (
               <MotionCard
                 key={card.id}
-                whileHover={{ y: -4 }}
                 className="overflow-hidden border-2"
                 style={{ borderColor: card.color }}
               >
@@ -627,7 +628,6 @@ export default function BudgetCardsPage() {
             {subscriptionCards.map((card: any) => (
               <MotionCard
                 key={card.id}
-                whileHover={{ y: -4 }}
                 className="overflow-hidden border-2 border-pink-200"
               >
                 <CardContent className="p-6">
@@ -879,6 +879,6 @@ export default function BudgetCardsPage() {
           cardId={selectedCardId}
         />
       )}
-    </div>
+    </AnimatedSection>
   );
 }
