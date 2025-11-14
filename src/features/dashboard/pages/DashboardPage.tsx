@@ -384,7 +384,7 @@ export default function DashboardPage() {
               {statsData.recent_transactions.slice(0, 5).map((transaction: any) => (
                 <motion.div
                   key={transaction.id}
-                  whileHover={{ scale: 1.01, backgroundColor: 'hsl(var(--color-surface-2))' }}
+                  whileHover={{ scale: 1.01, backgroundColor: 'hsl(255 50% 96%)' }}
                   className="flex items-center justify-between p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all duration-200"
                 >
                   <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
