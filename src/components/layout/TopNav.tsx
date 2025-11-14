@@ -33,26 +33,7 @@ export default function TopNav() {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="sticky top-0 z-50 w-full m-0 border-b border-border/50 bg-surface-1/95 backdrop-blur-md shadow-soft"
     >
-      <div className="flex h-14 sm:h-16 items-center justify-between px-4 sm:px-5 md:px-6">
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <div className="flex items-center gap-2.5 sm:gap-3.5">
-            <motion.div 
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-xl sm:rounded-2xl flex items-center justify-center"
-            >
-              <img 
-                src="/assets/logo.png" 
-                alt="UniPay Logo" 
-                className="h-full w-full object-contain"
-              />
-            </motion.div>
-            <span className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-[#9b87f5] via-[#7DD3FC] to-[#60C5E8] bg-clip-text text-transparent tracking-tight drop-shadow-sm">
-              UniPay
-            </span>
-          </div>
-        </div>
-
+      <div className="flex h-14 sm:h-16 items-center justify-end px-4 sm:px-5 md:px-6">
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           <Link to="/notifications">
             <motion.button
