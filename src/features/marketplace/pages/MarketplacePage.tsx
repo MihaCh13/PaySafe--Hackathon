@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { marketplaceAPI, authAPI } from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import { Store, Plus, Search, ShoppingBag, Layers } from 'lucide-react';
@@ -159,9 +159,10 @@ export default function EnhancedMarketplacePage() {
                 Create Listing
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl" description="List an item for sale on the student marketplace">
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Create Marketplace Listing</DialogTitle>
+                <DialogDescription>List an item for sale on the student marketplace</DialogDescription>
               </DialogHeader>
               <CreateListingForm
                 onSubmit={handleCreateListing}

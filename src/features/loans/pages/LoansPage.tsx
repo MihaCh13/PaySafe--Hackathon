@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { loansAPI } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -246,9 +246,10 @@ export default function LoansPage() {
               Request Loan
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md" description="Submit a loan request to borrow money from a friend">
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Request a Loan</DialogTitle>
+              <DialogDescription>Submit a loan request to borrow money from a friend</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
@@ -517,9 +518,10 @@ export default function LoansPage() {
       </Tabs>
 
       <Dialog open={repayDialogOpen} onOpenChange={setRepayDialogOpen}>
-        <DialogContent description="Make a repayment towards your outstanding loan">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Repay Loan</DialogTitle>
+            <DialogDescription>Make a repayment towards your outstanding loan</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="p-4 bg-gray-50 rounded-lg space-y-2">
