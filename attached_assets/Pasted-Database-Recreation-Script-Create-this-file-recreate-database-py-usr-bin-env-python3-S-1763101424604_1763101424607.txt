@@ -1,0 +1,89 @@
+Database Recreation Script
+Create this file: recreate_database.py
+
+#!/usr/bin/env python3
+"""
+Script to recreate the entire UniPay database from scratch
+Usage: python recreate_database.py
+"""
+from app import create_app
+from app.extensions import db
+import sys
+def recreate_database():
+    """Drop all tables and recreate them"""
+    
+    app = create_app()
+    
+    with app.app_context():
+        print("🗑️  Dropping all existing tables...")
+        db.drop_all()
+        print("✅ All tables dropped")
+        
+        print("\n🔨 Creating all tables from models...")
+        db.create_all()
+        print("✅ All tables created successfully!")
+        
+        # List all created tables
+        from sqlalchemy import inspect
+        inspector = inspect(db.engine)
+        tables = inspector.get_table_names()
+        
+        print(f"\n📊 Created {len(tables)} tables:")
+        for table in sorted(tables):
+            print(f"   - {table}")
+        
+        print("\n✅ Database recreation complete!")
+        print("\n💡 Next step: Run 'flask db stamp head' to sync migrations")
+        
+        return True
+if __name__ == "__main__":
+    try:
+        recreate_database()
+        sys.exit(0)
+    except Exception as e:
+        print(f"\n❌ Error recreating database: {e}")
+        sys.exit(1)
+
+How to Use:
+Option 1: Quick Recreation
+
+# Run from backend directory
+cd backend
+python recreate_database.py
+# Then sync migrations
+flask db stamp head
+
+Option 2: One-liner (Shell)
+
+cd backend && python -c "from app import create_app; from app.extensions import db; app = create_app(); app.app_context().push(); db.drop_all(); db.create_all(); print('✅ Database recreated')"
+
+Option 3: With Migration Sync (All-in-one)
+
+cd backend && \
+python -c "from app import create_app; from app.extensions import db; app = create_app(); app.app_context().push(); db.drop_all(); db.create_all(); print('✅ Tables created')" && \
+flask db stamp head && \
+echo "✅ Database fully recreated and synced"
+
+What This Creates:
+All 18 tables:
+
+✅ users
+✅ wallets
+✅ transactions
+✅ virtual_cards
+✅ subscriptions
+✅ subscription_cards
+✅ savings_pockets
+✅ goals
+✅ loans
+✅ loan_repayments
+✅ marketplace_listings
+✅ marketplace_orders
+✅ isic_profiles
+✅ isic_card_metadata
+✅ merchants
+✅ discount_applications
+✅ alembic_version
+Plus all indexes and foreign keys from Sprint 2!
+
+Would you like me to create this script file for you, or do you prefer to copy-paste it yourself?
