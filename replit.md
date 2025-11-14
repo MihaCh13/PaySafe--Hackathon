@@ -14,7 +14,7 @@ UniPay is structured as a single-page application (SPA) with a clear separation 
 The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation, a fully responsive collapsible left sidebar, a modern color palette with violet/indigo gradients and pastel accents, card-based layouts, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
 
 **Branding:**
-*   **Logo:** Custom student wallet logo with gradient design (purple to cyan) stored at `public/assets/logo.png`. The logo features a wallet with graduation cap, money symbols, and keyhole, perfectly representing the student financial platform. The logo appears across all pages including TopNav (dashboard), Login, and Register pages with consistent sizing and proper aspect ratio preservation using `object-contain`.
+*   **Logo:** Modern gradient text logo for "UniPay" stored at `public/assets/logo.png`. The logo features clean typography with a smooth purple-to-blue gradient that matches the platform's design system (from lavender hsl(258 70% 78%) to pastel blue hsl(210 75% 82%)). The final "Y" character has enhanced contrast for better visibility. The logo appears across all pages including TopNav (dashboard), Login, and Register pages with consistent sizing and proper aspect ratio preservation using `object-contain`. **Last updated:** November 14, 2025.
 
 **Key UI/UX Features:**
 *   **Responsive Collapsible Sidebar:** Universally available, responsive widths, touch-friendly controls, smooth Framer Motion animations, persistent state via Zustand, and full accessibility.
