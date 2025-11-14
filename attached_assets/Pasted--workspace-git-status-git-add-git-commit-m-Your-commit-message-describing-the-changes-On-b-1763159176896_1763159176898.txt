@@ -1,0 +1,77 @@
+~/workspace$ git status
+git add .
+git commit -m "Your commit message describing the changes"
+On branch main
+Your branch and 'personal/main' have diverged,
+and have 33 and 6 different commits each, respectively.
+  (use "git pull" if you want to integrate the remote branch with yours)
+
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Changes to be committed:
+    modified:   .replit
+    deleted:    attached_assets/Pasted--workspace-Accept-organization-repo-s-version-for-configuration-files-git-checkout-theirs-re-1763042355374_1763042355375.txt
+    deleted:    attached_assets/Pasted--workspace-git-checkout-theirs-replit-fatal-Unable-to-create-home-runner-workspace-git-ind-1763042507835_1763042507835.txt
+    deleted:    attached_assets/Pasted--workspace-git-fetch-origin-git-fetch-org-error-cannot-lock-ref-refs-remotes-origin-HEAD-Una-1763042169323_1763042169324.txt
+    deleted:    attached_assets/Pasted--workspace-git-fetch-origin-git-fetch-org-error-cannot-lock-ref-refs-remotes-origin-HEAD-Una-1763042244870_1763042244870.txt
+    deleted:    attached_assets/Pasted--workspace-git-remote-v-gitsafe-backup-git-gitsafe-5418-backup-git-fetch-gitsafe-backup-g-1763027271821_1763027271822.txt
+    deleted:    attached_assets/Pasted--workspace-git-remote-v-gitsafe-backup-git-gitsafe-5418-backup-git-fetch-gitsafe-backup-g-1763027788883_1763027788885.txt
+    modified:   attached_assets/Pasted-Please-populate-the-test-account-data-for-the-user-with-email-StudentKlombaTest-com-in-the-UniPay--1762817617083_1762817617084.txt
+    modified:   attached_assets/Pasted-Please-redesign-the-UniPay-frontend-to-have-a-clean-modern-and-interactive-layout-inspired-by-Revo-1762551657635_1762551657636.txt
+    modified:   attached_assets/Pasted-We-already-have-a-working-login-and-registration-system-Now-please-expand-the-project-by-adding-1762552302877_1762552302878.txt
+    modified:   attached_assets/Pasted-We-already-have-authentication-login-register-Now-let-s-build-the-visual-skeleton-and-comp-1762554509894_1762554509895.txt
+    modified:   backend/app/__init__.py
+    modified:   backend/app/blueprints/auth.py
+    modified:   backend/app/models/user.py
+    modified:   backend/config.py
+    deleted:    backend/migrate_account_to_test.py
+    deleted:    backend/migrate_account_to_test_auto.py
+    deleted:    backend/migrations/versions/654d48a3b7a5_add_profile_photo_url_to_users.py
+    modified:   backend/transaction_reports/transactions_20251108_233103.csv
+    modified:   backend/transaction_reports/transactions_20251108_233209.csv
+    modified:   backend/transaction_reports/transactions_20251108_233307.csv
+    modified:   backend/transaction_reports/transactions_20251108_233931.csv
+    modified:   backend/transaction_reports/transactions_20251108_234526.csv
+    modified:   backend/transaction_reports/transactions_20251110_224605.csv
+    deleted:    backend/uploads/profile_photos/575989c2b6504ba7aa3f4062713c9de6.jpg
+    deleted:    generated-icon.png
+    modified:   replit.md
+    modified:   src/features/transfers/pages/TransfersPage.tsx
+    modified:   src/lib/api.ts
+    modified:   src/store/authStore.ts
+    modified:   vite.config.ts
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+    both modified:   src/components/layout/TopNav.tsx
+    both modified:   src/features/profile/pages/ProfilePage.tsx
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+    modified:   .replit
+
+fatal: Unable to create '/home/runner/workspace/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+fatal: Unable to create '/home/runner/workspace/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+~/workspace$ rm -f .git/index.lock
+~/workspace$ rm -f .git/index.lock
+~/workspace$ git add .replit
+~/workspace$ grep -n "<<<<<<" src/components/layout/TopNav.tsx src/features/profile/pages/ProfilePage.tsx
+~/workspace$ git add src/components/layout/TopNav.tsx src/features/profile/pages/ProfilePage.tsx
+git commit -m "Merge changes from personal/main"
+[main f24c25d] Merge changes from personal/main
+~/workspace$ 
