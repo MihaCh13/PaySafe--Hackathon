@@ -83,7 +83,7 @@ export default function RegisterPage() {
       >
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-2xl flex items-center justify-center">
+            <div className="h-16 w-16 rounded-2xl flex items-center justify-center">
               <img 
                 src="/assets/logo.png" 
                 alt="UniPay Logo" 
