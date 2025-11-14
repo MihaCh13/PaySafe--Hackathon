@@ -42,12 +42,61 @@ export default function Sidebar() {
       transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="flex flex-col m-0 p-0 border-r border-border/50 bg-surface-1/80 backdrop-blur-sm relative shadow-soft z-40"
     >
-        <div className="flex items-center justify-end p-2.5 xs:p-3 sm:p-4 border-b border-border/50">
+        <div className="flex items-center justify-between p-2.5 xs:p-3 sm:p-4 border-b border-border/50">
+          <AnimatePresence mode="wait">
+            {!isCollapsed ? (
+              <motion.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-2"
+              >
+                <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  >
+                    <img 
+                      src="/assets/logo.png" 
+                      alt="UniPay Logo" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                  <span className="text-base sm:text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent whitespace-nowrap">
+                    UniPay
+                  </span>
+                </Link>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Link to="/dashboard" className="block">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    className="h-9 w-9 rounded-xl flex items-center justify-center"
+                  >
+                    <img 
+                      src="/assets/logo.png" 
+                      alt="UniPay Logo" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
-            className="h-11 w-11 rounded-xl hover:bg-primary-light/30 transition-all duration-200"
+            className="h-11 w-11 rounded-xl hover:bg-primary-light/30 transition-all duration-200 flex-shrink-0"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? (
