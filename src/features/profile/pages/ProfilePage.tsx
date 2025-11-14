@@ -197,17 +197,22 @@ export default function ProfilePage() {
       <MotionCard variants={itemVariants} className="border-0 shadow-sm">
         <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <Avatar className="h-24 w-24 border-4 border-violet-100" key={photoTimestamp}>
-              {user?.profile_photo_url ? (
-                <AvatarImage 
-                  src={`${user.profile_photo_url}?t=${photoTimestamp}`} 
-                  alt={`${user.first_name} ${user.last_name}`}
-                />
-              ) : null}
-              <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-3xl font-bold">
-                {getInitials()}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#9b87f5] via-[#7DD3FC] to-[#60C5E8] rounded-full blur-sm opacity-75"></div>
+              <div className="relative p-1 bg-gradient-to-br from-[#9b87f5] via-[#7DD3FC] to-[#60C5E8] rounded-full">
+                <Avatar className="h-24 w-24 border-4 border-white" key={photoTimestamp}>
+                  {user?.profile_photo_url ? (
+                    <AvatarImage 
+                      src={`${user.profile_photo_url}?t=${photoTimestamp}`} 
+                      alt={`${user.first_name} ${user.last_name}`}
+                    />
+                  ) : null}
+                  <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-3xl font-bold">
+                    {getInitials()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+            </div>
 
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-2xl font-bold text-gray-900">
