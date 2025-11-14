@@ -14,12 +14,15 @@ UniPay is structured as a single-page application (SPA) with a clear separation 
 The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation, a fully responsive collapsible left sidebar, a modern color palette with violet/indigo gradients and pastel accents, card-based layouts, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
 
 **Branding:**
-*   **Logo:** Modern icon-based logo depicting a digital wallet with student theme, stored at `public/assets/logo.png`. The logo features a sleek wallet design with subtle banknotes visible inside and a graduation cap symbol on the front. Colors use the platform's signature lavender-to-pastel-blue gradient matching the design system. This is a pure graphic icon with no text, designed to sit alongside the "UniPay" text name. The logo appears consistently across all pages and components:
-    *   **TopNav:** Logo + text in header (h-11 to h-14 responsive sizing)
-    *   **Sidebar:** Logo + text when expanded, logo only when collapsed (h-9 to h-10 responsive sizing), clickable link to dashboard, smooth Framer Motion animations
-    *   **Login Page:** Logo + text above login card (h-16 w-16 sizing)
-    *   **Register Page:** Logo + text above registration card (h-16 w-16 sizing)
-    *   All implementations use `object-contain` for proper aspect ratio preservation, include hover effects, and maintain accessibility with proper alt text. **Last updated:** November 14, 2025.
+*   **Logo:** Modern icon-based logo depicting a digital wallet with student theme, stored at `public/assets/logo.png`. The logo features a sleek wallet design with subtle banknotes visible inside and a graduation cap symbol on the front. Colors use the platform's signature lavender-to-cyan gradient. This is a pure graphic icon with no text, designed to sit alongside the "UniPay" text name. 
+    
+    **Logo Specifications:**
+    *   **Text Styling:** "UniPay" text uses a beautiful gradient (`from-[#9b87f5] via-[#7DD3FC] to-[#60C5E8]`) matching the logo's lavender-to-cyan color palette, extrabold font weight, tight tracking, and subtle drop shadow for high contrast and readability
+    *   **TopNav:** Logo (h-12 to h-16 responsive) + gradient text (text-xl to text-2xl)
+    *   **Sidebar:** When expanded - Logo (h-10 to h-11) + gradient text (text-lg to text-xl), clickable link to dashboard; When collapsed - Only collapse/expand button visible (no logo or text)
+    *   **Login Page:** Logo (h-20 w-20) + gradient text (text-3xl)
+    *   **Register Page:** Logo (h-20 w-20) + gradient text (text-3xl)
+    *   All implementations use `object-contain` for proper aspect ratio preservation, include smooth Framer Motion hover effects, and maintain accessibility with proper alt text. **Last updated:** November 14, 2025.
 
 **Key UI/UX Features:**
 *   **Responsive Collapsible Sidebar:** Universally available, responsive widths, touch-friendly controls, smooth Framer Motion animations, persistent state via Zustand, and full accessibility.

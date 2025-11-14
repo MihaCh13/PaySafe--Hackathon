@@ -82,15 +82,15 @@ export default function LoginPage() {
         className="w-full max-w-md"
       >
         <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center gap-3">
-            <div className="h-16 w-16 rounded-2xl flex items-center justify-center">
+          <div className="flex items-center gap-4">
+            <div className="h-20 w-20 rounded-2xl flex items-center justify-center">
               <img 
                 src="/assets/logo.png" 
                 alt="UniPay Logo" 
                 className="h-full w-full object-contain"
               />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="text-3xl font-extrabold bg-gradient-to-r from-[#9b87f5] via-[#7DD3FC] to-[#60C5E8] bg-clip-text text-transparent tracking-tight drop-shadow-sm">
               UniPay
             </span>
           </div>
