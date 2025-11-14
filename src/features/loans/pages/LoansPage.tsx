@@ -246,7 +246,7 @@ export default function LoansPage() {
               Request Loan
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md" description="Submit a loan request to borrow money from a friend">
             <DialogHeader>
               <DialogTitle>Request a Loan</DialogTitle>
             </DialogHeader>
@@ -517,7 +517,7 @@ export default function LoansPage() {
       </Tabs>
 
       <Dialog open={repayDialogOpen} onOpenChange={setRepayDialogOpen}>
-        <DialogContent>
+        <DialogContent description="Make a repayment towards your outstanding loan">
           <DialogHeader>
             <DialogTitle>Repay Loan</DialogTitle>
           </DialogHeader>

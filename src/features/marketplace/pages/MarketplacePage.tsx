@@ -159,7 +159,7 @@ export default function EnhancedMarketplacePage() {
                 Create Listing
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl" description="List an item for sale on the student marketplace">
               <DialogHeader>
                 <DialogTitle>Create Marketplace Listing</DialogTitle>
               </DialogHeader>
