@@ -1,25 +1,6 @@
 import os
 from datetime import timedelta
 
-def _build_cors_origins():
-    """Build CORS origins list including Replit domain if available"""
-    origins = [
-        'http://localhost:5000',
-        'http://0.0.0.0:5000',
-        'http://localhost:5001',
-        'http://0.0.0.0:5001'
-    ]
-    
-    # Add Replit domain if available
-    replit_domain = os.environ.get('REPLIT_DEV_DOMAIN')
-    if replit_domain:
-        origins.extend([
-            f'https://{replit_domain}',
-            f'http://{replit_domain}'
-        ])
-    
-    return origins
-
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
@@ -34,11 +15,9 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     
-    # CORS configuration - dynamically includes Replit domain
-    CORS_ORIGINS = _build_cors_origins()
+    CORS_ORIGINS = ['http://localhost:5000', 'http://0.0.0.0:5000', 'http://localhost:5001', 'http://0.0.0.0:5001']
     
-    # Restrict SocketIO CORS to same origins for security
-    SOCKETIO_CORS_ALLOWED_ORIGINS = _build_cors_origins()
+    SOCKETIO_CORS_ALLOWED_ORIGINS = '*'
     
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
     MAIL_PORT = int(os.environ.get('MAIL_PORT') or 587)

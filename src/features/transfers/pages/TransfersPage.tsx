@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowUpRight, ArrowDownLeft, Send, Users, Calendar, QrCode, ScanLine, X, CreditCard } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Send, Users, Calendar, QrCode, ScanLine, X } from 'lucide-react';
 import { walletAPI, transactionsAPI } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
@@ -29,7 +29,6 @@ export default function TransfersPage() {
   const { user } = useAuthStore();
   const { selectedCurrency } = useCurrencyStore();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
-  const [ibanDialogOpen, setIbanDialogOpen] = useState(false);
   const [recipientUsername, setRecipientUsername] = useState('');
   const [amount, setAmount] = useState('');
   const [isScheduled, setIsScheduled] = useState(false);
@@ -39,9 +38,6 @@ export default function TransfersPage() {
   const [scannerDialogOpen, setScannerDialogOpen] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [qrToken, setQrToken] = useState<string>('');
-  const [ibanNumber, setIbanNumber] = useState('');
-  const [recipientName, setRecipientName] = useState('');
-  const [ibanAmount, setIbanAmount] = useState('');
   const scannerRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const queryClient = useQueryClient();
@@ -184,22 +180,6 @@ export default function TransfersPage() {
     setScannerDialogOpen(true);
   };
 
-  const handleIbanTransfer = () => {
-    if (!ibanNumber || !ibanAmount || Number(ibanAmount) <= 0) {
-      toast.error('Please enter valid IBAN and amount');
-      return;
-    }
-
-    toast.info('IBAN transfers are not yet supported', {
-      description: 'This feature is coming soon. Use username transfers for now.'
-    });
-    
-    setIbanDialogOpen(false);
-    setIbanNumber('');
-    setRecipientName('');
-    setIbanAmount('');
-  };
-
   useEffect(() => {
     if (scannerDialogOpen && scannerRef.current && !isScanning) {
       startQRScanner();
@@ -259,38 +239,19 @@ export default function TransfersPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="pt-6 space-y-3">
-            <p className="text-gray-600 dark:text-gray-400 mb-1">
+          <CardContent className="pt-6">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               Available Balance:{' '}
               <span className="font-bold text-violet-600">
                 {formatCurrency(walletData?.balance || 0, selectedCurrency)}
               </span>
             </p>
-            
             <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleScanClick}
-            >
-              <ScanLine className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span>Scan QR code to send</span>
-            </Button>
-
-            <Button
-              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:opacity-90 transition-opacity"
+              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
               onClick={() => setSendDialogOpen(true)}
             >
-              <Send className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span>Send money by username</span>
-            </Button>
-
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setIbanDialogOpen(true)}
-            >
-              <CreditCard className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span>Send money by bank account</span>
+              <Send className="h-4 w-4 mr-2" />
+              Send Money
             </Button>
           </CardContent>
         </MotionCard>
@@ -308,20 +269,31 @@ export default function TransfersPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-6 space-y-4">
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Share your username:</p>
-              <p className="text-xl font-bold text-violet-600">@{user?.username || 'loading...'}</p>
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-xl font-bold text-violet-600">@{user?.username || 'loading...'}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowQRDialog(true)}
+                  className="flex items-center gap-2"
+                >
+                  <QrCode className="h-4 w-4" />
+                  Show QR
+                </Button>
+              </div>
             </div>
-            
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowQRDialog(true)}
-            >
-              <QrCode className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span>Show your QR code</span>
-            </Button>
-            
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={handleScanClick}
+              >
+                <ScanLine className="h-4 w-4 mr-2" />
+                Scan QR to Send
+              </Button>
+            </div>
             <p className="text-sm text-gray-500 text-center">
               Others can send you money using this username or by scanning your QR code
             </p>
@@ -601,64 +573,6 @@ export default function TransfersPage() {
             >
               <X className="h-4 w-4 mr-2" />
               Cancel
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={ibanDialogOpen} onOpenChange={setIbanDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Send Money by Bank Account</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label htmlFor="recipient-name">Recipient Name (Optional)</Label>
-              <Input
-                id="recipient-name"
-                placeholder="John Doe"
-                value={recipientName}
-                onChange={(e) => setRecipientName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="iban">IBAN / Bank Account Number</Label>
-              <Input
-                id="iban"
-                placeholder="GB29 NWBK 6016 1331 9268 19"
-                value={ibanNumber}
-                onChange={(e) => setIbanNumber(e.target.value)}
-              />
-              <p className="text-xs text-gray-500">
-                Enter the recipient's IBAN or bank account number
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="iban-amount">Amount</Label>
-              <Input
-                id="iban-amount"
-                type="number"
-                min="1"
-                step="0.01"
-                placeholder="50.00"
-                value={ibanAmount}
-                onChange={(e) => setIbanAmount(e.target.value)}
-              />
-            </div>
-
-            <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-              <p className="text-sm text-blue-800 dark:text-blue-200">
-                <strong>Note:</strong> Bank account transfers are coming soon. This feature will support IBAN transfers with standard processing times.
-              </p>
-            </div>
-
-            <Button
-              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
-              onClick={handleIbanTransfer}
-              disabled={!ibanNumber || !ibanAmount || Number(ibanAmount) <= 0}
-            >
-              <Send className="h-4 w-4 mr-2" />
-              Send Transfer
             </Button>
           </div>
         </DialogContent>

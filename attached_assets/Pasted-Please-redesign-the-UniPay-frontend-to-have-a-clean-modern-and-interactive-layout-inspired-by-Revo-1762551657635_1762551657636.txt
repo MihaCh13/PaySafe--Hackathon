@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Please redesign the UniPay frontend to have a clean, modern, and interactive layout inspired by Revolut’s app design.
 
 Goal:
@@ -66,72 +65,3 @@ Expected outcome:
 ✅ Interactive dashboard  
 ✅ Responsive on desktop & mobile  
 ✅ Profile dropdown and top bar navigation
-=======
-Please redesign the UniPay frontend to have a clean, modern, and interactive layout inspired by Revolut’s app design.
-
-Goal:
-Keep all existing functionality (dashboard, wallet, cards, savings, etc.) but make the UI more intuitive, organized, and visually appealing — with a sleek fintech look and smooth navigation.
-
-Requirements:
-1. **Top Navigation Bar**
-   - Add a fixed top bar with:
-     - Profile picture (left)
-     - App logo or "UniPay" title (center)
-     - Settings icon (right)
-   - Clicking the profile picture should open a small dropdown with:
-     - "My Profile"
-     - "Settings"
-     - "Logout"
-
-2. **Dashboard Layout**
-   - Replace current layout with a clean card-based interface:
-     - Large balance card at the top (showing available balance)
-     - Quick action buttons (Top-up, Transfer, Add Card)
-     - Recent transactions below in a scrollable list
-   - Use gradients, shadows, and rounded corners like Revolut
-   - Add subtle hover effects and motion for interactivity
-
-3. **Sidebar / Bottom Menu**
-   - Replace the current cluttered navigation with a sleek sidebar or bottom navigation bar (depending on screen size):
-     - Dashboard 🏠
-     - Wallet 💰
-     - Cards 💳
-     - Savings 🐖
-     - Marketplace 🛍️
-     - Loans 🤝
-     - Profile 👤
-   - On mobile view, make it a bottom tab bar with icons only
-
-4. **Color Palette & Style**
-   - Minimalistic white background with pastel accent colors
-   - Use soft blues, purples, and gradients similar to Revolut
-   - Consistent typography with clear hierarchy (headings, labels, balances)
-
-5. **Interactivity**
-   - Add smooth animations (Framer Motion)
-   - Hover and press effects for buttons
-   - Loading skeletons for pages
-   - Animated transitions when switching pages
-
-6. **Responsiveness**
-   - Ensure all layouts look great on both desktop and mobile
-   - Use grid and flex layouts to adapt dynamically
-
-7. **Profile Page**
-   - Show user info: name, email, university, ISIC status
-   - Add buttons to edit profile and change PIN
-   - Include small “Achievements” or “Goals progress” widgets (optional)
-
-8. **Implementation details**
-   - Use Tailwind + shadcn/ui components
-   - You can use Framer Motion for animations
-   - Keep the project under the `src/features` structure (React + Vite)
-   - Don’t remove existing API connections — just redesign the UI layout
-
-Expected outcome:
-✅ Modern Revolut-like design  
-✅ Intuitive navigation (less cluttered)  
-✅ Interactive dashboard  
-✅ Responsive on desktop & mobile  
-✅ Profile dropdown and top bar navigation
->>>>>>> org/main

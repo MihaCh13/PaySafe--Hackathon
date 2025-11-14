@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Bell, User, LogOut, ChevronDown, Wallet } from 'lucide-react';
 import {
   DropdownMenu,
@@ -68,12 +68,6 @@ export default function TopNav() {
                 className="flex items-center gap-1.5 sm:gap-2.5 rounded-xl sm:rounded-2xl hover:bg-primary-light/20 pr-2 sm:pr-3 pl-1 sm:pl-1.5 py-1 sm:py-1.5 transition-all duration-200 shadow-soft-xs hover:shadow-soft tap-target"
               >
                 <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border-2 border-primary/30 shadow-soft">
-                  {user?.profile_photo_url && (
-                    <AvatarImage 
-                      src={`${user.profile_photo_url}?t=${Date.now()}`}
-                      alt={`${user.first_name} ${user.last_name}`}
-                    />
-                  )}
                   <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-xs sm:text-sm font-semibold">
                     {getInitials()}
                   </AvatarFallback>

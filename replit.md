@@ -3,6 +3,57 @@
 ## Overview
 UniPay is a digital wallet application designed for students, integrating financial services with lifestyle features. Its core purpose is to provide secure digital payments, subscription management, student discounts, savings goal tracking, and peer-to-peer lending and marketplace functionalities. UniPay aims to be an essential financial tool, offering convenience, security, customized benefits, and fostering financial literacy and independence.
 
+## Recent Changes
+
+### November 11, 2025 - Sprint 2: Performance & Data Integrity (COMPLETE)
+**Security hardening and performance optimization for production readiness.**
+
+#### Database Optimization (C-8) ✅
+- Added 23 database indexes on foreign keys and frequently queried columns via Alembic migration (748f170551f2)
+- Performance improvements on:
+  - Transactions: user_id, sender_id, receiver_id, card_id, transaction_type, status (6 indexes)
+  - Loans: lender_id, borrower_id, status (3 indexes)
+  - Marketplace: seller_id, buyer_id, listing_id, category, university, is_available, is_sold, status (8 indexes)
+  - Virtual Cards: user_id, card_purpose (2 indexes)
+  - Goals, Subscriptions, Savings Pockets, Loan Repayments (4 indexes)
+- Significant performance gains on JOIN queries and WHERE clauses with foreign keys
+
+#### Budget Card Validation (C-6) ✅
+- Enhanced `VirtualCard.spend()` and `VirtualCard.can_spend()` to enforce both allocated budget AND monthly spending limits
+- Clear error messages showing available vs. required amounts
+- Prevents overspending beyond configured financial controls
+
+#### Deadlock Prevention (C-7) ✅
+- Implemented deterministic wallet locking across all wallet-to-wallet operations
+- `lock_wallets_deterministic()` helper ensures consistent lock order (ascending user_id)
+- Eliminates circular wait conditions in concurrent transactions
+- Applied to 5 critical endpoints:
+  - Marketplace orders (cross-purchases)
+  - Wallet transfers (peer-to-peer)
+  - Loan repayments
+  - Loan approvals
+  - Loan cancellations
+- Documented single-phase escrow flow with `escrow_released=True`
+
+#### P2P Lending Validation (C-12) ✅
+- Enhanced balance validation with detailed error messages
+- Shows available vs. required amounts for repayments and loan approvals
+- Added logging for failed operations
+- Applied deterministic wallet locking to prevent deadlocks
+
+**Production Readiness:** Architect-approved. Recommend integration/concurrency testing in staging before production deployment.
+
+---
+
+### November 11, 2025 - QR Code Payment Feature
+- Implemented secure QR code payment system in Top Up and Transfers pages
+- Added QR code display with auto-expiry (5 minutes)
+- Added bank transfer details dialog with copy-to-clipboard functionality
+- Uses `itsdangerous` signed tokens (not JWT) to prevent bearer token leakage
+- Backend endpoints: `GET /wallet/qr-payment-token`, `POST /wallet/verify-qr-token`
+- Enhanced Transfers page with QR scanner integration using `html5-qrcode`
+- Architect-verified security implementation ensuring tokens cannot be used for API authentication
+
 ## User Preferences
 No specific user preferences recorded yet. This section will be updated as development progresses.
 
@@ -39,7 +90,6 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 *   **ISIC Discounts:** Integration for student card-based discounts.
 *   **Security Settings:** PIN management, visual-only features for email verification, 2FA, active sessions, rate limiting, and session timeout.
 *   **Notifications:** Comprehensive toast notification system and optimized UI dialogs for various screen sizes.
-*   **Profile Photo Upload:** Secure profile photo upload with validation, secure storage, and automatic cleanup.
 
 ### System Design Choices
 *   **Database Schema:** Core entities include Users, Wallets, Transactions, VirtualCards, Subscriptions, SavingsPockets, Goals, Marketplace (Listings, Orders), Loans, Repayments, and ISIC models.
