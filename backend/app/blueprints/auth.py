@@ -1,12 +1,9 @@
-from flask import Blueprint, request, jsonify, current_app, send_from_directory
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from app.extensions import db, limiter
 from app.models import User, Wallet
 from app.utils.validators import RegisterSchema, LoginSchema, sanitize_html
 from marshmallow import ValidationError
-import os
-from werkzeug.utils import secure_filename
-import uuid
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -271,104 +268,4 @@ def check_default_pin():
     return jsonify({
         'has_pin': has_pin,
         'is_default_pin': has_default_pin
-    }), 200
-
-# Allowed image extensions
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@auth_bp.route('/profile/photo', methods=['POST'])
-@jwt_required()
-@limiter.limit("5 per minute")
-def upload_profile_photo():
-    user_id = int(get_jwt_identity())
-    user = User.query.get(user_id)
-    
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-    
-    if 'photo' not in request.files:
-        return jsonify({'error': 'No photo file provided'}), 400
-    
-    file = request.files['photo']
-    
-    if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-    
-    if not allowed_file(file.filename):
-        return jsonify({'error': 'Invalid file type. Allowed types: PNG, JPG, JPEG, GIF, WEBP'}), 400
-    
-    # Check file size
-    file.seek(0, os.SEEK_END)
-    file_size = file.tell()
-    file.seek(0)  # Reset file pointer
-    
-    if file_size > MAX_FILE_SIZE:
-        return jsonify({'error': 'File size exceeds 5MB limit'}), 400
-    
-    # Generate unique filename
-    file_extension = file.filename.rsplit('.', 1)[1].lower()
-    unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
-    
-    # Create uploads directory if it doesn't exist
-    upload_folder = os.path.join(current_app.root_path, '..', 'uploads', 'profile_photos')
-    os.makedirs(upload_folder, exist_ok=True)
-    
-    # Delete old profile photo if exists
-    if user.profile_photo_url:
-        old_photo_path = os.path.join(current_app.root_path, '..', user.profile_photo_url.lstrip('/'))
-        if os.path.exists(old_photo_path):
-            try:
-                os.remove(old_photo_path)
-            except Exception as e:
-                current_app.logger.warning(f"Failed to delete old profile photo: {e}")
-    
-    # Save new photo
-    file_path = os.path.join(upload_folder, unique_filename)
-    file.save(file_path)
-    
-    # Update user profile photo URL
-    user.profile_photo_url = f"/uploads/profile_photos/{unique_filename}"
-    db.session.commit()
-    
-    current_app.logger.info(f"Profile photo uploaded successfully for user: {user.email}")
-    
-    return jsonify({
-        'message': 'Profile photo uploaded successfully',
-        'profile_photo_url': user.profile_photo_url,
-        'user': user.to_dict()
-    }), 200
-
-@auth_bp.route('/profile/photo', methods=['DELETE'])
-@jwt_required()
-def delete_profile_photo():
-    user_id = int(get_jwt_identity())
-    user = User.query.get(user_id)
-    
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-    
-    if not user.profile_photo_url:
-        return jsonify({'error': 'No profile photo to delete'}), 400
-    
-    # Delete photo file
-    photo_path = os.path.join(current_app.root_path, '..', user.profile_photo_url.lstrip('/'))
-    if os.path.exists(photo_path):
-        try:
-            os.remove(photo_path)
-        except Exception as e:
-            current_app.logger.warning(f"Failed to delete profile photo file: {e}")
-    
-    # Clear profile photo URL
-    user.profile_photo_url = None
-    db.session.commit()
-    
-    current_app.logger.info(f"Profile photo deleted for user: {user.email}")
-    
-    return jsonify({
-        'message': 'Profile photo deleted successfully',
-        'user': user.to_dict()
     }), 200

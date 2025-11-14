@@ -27,7 +27,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python backend/run.py & sleep 3 && npm run dev"
+args = "python backend/run.py & npm run dev"
 waitForPort = 5000
 
 [[ports]]

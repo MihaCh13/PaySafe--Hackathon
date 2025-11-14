@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
@@ -27,24 +27,19 @@ import {
   Monitor,
   Clock,
   AlertTriangle,
-  Key,
-  Upload,
-  Camera
+  Key
 } from 'lucide-react';
 
 const MotionCard = motion.create(Card);
 
 export default function ProfilePage() {
-  const { user, updateUser } = useAuthStore();
+  const { user } = useAuthStore();
   const { toast } = useToast();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [isChangePinDialogOpen, setIsChangePinDialogOpen] = useState(false);
   const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] = useState(false);
   const [pinStatus, setPinStatus] = useState<{ hasPin: boolean; isDefaultPin: boolean } | null>(null);
   const [isPinStatusLoading, setIsPinStatusLoading] = useState(true);
-  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
-  const [photoTimestamp, setPhotoTimestamp] = useState(Date.now());
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchPinStatus = async () => {
     try {
@@ -71,75 +66,6 @@ export default function ProfilePage() {
 
   const handlePinChangeSuccess = () => {
     fetchPinStatus();
-  };
-
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      toast({
-        title: 'Invalid File Type',
-        description: 'Please select a PNG, JPG, GIF, or WEBP image',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    // Validate file size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: 'File Too Large',
-        description: 'Please select an image smaller than 5MB',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setIsUploadingPhoto(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('photo', file);
-
-      const response = await authAPI.uploadProfilePhoto(formData);
-      
-      console.log('Upload response:', response.data);
-      
-      // Update user in store
-      if (response.data.user) {
-        console.log('Updating user with:', response.data.user);
-        updateUser(response.data.user);
-        // Update timestamp to force avatar refresh
-        const newTimestamp = Date.now();
-        setPhotoTimestamp(newTimestamp);
-        console.log('Photo timestamp updated to:', newTimestamp);
-      }
-
-      toast({
-        title: 'Success',
-        description: 'Profile photo updated successfully',
-      });
-    } catch (error: any) {
-      console.error('Failed to upload profile photo:', error);
-      toast({
-        title: 'Upload Failed',
-        description: error.response?.data?.error || 'Failed to upload profile photo',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsUploadingPhoto(false);
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
   };
 
   const handleToggle2FA = (enabled: boolean) => {
@@ -197,22 +123,11 @@ export default function ProfilePage() {
       <MotionCard variants={itemVariants} className="border-0 shadow-sm">
         <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#9b87f5] via-[#7DD3FC] to-[#60C5E8] rounded-full blur-sm opacity-75"></div>
-              <div className="relative p-1 bg-gradient-to-br from-[#9b87f5] via-[#7DD3FC] to-[#60C5E8] rounded-full">
-                <Avatar className="h-24 w-24 border-4 border-white" key={photoTimestamp}>
-                  {user?.profile_photo_url ? (
-                    <AvatarImage 
-                      src={`${user.profile_photo_url}?t=${photoTimestamp}`} 
-                      alt={`${user.first_name} ${user.last_name}`}
-                    />
-                  ) : null}
-                  <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-3xl font-bold">
-                    {getInitials()}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-            </div>
+            <Avatar className="h-24 w-24 border-4 border-violet-100">
+              <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-3xl font-bold">
+                {getInitials()}
+              </AvatarFallback>
+            </Avatar>
 
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-2xl font-bold text-gray-900">
@@ -220,35 +135,7 @@ export default function ProfilePage() {
               </h2>
               <p className="text-gray-600 mt-1">@{user?.username}</p>
               
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              
               <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleUploadClick}
-                    disabled={isUploadingPhoto}
-                  >
-                    {isUploadingPhoto ? (
-                      <>
-                        <Upload className="h-4 w-4 mr-2 animate-pulse" />
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Camera className="h-4 w-4 mr-2" />
-                        Upload Photo
-                      </>
-                    )}
-                  </Button>
-                </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button variant="outline" size="sm" onClick={() => setIsEditProfileDialogOpen(true)}>
                     <Edit className="h-4 w-4 mr-2" />

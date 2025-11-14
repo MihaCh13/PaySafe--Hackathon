@@ -2,6 +2,9 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: '/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 api.interceptors.request.use((config) => {
@@ -45,9 +48,6 @@ export const authAPI = {
   changePin: (password: string, new_pin: string, confirm_pin: string) => 
     api.post('/auth/change-pin', { password, new_pin, confirm_pin }),
   checkDefaultPin: () => api.get('/auth/check-default-pin'),
-  uploadProfilePhoto: (formData: FormData) => 
-    api.post('/auth/profile/photo', formData),
-  deleteProfilePhoto: () => api.delete('/auth/profile/photo'),
 };
 
 export const walletAPI = {

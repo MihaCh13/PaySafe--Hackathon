@@ -10,7 +10,6 @@ export default defineConfig({
     allowedHosts: true,
     proxy: {
       '/api': 'http://localhost:8000',
-      '/uploads': 'http://localhost:8000',
     },
     watch: {
       ignored: ["**/node_modules/**", "**/.pythonlibs/**", "**/.*"],
