@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CreditCard, Plus, Lock, Unlock, ArrowUpCircle, MinusCircle, Calendar, Pause, Play, Trash2, Wallet } from 'lucide-react';
+import { CreditCard, Plus, Lock, Wallet } from 'lucide-react';
 import { toast } from 'sonner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
@@ -276,6 +276,160 @@ export default function BudgetCardsPage() {
   const budgetCards = cardsData?.cards?.filter((card: any) => card.card_purpose === 'budget') || [];
   const subscriptionCards = cardsData?.cards?.filter((card: any) => card.card_purpose === 'subscription') || [];
 
+  const renderMainWalletCard = () => {
+    if (!walletData) return null;
+    return (
+      <MotionCard 
+        className="overflow-hidden border-none shadow-lg h-[180px]"
+        style={{
+          background: 'linear-gradient(135deg, #9b87f5 0%, #7DD3FC 50%, #60C5E8 100%)',
+        }}
+      >
+        <CardContent className="p-4 h-full flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <p className="text-xs text-white/80 font-semibold uppercase tracking-wide">Main Wallet Card</p>
+              <h3 className="font-semibold text-white text-sm mt-0.5">Primary Balance</h3>
+            </div>
+            <Wallet className="h-4 w-4 text-white/90 flex-shrink-0" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs text-white/90">**** **** **** {(walletData.id || '0000').toString().slice(-4).padStart(4, '0')}</p>
+            <p className="text-base font-bold text-white">{formatCurrency(walletData.balance || 0, selectedCurrency)}</p>
+          </div>
+          <Button
+            size="sm"
+            variant="secondary"
+            className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30 h-8 text-xs"
+          >
+            View Details
+          </Button>
+        </CardContent>
+      </MotionCard>
+    );
+  };
+
+  const renderPaymentCard = (card: any) => {
+    const isOneTime = card.card_name.toLowerCase().includes('one-time');
+    const cardType = isOneTime ? 'ONE-TIME CARD' : 'STANDARD DIGITAL CARD';
+    const cardGradient = isOneTime 
+      ? 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)'
+      : 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)';
+    
+    return (
+      <MotionCard 
+        key={card.id}
+        className="overflow-hidden border-none shadow-lg h-[180px]"
+        style={{
+          background: cardGradient,
+        }}
+      >
+        <CardContent className="p-4 h-full flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <p className="text-xs text-white/80 font-semibold uppercase tracking-wide">
+                {cardType}
+              </p>
+              <h3 className="font-semibold text-white text-sm mt-0.5">{card.card_name}</h3>
+            </div>
+            <CreditCard className="h-4 w-4 text-white/90 flex-shrink-0" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs text-white/90">**** **** **** {card.card_number_last4}</p>
+            {card.is_frozen && (
+              <Badge variant="secondary" className="bg-white/20 text-white border-white/30 text-xs w-fit">
+                <Lock className="h-3 w-3 mr-1" />
+                Frozen
+              </Badge>
+            )}
+          </div>
+          <Button
+            size="sm"
+            variant="secondary"
+            className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30 h-8 text-xs"
+            onClick={() => {
+              setSelectedCardId(card.id);
+              setPaymentDetailOpen(true);
+            }}
+          >
+            View Details
+          </Button>
+        </CardContent>
+      </MotionCard>
+    );
+  };
+
+  const renderBudgetCard = (card: any) => {
+    return (
+      <MotionCard
+        key={card.id}
+        className="overflow-hidden border-2 h-[180px]"
+        style={{ borderColor: card.color || '#e5e7eb' }}
+      >
+        <CardContent className="p-3 h-full flex flex-col justify-between">
+          <div className="flex justify-between items-start mb-2">
+            <div className="flex-1">
+              <p className="text-xs text-gray-500 font-medium">{card.category || 'Budget'}</p>
+              <h3 className="font-semibold text-sm">{card.card_name}</h3>
+            </div>
+            {card.icon && <span className="text-lg">{card.icon}</span>}
+          </div>
+          
+          <div className="flex-1 flex flex-col justify-center space-y-1.5">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-gray-500">Loaded:</span>
+              <span className="font-bold">{formatCurrency(card.allocated_amount || 0, selectedCurrency)}</span>
+            </div>
+            <div className="flex justify-between items-center text-xs bg-red-50 rounded px-2 py-1">
+              <span className="text-red-700 font-medium">Spent:</span>
+              <span className="font-bold text-red-600">{formatCurrency(card.spent_amount || 0, selectedCurrency)}</span>
+            </div>
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-green-600 font-medium">Remaining:</span>
+              <span className="font-bold text-green-600">{formatCurrency(card.remaining_balance || 0, selectedCurrency)}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-1 mt-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 text-xs px-1"
+              onClick={() => {
+                setSelectedCardId(card.id);
+                card.card_purpose === 'budget' ? setBudgetDetailOpen(true) : setSubscriptionDetailOpen(true);
+              }}
+            >
+              Details
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 text-xs px-1"
+              onClick={() => {
+                setSelectedCardId(card.id);
+                setAllocateDialogOpen(true);
+              }}
+            >
+              Add
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 text-xs px-1"
+              onClick={() => {
+                setSelectedCardId(card.id);
+                setSpendDialogOpen(true);
+              }}
+            >
+              Spend
+            </Button>
+          </div>
+        </CardContent>
+      </MotionCard>
+    );
+  };
+
   return (
     <AnimatedSection className="space-y-6 max-w-7xl mx-auto" stagger>
       <AnimatedDiv variants={fadeUp} className="flex justify-between items-center">
@@ -398,449 +552,34 @@ export default function BudgetCardsPage() {
         </TabsList>
 
         <TabsContent value="all" className="space-y-4 mt-6">
-          <AnimatedDiv variants={fadeUp} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cardsData?.cards?.map((card: any, index: number) => (
-              <MotionCard
-                key={card.id}
-                variants={listItem}
-                custom={index}
-                className="overflow-hidden border-2"
-                style={{ borderColor: card.card_purpose === 'budget' ? card.color : '#e5e7eb' }}
-              >
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <p className="text-sm text-gray-500">
-                        {card.card_purpose === 'payment' ? 'Payment Card' : 
-                         card.card_purpose === 'budget' ? 'Budget Card' : 
-                         'Subscription Card'}
-                      </p>
-                      <h3 className="font-semibold text-lg">{card.card_name}</h3>
-                    </div>
-                    {(card.card_purpose === 'budget' || card.card_purpose === 'subscription') && (
-                      <span className="text-2xl">{card.icon}</span>
-                    )}
-                  </div>
-
-                  {card.card_purpose === 'payment' ? (
-                    <>
-                      <p className="text-gray-600 mb-4">**** **** **** {card.card_number_last4}</p>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="default"
-                          onClick={() => {
-                            setSelectedCardId(card.id);
-                            setPaymentDetailOpen(true);
-                          }}
-                          className="flex-1"
-                        >
-                          <CreditCard className="h-4 w-4 mr-1" />
-                          View Details
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={card.is_frozen ? 'default' : 'secondary'}
-                          onClick={() =>
-                            card.is_frozen ? unfreezeMutation.mutate(card.id) : freezeMutation.mutate(card.id)
-                          }
-                        >
-                          {card.is_frozen ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </>
-                  ) : card.card_purpose === 'budget' ? (
-                    <>
-                      <div className="space-y-4 mb-4">
-                        {/* Symmetrical Layout: Initial Budget (Left) vs Remaining Balance (Right) */}
-                        <div className="flex justify-between items-center gap-4">
-                          {/* Left: Initial Budget Loaded */}
-                          <div className="flex-1 text-left">
-                            <div className="text-xs text-gray-500 font-medium mb-1">Budget Loaded</div>
-                            <div className="text-xl font-bold text-gray-900">
-                              {formatCurrency(card.allocated_amount || 0, selectedCurrency)}
-                            </div>
-                          </div>
-                          
-                          {/* Right: Remaining Balance - Emphasized */}
-                          <div className="flex-1 text-right">
-                            <div className="text-xs text-green-600 font-medium mb-1">Remaining Balance</div>
-                            <div className="text-xl font-bold text-green-600">
-                              {formatCurrency(card.remaining_balance || 0, selectedCurrency)}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Center: Amount Spent */}
-                        <div className="text-center py-2 px-3 bg-red-50 rounded-lg border border-red-200">
-                          <div className="text-xs text-red-700 font-medium mb-1">Amount Spent</div>
-                          <div className="text-lg font-semibold text-red-600">
-                            {formatCurrency(card.spent_amount || 0, selectedCurrency)}
-                          </div>
-                        </div>
-                        
-                        {/* Thin Progress Bar - Optional Indicator */}
-                        <div>
-                          <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-violet-600 transition-all"
-                              style={{ width: `${Math.min(card.spent_percentage, 100)}%` }}
-                            />
-                          </div>
-                          <div className="flex justify-between text-xs text-gray-400 mt-1">
-                            <span>0%</span>
-                            <span className="font-medium text-gray-600">{card.spent_percentage?.toFixed(0)}% used</span>
-                            <span>100%</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <Button
-                          size="sm"
-                          variant="default"
-                          onClick={() => {
-                            setSelectedCardId(card.id);
-                            setBudgetDetailOpen(true);
-                          }}
-                        >
-                          <CreditCard className="h-4 w-4 mr-1" />
-                          Details
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedCardId(card.id);
-                            setAllocateDialogOpen(true);
-                          }}
-                        >
-                          <ArrowUpCircle className="h-4 w-4 mr-1" />
-                          Add
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedCardId(card.id);
-                            setSpendDialogOpen(true);
-                          }}
-                        >
-                          <MinusCircle className="h-4 w-4 mr-1" />
-                          Spend
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="space-y-3 mb-4">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Active Subscriptions</span>
-                          <span className="font-semibold">{card.subscription_count || 0}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Monthly Total</span>
-                          <span className="font-semibold text-violet-600">${card.total_monthly_spend?.toFixed(2) || '0.00'}</span>
-                        </div>
-                        {card.next_billing_date && (
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <Calendar className="h-3 w-3" />
-                            Next billing: {new Date(card.next_billing_date).toLocaleDateString()}
-                          </div>
-                        )}
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="default"
-                        className="w-full"
-                        onClick={() => {
-                          setSelectedCardId(card.id);
-                          setSubscriptionDetailOpen(true);
-                        }}
-                      >
-                        View Details
-                      </Button>
-                    </>
-                  )}
-                </CardContent>
-              </MotionCard>
-            ))}
-          </AnimatedDiv>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {renderMainWalletCard()}
+            {paymentCards.map((card: any) => renderPaymentCard(card))}
+            {budgetCards.map((card: any) => renderBudgetCard(card))}
+            {subscriptionCards.map((card: any) => renderBudgetCard(card))}
+          </div>
         </TabsContent>
 
         <TabsContent value="payment" className="space-y-4 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Main Wallet Card - Primary Card */}
-            {walletData && (
-              <MotionCard 
-                className="overflow-hidden border-none shadow-lg h-[180px]"
-                style={{
-                  background: 'linear-gradient(135deg, #9b87f5 0%, #7DD3FC 50%, #60C5E8 100%)',
-                }}
-              >
-                <CardContent className="p-4 h-full flex flex-col justify-between">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <p className="text-xs text-white/80 font-semibold uppercase tracking-wide">Main Wallet Card</p>
-                      <h3 className="font-semibold text-white text-sm mt-0.5">Primary Balance</h3>
-                    </div>
-                    <Wallet className="h-4 w-4 text-white/90 flex-shrink-0" />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-xs text-white/90">**** **** **** {(walletData.id || '0000').toString().slice(-4).padStart(4, '0')}</p>
-                    <p className="text-base font-bold text-white">{formatCurrency(walletData.balance || 0, selectedCurrency)}</p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30 h-8 text-xs"
-                  >
-                    View Details
-                  </Button>
-                </CardContent>
-              </MotionCard>
-            )}
-
-            {/* Payment Cards with Gradients */}
-            {paymentCards.map((card: any) => {
-              const isOneTime = card.card_name.toLowerCase().includes('one-time');
-              const cardType = isOneTime ? 'ONE-TIME CARD' : 'STANDARD DIGITAL CARD';
-              const cardGradient = isOneTime 
-                ? 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)'
-                : 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)';
-              
-              return (
-                <MotionCard 
-                  key={card.id}
-                  className="overflow-hidden border-none shadow-lg h-[180px]"
-                  style={{
-                    background: cardGradient,
-                  }}
-                >
-                  <CardContent className="p-4 h-full flex flex-col justify-between">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <p className="text-xs text-white/80 font-semibold uppercase tracking-wide">
-                          {cardType}
-                        </p>
-                        <h3 className="font-semibold text-white text-sm mt-0.5">{card.card_name}</h3>
-                      </div>
-                      <CreditCard className="h-4 w-4 text-white/90 flex-shrink-0" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs text-white/90">**** **** **** {card.card_number_last4}</p>
-                      {card.is_frozen && (
-                        <Badge variant="secondary" className="bg-white/20 text-white border-white/30 text-xs w-fit">
-                          <Lock className="h-3 w-3 mr-1" />
-                          Frozen
-                        </Badge>
-                      )}
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30 h-8 text-xs"
-                      onClick={() => {
-                        setSelectedCardId(card.id);
-                        setPaymentDetailOpen(true);
-                      }}
-                    >
-                      View Details
-                    </Button>
-                  </CardContent>
-                </MotionCard>
-              );
-            })}
+            {renderMainWalletCard()}
+            {paymentCards.map((card: any) => renderPaymentCard(card))}
           </div>
         </TabsContent>
 
         <TabsContent value="budget" className="space-y-4 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {budgetCards.map((card: any) => (
-              <MotionCard
-                key={card.id}
-                className="overflow-hidden border-2"
-                style={{ borderColor: card.color }}
-              >
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <p className="text-sm text-gray-500">{card.category}</p>
-                      <h3 className="font-semibold text-lg">{card.card_name}</h3>
-                    </div>
-                    <span className="text-2xl">{card.icon}</span>
-                  </div>
-                  <div className="space-y-4 mb-4">
-                    {/* Symmetrical Layout: Initial Budget (Left) vs Remaining Balance (Right) */}
-                    <div className="flex justify-between items-center gap-4">
-                      {/* Left: Initial Budget Loaded */}
-                      <div className="flex-1 text-left">
-                        <div className="text-xs text-gray-500 font-medium mb-1">Budget Loaded</div>
-                        <div className="text-xl font-bold text-gray-900">
-                          {formatCurrency(card.allocated_amount || 0, selectedCurrency)}
-                        </div>
-                      </div>
-                      
-                      {/* Right: Remaining Balance - Emphasized */}
-                      <div className="flex-1 text-right">
-                        <div className="text-xs text-green-600 font-medium mb-1">Remaining Balance</div>
-                        <div className="text-xl font-bold text-green-600">
-                          {formatCurrency(card.remaining_balance || 0, selectedCurrency)}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Center: Amount Spent */}
-                    <div className="text-center py-2 px-3 bg-red-50 rounded-lg border border-red-200">
-                      <div className="text-xs text-red-700 font-medium mb-1">Amount Spent</div>
-                      <div className="text-lg font-semibold text-red-600">
-                        {formatCurrency(card.spent_amount || 0, selectedCurrency)}
-                      </div>
-                    </div>
-                    
-                    {/* Thin Progress Bar - Optional Indicator */}
-                    <div>
-                      <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-violet-600 transition-all"
-                          style={{ width: `${Math.min(card.spent_percentage, 100)}%` }}
-                        />
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-400 mt-1">
-                        <span>0%</span>
-                        <span className="font-medium text-gray-600">{card.spent_percentage?.toFixed(0)}% used</span>
-                        <span>100%</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedCardId(card.id);
-                        setAllocateDialogOpen(true);
-                      }}
-                    >
-                      <ArrowUpCircle className="h-4 w-4 mr-1" />
-                      Add Funds
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedCardId(card.id);
-                        setSpendDialogOpen(true);
-                      }}
-                    >
-                      <MinusCircle className="h-4 w-4 mr-1" />
-                      Spend
-                    </Button>
-                  </div>
-                </CardContent>
-              </MotionCard>
-            ))}
+            {renderMainWalletCard()}
+            {paymentCards.map((card: any) => renderPaymentCard(card))}
+            {budgetCards.map((card: any) => renderBudgetCard(card))}
           </div>
         </TabsContent>
 
         <TabsContent value="subscription" className="space-y-4 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {subscriptionCards.map((card: any) => (
-              <MotionCard
-                key={card.id}
-                className="overflow-hidden border-2 border-pink-200"
-              >
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Subscription Manager</p>
-                      <h3 className="font-semibold text-lg">{card.card_name}</h3>
-                    </div>
-                    <span className="text-2xl">{card.icon || '📱'}</span>
-                  </div>
-
-                  <div className="space-y-3 mb-4">
-                    <div className="flex justify-between items-center p-3 bg-violet-50 rounded-lg">
-                      <span className="text-sm text-gray-600">Monthly Total</span>
-                      <span className="text-lg font-bold text-violet-600">
-                        ${card.total_monthly_spend?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-
-                    {card.subscriptions && card.subscriptions.length > 0 ? (
-                      <div className="space-y-2">
-                        <p className="text-xs text-gray-500 font-semibold">Active Subscriptions ({card.subscription_count})</p>
-                        {card.subscriptions.map((sub: any) => (
-                          <div key={sub.id} className="p-3 bg-gray-50 rounded-lg">
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <p className="font-medium text-sm">{sub.service_name}</p>
-                                <p className="text-xs text-gray-500">{sub.service_category}</p>
-                              </div>
-                              <Badge variant={sub.is_active ? "default" : "secondary"}>
-                                {sub.is_active ? 'Active' : 'Paused'}
-                              </Badge>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm font-semibold text-violet-600">
-                                ${sub.amount}/{sub.billing_cycle === 'monthly' ? 'mo' : 'yr'}
-                              </span>
-                              <div className="flex gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-7 w-7 p-0"
-                                  onClick={() => {
-                                    if (sub.is_active) {
-                                      pauseSubscriptionMutation.mutate({ cardId: card.id, subId: sub.id });
-                                    } else {
-                                      resumeSubscriptionMutation.mutate({ cardId: card.id, subId: sub.id });
-                                    }
-                                  }}
-                                >
-                                  {sub.is_active ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-7 w-7 p-0 text-red-600 hover:text-red-700"
-                                  onClick={() => {
-                                    if (confirm(`Delete ${sub.service_name} subscription?`)) {
-                                      deleteSubscriptionMutation.mutate({ cardId: card.id, subId: sub.id });
-                                    }
-                                  }}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                            {sub.next_billing_date && (
-                              <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
-                                Next: {new Date(sub.next_billing_date).toLocaleDateString()}
-                              </p>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-gray-500 text-center py-4">No subscriptions yet</p>
-                    )}
-                  </div>
-
-                  <Button
-                    size="sm"
-                    variant="default"
-                    className="w-full"
-                    onClick={() => {
-                      setSelectedCardId(card.id);
-                      setSubscriptionDetailOpen(true);
-                    }}
-                  >
-                    View Details
-                  </Button>
-                </CardContent>
-              </MotionCard>
-            ))}
+            {renderMainWalletCard()}
+            {paymentCards.map((card: any) => renderPaymentCard(card))}
+            {subscriptionCards.map((card: any) => renderBudgetCard(card))}
           </div>
         </TabsContent>
       </Tabs>

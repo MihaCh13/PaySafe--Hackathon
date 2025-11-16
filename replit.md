@@ -53,14 +53,24 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
     - Full multi-currency support throughout
     - Consistent layout across both "All" and "Budget" tabs
     - Automatic query invalidation ensures Dashboard Recent Transactions displays all transaction types including budget card payments
-*   **Payment Cards Section:** Compact rectangular card tiles with gradient designs:
-    - **Main Wallet Card**: Primary balance card with app's signature violet-cyan gradient, displays current balance
-    - **One-Time Card**: Orange gradient (#F97316 to #FB923C) for one-time payment cards
-    - **Standard Digital Card**: Purple gradient (#8B5CF6 to #A78BFA) for standard payment cards
-    - Fixed height (180px), no excessive white space
-    - Consistent structure: card type (uppercase label), masked card number, "View Details" button at same position
-    - Gradient selection based on card type, not array index
-    - All cards display card icon, frozen status badge when applicable
+*   **Budget Cards & Payment Cards Section:** Complete redesign with compact, consistent card tiles across all tabs:
+    - **Reusable Card Components**: Created `renderMainWalletCard()`, `renderPaymentCard()`, and `renderBudgetCard()` functions for consistency
+    - **Main Wallet Card** (appears in ALL tabs):
+      - Violet-cyan gradient (#9b87f5 → #7DD3FC → #60C5E8) matching app's signature branding
+      - Displays primary balance and masked ID number
+      - Compact 180px height with tight spacing (p-4, text-xs, h-8 buttons)
+    - **Payment Cards** (One-Time & Standard):
+      - Orange gradient (#F97316 → #FB923C) for One-Time cards
+      - Purple gradient (#8B5CF6 → #A78BFA) for Standard Digital cards
+      - Uppercase card type labels, masked card numbers, frozen status badges
+      - Consistent 180px height with compact layout
+    - **Budget & Subscription Cards**:
+      - Universal three-value layout: Loaded / Spent (red emphasis) / Remaining (green emphasis)
+      - Subscription cards now behave exactly like budget cards (reloadable, show balances)
+      - Compact 180px height with tight spacing
+      - Three action buttons: Details, Add, Spend
+    - **Tab Consistency**: All tabs (All, Payment, Budget, Subscription) show Main Wallet Card + Payment Cards + relevant budget/subscription cards in the same compact style
+    - **No Excessive White Space**: Fixed height (h-[180px]), reduced padding (p-3/p-4), smaller buttons (h-7/h-8), compact text (text-xs/text-sm)
 
 ### System Design Choices
 *   **Database Schema:** Core entities include Users, Wallets, Transactions, VirtualCards, Subscriptions, SavingsPockets, Goals, Marketplace (Listings, Orders), Loans, Repayments, and ISIC models.
