@@ -43,7 +43,8 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 *   **P2P Lending:** Request-approval system with distinct tabs, approval workflow, loan lifecycle tracking, role-based actions, visual indicators, and robust security.
 *   **ISIC Discounts:** Integration for student card-based discounts.
 *   **Security Settings:** PIN management, visual-only features for email verification, 2FA, active sessions, rate limiting, and session timeout.
-*   **Notifications:** Comprehensive toast notification system and optimized UI dialogs.
+*   **Notifications:** Comprehensive notification system with persistent bell icon badge, Zustand store with localStorage persistence, toast notifications for all financial actions (transfers, top-ups, budget card spending), and currency-aware notification helpers that format amounts based on user's selected currency.
+*   **Budget Cards:** Enhanced visual hierarchy with prominently displayed available balance in green highlight box, comprehensive budget overview showing total budget and spent amounts, progress bar with color-coded usage indicators, and full multi-currency support. Automatic query invalidation ensures Dashboard Recent Transactions displays all transaction types including budget card payments.
 
 ### System Design Choices
 *   **Database Schema:** Core entities include Users, Wallets, Transactions, VirtualCards, Subscriptions, SavingsPockets, Goals, Marketplace (Listings, Orders), Loans, Repayments, and ISIC models.
