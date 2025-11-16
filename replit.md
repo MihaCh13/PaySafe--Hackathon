@@ -74,16 +74,20 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
       - Uppercase card type labels, masked card numbers, frozen status badges
       - Consistent 180px height with compact layout
     - **Budget & Subscription Cards**:
-      - Elongated card layout with generous padding (p-6) for clean, spacious appearance
-      - Prominent green gradient "Available Balance" box at top showing remaining_balance in large text
+      - **Structured Flexbox Layout**: Full-height flex column layout ensures consistent vertical alignment across all cards
+      - **Fixed Height Header**: min-h-[60px] header section accommodates 1-2 line card names with line-clamp-2 constraint
+      - Prominent green gradient "Available Balance" box showing remaining_balance in large text
       - Financial overview row: Total Budget (allocated_amount) left, Spent (spent_amount) right in red
       - Green→Yellow→Red progress bar based on spending percentage (<50% green, <80% yellow, ≥80% red)
-      - **Action Buttons (Redesigned 2-Row Layout)**:
+      - **Action Buttons (Redesigned 2-Row Layout with Fixed Positioning)**:
+        - Fixed footer section with top border separator (pt-4 border-t)
         - Row 1: "Add Funds" (green gradient) and "Spend" (orange-red gradient) side-by-side
         - Row 2: "View Details" (violet outline) spanning full width
         - Color-coded gradients: Green for funding actions, orange-red for spending, violet for secondary actions
         - Enhanced readability with font-medium, larger icons (h-4 w-4), and proper spacing
+        - Buttons maintain consistent vertical position regardless of card name length
         - Improved visual hierarchy with primary actions (row 1) and secondary actions (row 2)
+      - **Perfect Grid Alignment**: All cards align at top with consistent spacing between all internal elements
       - Subscription cards behave identically to budget cards with full financial tracking (allocated_amount, spent_amount, remaining_balance, spent_percentage)
       - Backend VirtualCard model supports financial methods (get_remaining_balance, get_spent_percentage) for both budget and subscription purposes
     - **Tab Consistency & Accurate Counters**: 
