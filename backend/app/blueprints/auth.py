@@ -132,13 +132,24 @@ def update_user_profile():
     
     data = request.get_json()
     
-    if 'username' in data and data['username'] != user.username:
-        if not data['username'] or len(data['username']) < 3:
-            return jsonify({'error': 'Username must be at least 3 characters'}), 400
-        existing_user = User.query.filter_by(username=data['username']).first()
-        if existing_user:
-            return jsonify({'error': 'Username already taken'}), 400
-        user.username = data['username']
+    if 'username' in data:
+        import re
+        old_username = user.username
+        username = data['username'].strip()
+        
+        if username != old_username:
+            if not username or len(username) < 3:
+                return jsonify({'error': 'Username must be at least 3 characters'}), 400
+            
+            if not re.match(r'^[a-zA-Z0-9_]+$', username):
+                return jsonify({'error': 'Username can only contain letters, numbers, and underscores'}), 400
+            
+            existing_user = User.query.filter(User.username == username, User.id != user.id).first()
+            if existing_user:
+                return jsonify({'error': 'Username already taken'}), 400
+            
+            user.username = username
+            current_app.logger.info(f"Username updated from '{old_username}' to '{username}' for user: {user.email}")
     
     if 'email' in data and data['email'] != user.email:
         existing_user = User.query.filter_by(email=data['email']).first()
