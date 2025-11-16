@@ -132,6 +132,14 @@ def update_user_profile():
     
     data = request.get_json()
     
+    if 'username' in data and data['username'] != user.username:
+        if not data['username'] or len(data['username']) < 3:
+            return jsonify({'error': 'Username must be at least 3 characters'}), 400
+        existing_user = User.query.filter_by(username=data['username']).first()
+        if existing_user:
+            return jsonify({'error': 'Username already taken'}), 400
+        user.username = data['username']
+    
     if 'email' in data and data['email'] != user.email:
         existing_user = User.query.filter_by(email=data['email']).first()
         if existing_user:

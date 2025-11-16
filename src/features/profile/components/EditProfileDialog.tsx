@@ -18,6 +18,7 @@ import { useAuthStore } from '@/store/authStore';
 import { Loader2 } from 'lucide-react';
 
 const profileSchema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters').regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
   first_name: z.string().min(1, 'First name is required'),
   last_name: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email address'),
@@ -46,6 +47,7 @@ export function EditProfileDialog({ open, onClose }: EditProfileDialogProps) {
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
+      username: user?.username || '',
       first_name: user?.first_name || '',
       last_name: user?.last_name || '',
       email: user?.email || '',
@@ -58,6 +60,7 @@ export function EditProfileDialog({ open, onClose }: EditProfileDialogProps) {
   useEffect(() => {
     if (open && user) {
       reset({
+        username: user.username || '',
         first_name: user.first_name || '',
         last_name: user.last_name || '',
         email: user.email || '',
@@ -109,6 +112,21 @@ export function EditProfileDialog({ open, onClose }: EditProfileDialogProps) {
 
         <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto flex-1 pr-2">
           <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Username *</Label>
+              <Input
+                id="username"
+                {...register('username')}
+                placeholder="johndoe"
+              />
+              {errors.username && (
+                <p className="text-sm text-red-600">{errors.username.message}</p>
+              )}
+              <p className="text-xs text-gray-500">
+                Your username is used for transfers and must be unique
+              </p>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="first_name">First Name *</Label>
