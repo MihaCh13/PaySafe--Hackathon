@@ -589,7 +589,7 @@ export default function BudgetCardsPage() {
                     <div className="text-center py-2 px-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
                       <div className="text-xs text-green-700 font-medium mb-1">Available Balance</div>
                       <div className="text-2xl font-bold text-green-700">
-                        ${card.remaining_balance?.toFixed(2)}
+                        {formatCurrency(card.remaining_balance || 0, selectedCurrency)}
                       </div>
                     </div>
                     
@@ -597,11 +597,11 @@ export default function BudgetCardsPage() {
                     <div className="flex justify-between text-sm">
                       <div>
                         <div className="text-xs text-gray-500">Total Budget</div>
-                        <div className="font-semibold">${card.allocated_amount?.toFixed(2)}</div>
+                        <div className="font-semibold">{formatCurrency(card.allocated_amount || 0, selectedCurrency)}</div>
                       </div>
                       <div className="text-right">
                         <div className="text-xs text-gray-500">Spent</div>
-                        <div className="font-semibold text-red-600">${card.spent_amount?.toFixed(2)}</div>
+                        <div className="font-semibold text-red-600">{formatCurrency(card.spent_amount || 0, selectedCurrency)}</div>
                       </div>
                     </div>
                     
