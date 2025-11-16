@@ -72,8 +72,12 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
       - Three action buttons with icons: Add Funds (ArrowUpCircle), Spend (MinusCircle), Details (Info)
       - Subscription cards behave identically to budget cards with full financial tracking (allocated_amount, spent_amount, remaining_balance, spent_percentage)
       - Backend VirtualCard model supports financial methods (get_remaining_balance, get_spent_percentage) for both budget and subscription purposes
-    - **Tab Consistency & Accurate Counters**: All tabs (All, Payment, Budget, Subscription) show Main Wallet Card + Payment Cards + relevant budget/subscription cards in the same compact style
-      - Tab counters accurately reflect displayed cards: main wallet (1) + payment cards + category-specific cards
+    - **Tab Consistency & Accurate Counters**: 
+      - All tab: Main Wallet Card + Payment Cards + Budget Cards + Subscription Cards
+      - Payment tab: Main Wallet Card + Payment Cards only
+      - Budget tab: Main Wallet Card + Budget Cards only (payment cards removed)
+      - Subscription tab: Main Wallet Card + Subscription Cards only (payment cards removed)
+      - Tab counters accurately reflect displayed cards in each category
     - **No Excessive White Space**: Fixed height (h-[180px]), reduced padding (p-3/p-4), smaller buttons (h-7/h-8), compact text (text-xs/text-sm)
 
 ### System Design Choices

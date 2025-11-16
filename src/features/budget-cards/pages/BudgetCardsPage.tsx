@@ -574,8 +574,8 @@ export default function BudgetCardsPage() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="all">All ({(walletData ? 1 : 0) + paymentCards.length + budgetCards.length + subscriptionCards.length})</TabsTrigger>
           <TabsTrigger value="payment">Payment ({(walletData ? 1 : 0) + paymentCards.length})</TabsTrigger>
-          <TabsTrigger value="budget">Budget ({(walletData ? 1 : 0) + paymentCards.length + budgetCards.length})</TabsTrigger>
-          <TabsTrigger value="subscription">Subscriptions ({(walletData ? 1 : 0) + paymentCards.length + subscriptionCards.length})</TabsTrigger>
+          <TabsTrigger value="budget">Budget ({(walletData ? 1 : 0) + budgetCards.length})</TabsTrigger>
+          <TabsTrigger value="subscription">Subscriptions ({(walletData ? 1 : 0) + subscriptionCards.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4 mt-6">
@@ -597,7 +597,6 @@ export default function BudgetCardsPage() {
         <TabsContent value="budget" className="space-y-4 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {renderMainWalletCard()}
-            {paymentCards.map((card: any) => renderPaymentCard(card))}
             {budgetCards.map((card: any) => renderBudgetCard(card))}
           </div>
         </TabsContent>
@@ -605,7 +604,6 @@ export default function BudgetCardsPage() {
         <TabsContent value="subscription" className="space-y-4 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {renderMainWalletCard()}
-            {paymentCards.map((card: any) => renderPaymentCard(card))}
             {subscriptionCards.map((card: any) => renderBudgetCard(card))}
           </div>
         </TabsContent>
