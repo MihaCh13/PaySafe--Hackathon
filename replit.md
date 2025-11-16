@@ -75,8 +75,8 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
     - **Tab Consistency & Accurate Counters**: 
       - All tab: Main Wallet Card + Payment Cards + Budget Cards + Subscription Cards
       - Payment tab: Main Wallet Card + Payment Cards only
-      - Budget tab: Main Wallet Card + Budget Cards only (payment cards removed)
-      - Subscription tab: Main Wallet Card + Subscription Cards only (payment cards removed)
+      - Budget tab: Budget Cards only (main wallet and payment cards removed)
+      - Subscription tab: Subscription Cards only (main wallet and payment cards removed)
       - Tab counters accurately reflect displayed cards in each category
     - **No Excessive White Space**: Fixed height (h-[180px]), reduced padding (p-3/p-4), smaller buttons (h-7/h-8), compact text (text-xs/text-sm)
 
