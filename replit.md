@@ -5,32 +5,44 @@ UniPay is a digital wallet application designed for students, integrating financ
 
 ## Recent Changes
 
-### November 16, 2025 - Navigation & Profile Photo Feature
-**Enhanced user experience with persistent logo placement and profile photo upload functionality.**
+### November 16, 2025 - UI/UX Refinements & Profile/Transfers Improvements
+**Comprehensive UI polish with improved profile section, transfers reorganization, and Activity sync enhancements.**
 
-#### Navigation Improvements ✅
-- **Logo Always Visible:** Moved UniPay logo and text from collapsible Sidebar to TopNav (always-visible header)
-- **Simplified Sidebar:** Sidebar now contains only the collapse/expand arrow button, no logo
-- **Consistent Across All Pages:** Logo remains visible on every page regardless of sidebar state
+#### Profile Section Enhancements ✅
+- **Thin Gradient Border:** Profile photo now has elegant 2px gradient border (purple/indigo) instead of thick border
+- **Button Reorganization:** Photo upload/change button moved inline with Edit Profile and Change PIN buttons
+- **Improved Layout:** Add Photo / Change Photo / Remove Photo buttons now part of main action button row
+- **Enhanced Logo:** Wallet icon size increased from h-9/10 to h-11/12 for better visibility in TopNav
 
-#### Profile Photo Feature ✅
-- **Database Field:** Added `profile_photo_url` (TEXT) column to User model for Base64 image storage
-- **Upload Endpoint:** `POST /api/auth/profile/photo` with Base64 validation (validates image format and size)
-- **Delete Endpoint:** `DELETE /api/auth/profile/photo` to remove profile photos
-- **Frontend Components:**
-  - Camera icon button with gradient background (violet to indigo) on profile avatar
-  - Delete button (red trash icon) appears when photo is uploaded
-  - Gradient border (4px) around avatar using app's signature colors
-  - File validation: max 5MB, images only
-  - Upload/delete with loading states and toast notifications
-- **Avatar Display:** Profile photos shown in ProfilePage and TopNav dropdown
-- **Fallback:** Gradient avatar with user initials when no photo uploaded
+#### Transfers Section Reorganization ✅
+- **Send Money Card:**
+  - Kept "Send to Username" and "Scan QR Code" buttons
+  - Removed incorrect bank transfer button (was showing user's own details)
+  - Clean 2-button interface focused on instant transfers
+- **Receive Money Card:**
+  - Reorganized layout: username in dotted container
+  - "Show QR Code" button moved below container (not inside)
+  - Added "Receive via Bank Transfer / IBAN" button showing user's bank details
+  - Clear separation between QR and bank transfer options
+  - Updated helper text for clarity
+
+#### Activity Sync Improvements ✅
+- **Auto-Refresh:** Transactions refetch on mount and window focus
+- **Zero Stale Time:** Set `staleTime: 0` to ensure fresh data
+- **Manual Refresh:** Added refresh button with spinning icon animation
+- **Better UX:** Toast notifications for successful refresh
+
+#### Navigation & Profile Photo (Previous) ✅
+- **Logo Always Visible:** UniPay logo and text in TopNav (always-visible header)
+- **Simplified Sidebar:** Only collapse/expand arrow button
+- **Profile Photo Upload:** Base64 storage, 5MB limit, gradient fallback with initials
+- **Secure Endpoints:** JWT-protected upload/delete with validation
 
 **Technical Implementation:**
-- Base64 image storage (consistent with ISIC photo pattern)
-- Client-side and server-side validation
-- Proper error handling and user feedback
-- Secure endpoints with JWT authentication
+- Thin gradient borders using `p-[2px]` wrapper pattern
+- React Query refetch configuration for real-time data
+- Proper button grouping and spacing
+- Consistent color scheme (violet/indigo/purple gradients)
 
 ### November 11, 2025 - Sprint 2: Performance & Data Integrity (COMPLETE)
 **Security hardening and performance optimization for production readiness.**
