@@ -369,7 +369,7 @@ export default function BudgetCardsPage() {
     return (
       <MotionCard
         key={card.id}
-        className="overflow-hidden border-2"
+        className="border-2"
         style={{ borderColor: card.color }}
       >
         <CardContent className="p-6">

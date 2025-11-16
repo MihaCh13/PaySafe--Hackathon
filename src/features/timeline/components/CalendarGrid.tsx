@@ -41,6 +41,32 @@ export default function CalendarGrid({
     );
   };
 
+  const isIncomeTransaction = (transaction: any) => {
+    const incomeTypes = [
+      'topup',
+      'income',
+      'refund',
+      'transfer_received',
+      'loan_repayment_received',
+      'loan_received',
+      'loan_cancelled_refund',
+      'savings_withdrawal',
+      'sale',
+      'budget_withdrawal',
+    ];
+
+    if (incomeTypes.includes(transaction.transaction_type)) {
+      return true;
+    }
+
+    // Legacy support: transfers where user is the receiver
+    if (transaction.transaction_type === 'transfer' && transaction.receiver_id) {
+      return true; // Note: We can't check user_id here, but transfer_received should be used for new transactions
+    }
+
+    return false;
+  };
+
   const getCellBackgroundColor = (date: Date | null) => {
     if (!date) return '';
     
@@ -51,16 +77,13 @@ export default function CalendarGrid({
 
     const hasUpcoming = dayTransactions.some((t: any) => 
       t.status === 'scheduled' || 
-      (t.metadata && t.metadata.upcoming === true)
+      (t.metadata && t.metadata.source === 'USER_EXPECTED_PAYMENT')
     );
     const hasIncome = dayTransactions.some((t: any) => 
-      (t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund') &&
-      t.status !== 'scheduled'
+      isIncomeTransaction(t) && t.status !== 'scheduled'
     );
     const hasExpense = dayTransactions.some((t: any) => 
-      (t.transaction_type === 'transfer' || t.transaction_type === 'payment' || 
-      t.transaction_type === 'withdrawal' || t.transaction_type === 'purchase') &&
-      t.status !== 'scheduled'
+      !isIncomeTransaction(t) && t.status !== 'scheduled'
     );
 
     // Prioritize upcoming payments (show yellow)

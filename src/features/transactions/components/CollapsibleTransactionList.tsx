@@ -15,6 +15,7 @@ interface Transaction {
   status: string;
   sender_id?: number;
   receiver_id?: number;
+  metadata?: any;
 }
 
 interface CollapsibleTransactionListProps {
@@ -59,6 +60,11 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
 
   // Helper to determine if transaction is expense
   const isExpenseTransaction = (t: Transaction): boolean => {
+    // If it's income, it's not an expense (even if scheduled)
+    if (isIncomeTransaction(t)) {
+      return false;
+    }
+    
     const expenseTypes = [
       'payment',
       'purchase',
@@ -71,15 +77,22 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
       'savings_deposit',
       'budget_allocation',
       'budget_expense',
+      'withdrawal',
+      'transfer', // Legacy transfers are handled below
     ];
     
     if (expenseTypes.includes(t.transaction_type)) {
       return true;
     }
     
-    // Legacy transfer handling
+    // Legacy transfer handling: sender is expense
     if (t.transaction_type === 'transfer') {
       return t.sender_id === t.user_id;
+    }
+    
+    // Expected/scheduled payments that aren't income are expenses
+    if (t.status === 'scheduled' || (t.metadata && (t.metadata as any).source === 'USER_EXPECTED_PAYMENT')) {
+      return true;
     }
     
     return false;

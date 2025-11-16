@@ -75,10 +75,51 @@ export default function TransactionsPage() {
   
   // Merge all transactions including expected payments
   const transactions = [...regularTransactions, ...expectedPayments];
+  
+  // Shared transaction type classification
+  const incomeTypes = ['topup', 'income', 'refund', 'transfer_received', 'loan_repayment_received', 'loan_received', 'loan_cancelled_refund', 'savings_withdrawal', 'sale', 'budget_withdrawal'];
+  const expenseTypes = ['purchase', 'transfer_sent', 'card_payment', 'subscription_payment', 'loan_disbursement', 'loan_repayment', 'loan_cancelled_return', 'savings_deposit', 'budget_allocation', 'budget_expense', 'withdrawal'];
+  
+  // Calculate expected payment totals using transaction_type first, then metadata+sign fallback
+  const upcomingTotals = expectedPayments.reduce((acc: { income: number; expenses: number }, payment: any) => {
+    const isIncomeType = incomeTypes.includes(payment.transaction_type);
+    const isExpenseType = expenseTypes.includes(payment.transaction_type);
+    const isManualExpected = payment.metadata && payment.metadata.source === 'USER_EXPECTED_PAYMENT';
+    
+    if (isIncomeType) {
+      // Known income type
+      acc.income += Math.abs(payment.amount);
+    } else if (isExpenseType) {
+      // Known expense type
+      acc.expenses += Math.abs(payment.amount);
+    } else if (isManualExpected) {
+      // Ambiguous type from manual creation - use amount sign
+      // Manual expected payments use type='payment' and store as positive
+      // Treat as expense (since manual expected payments are typically expenses)
+      acc.expenses += Math.abs(payment.amount);
+    } else if (payment.amount < 0) {
+      // Negative amount = expense
+      acc.expenses += Math.abs(payment.amount);
+    } else {
+      // Positive amount with unknown type = income
+      acc.income += payment.amount;
+    }
+    
+    return acc;
+  }, { income: 0, expenses: 0 });
+  
+  // Calculate upcoming subscription totals (subscriptions are always expenses)
+  const upcomingSubscriptionExpenses = (subscriptionStatsData?.upcoming_payments || []).reduce((sum: number, sub: any) => {
+    return sum + Math.abs(sub.amount);
+  }, 0);
+  
   const stats = {
     total_income: statsData?.total_income || 0,
     total_expenses: statsData?.total_expenses || 0,
     transaction_count: statsData?.transaction_count || 0,
+    upcoming_income: upcomingTotals.income,
+    upcoming_expenses: upcomingTotals.expenses + upcomingSubscriptionExpenses,
+    upcoming_total: upcomingTotals.income + upcomingTotals.expenses + upcomingSubscriptionExpenses,
   };
 
   const groupTransactionsByDate = () => {
@@ -336,6 +377,69 @@ export default function TransactionsPage() {
             </MotionCard>
           </div>
         </div>
+
+        {/* Upcoming Payments Section */}
+        {(expectedPayments.length > 0 || subscriptionStatsData?.upcoming_payments?.length > 0) && (
+          <MotionCard variants={itemVariants} className="border-0 shadow-sm bg-yellow-50 border-l-4 border-yellow-400">
+            <CardHeader className="pb-3">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5 text-yellow-600" />
+                  Upcoming / Expected Payments
+                </CardTitle>
+                <div className="text-right">
+                  <p className="text-xs text-gray-600">Total Upcoming</p>
+                  <p className="text-xl font-bold text-yellow-700">{formatCurrency(stats.upcoming_total, selectedCurrency)}</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {expectedPayments.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Manually Scheduled</h4>
+                  {expectedPayments.slice(0, 5).map((payment: any) => (
+                    <div key={payment.id} className="flex justify-between items-center py-2 border-b border-yellow-200 last:border-0">
+                      <div>
+                        <p className="font-medium text-gray-900">{payment.description || 'Expected Payment'}</p>
+                        <p className="text-xs text-gray-600">
+                          {new Date(payment.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
+                      </div>
+                      <span className="font-semibold text-yellow-700">
+                        {formatCurrency(Math.abs(payment.amount), selectedCurrency)}
+                      </span>
+                    </div>
+                  ))}
+                  {expectedPayments.length > 5 && (
+                    <p className="text-xs text-gray-600 mt-2">+ {expectedPayments.length - 5} more expected payments</p>
+                  )}
+                </div>
+              )}
+              
+              {subscriptionStatsData?.upcoming_payments && subscriptionStatsData.upcoming_payments.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Upcoming Subscriptions</h4>
+                  {subscriptionStatsData.upcoming_payments.slice(0, 5).map((sub: any) => (
+                    <div key={`sub-${sub.id || sub.subscription_id}`} className="flex justify-between items-center py-2 border-b border-yellow-200 last:border-0">
+                      <div>
+                        <p className="font-medium text-gray-900">{sub.service_name}</p>
+                        <p className="text-xs text-gray-600">
+                          {sub.next_billing_date && new Date(sub.next_billing_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
+                      </div>
+                      <span className="font-semibold text-yellow-700">
+                        {formatCurrency(Math.abs(sub.amount), selectedCurrency)}
+                      </span>
+                    </div>
+                  ))}
+                  {subscriptionStatsData.upcoming_payments.length > 5 && (
+                    <p className="text-xs text-gray-600 mt-2">+ {subscriptionStatsData.upcoming_payments.length - 5} more subscriptions</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </MotionCard>
+        )}
 
         <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible">
           <CardContent className="p-0">

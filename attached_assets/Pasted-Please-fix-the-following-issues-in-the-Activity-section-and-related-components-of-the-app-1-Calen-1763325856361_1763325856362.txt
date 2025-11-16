@@ -1,0 +1,80 @@
+Please fix the following issues in the Activity section and related components of the app:
+
+1. Calendar in Activity – Income entries do NOT appear in green
+
+In the Activity section, within the calendar view, income events are supposed to be visually represented in green.
+Currently:
+
+Income entries are not displayed in green at all.
+
+Only expenses or other types of entries appear visually, while income is missing from the color-coded representation.
+
+👉 Fix:
+Ensure that all income events are properly rendered in the calendar UI, using the intended green color coding (as it worked in the previous version of the design).
+
+2. Budget (4) and Subscriptions (1) – Cards are cut off
+
+The buttons/cards inside these sections appear:
+
+visually cut in half
+
+not fitting inside their containers
+
+misaligned or clipped
+
+👉 Fix:
+Correct layout, padding, margins, and responsive sizing so the cards render fully inside their parent containers.
+
+3. Activity → All Transactions – Numbers do NOT match
+
+The counters in All Transactions are inconsistent:
+
+Income shows 7
+
+Expenses show 14
+
+But All shows 35 items (which is incorrect and not the sum of the two)
+
+👉 Fix:
+Verify aggregation logic across all data sources (Calendar, Budget cards, Subscriptions) and remove any duplicated or incorrectly counted entries.
+
+4. Missing section for upcoming payments
+
+There is currently no visualization for upcoming or scheduled payments in the Activity section or in All Transactions.
+
+This includes:
+
+upcoming subscription charges
+
+scheduled budget payments
+
+manually added future events in the calendar
+
+👉 Fix:
+Add a dedicated section: Upcoming / Expected Payments, even if the list is empty.
+
+5. Activity → Calculator does NOT include all financial data
+
+The calculator ignores multiple types of entries:
+
+previous incomes
+
+previous expenses
+
+future subscription charges
+
+manually scheduled items from the calendar
+
+👉 Fix:
+Ensure all past, present, and scheduled financial movements are included in the calculator logic.
+
+6. Income is still not visualized correctly in Activity
+
+Income entries in the Activity section:
+
+do not appear in the list consistently
+
+do not update the balance correctly
+
+👉 Fix:
+Render income transactions properly and ensure they contribute to the total balance.
