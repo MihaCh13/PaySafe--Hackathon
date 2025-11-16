@@ -51,6 +51,8 @@ def get_transactions():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     transaction_type = request.args.get('type')
+    date_from = request.args.get('date_from')
+    date_to = request.args.get('date_to')
     
     query = Transaction.query.filter(
         or_(
@@ -62,6 +64,20 @@ def get_transactions():
     
     if transaction_type:
         query = query.filter_by(transaction_type=transaction_type)
+    
+    if date_from:
+        try:
+            from_date = datetime.fromisoformat(date_from.replace('Z', '+00:00'))
+            query = query.filter(Transaction.created_at >= from_date)
+        except ValueError:
+            pass
+    
+    if date_to:
+        try:
+            to_date = datetime.fromisoformat(date_to.replace('Z', '+00:00'))
+            query = query.filter(Transaction.created_at <= to_date)
+        except ValueError:
+            pass
     
     query = query.order_by(Transaction.created_at.desc())
     

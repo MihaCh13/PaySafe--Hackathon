@@ -17,7 +17,17 @@ export default function FinanceTimelinePage() {
   const { data: transactionsData } = useQuery({
     queryKey: ['transactions', currentDate.getMonth(), currentDate.getFullYear()],
     queryFn: async () => {
-      const response = await transactionsAPI.getTransactions(1, 100);
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      const startDate = new Date(year, month - 1, 1);
+      
+      const endDate = new Date(year, month + 3, 0);
+      
+      const dateFrom = startDate.toISOString();
+      const dateTo = endDate.toISOString();
+      
+      const response = await transactionsAPI.getTransactions(1, 1000, undefined, dateFrom, dateTo);
       return response.data;
     },
   });

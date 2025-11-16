@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models import VirtualCard, Subscription, Wallet, Transaction
+from app.services import SubscriptionSchedulerService
 from datetime import datetime, timedelta
 
 cards_bp = Blueprint('cards', __name__)
@@ -834,3 +835,94 @@ def resume_subscription(card_id, sub_id):
         'message': 'Subscription resumed successfully',
         'subscription': subscription.to_dict()
     }), 200
+
+@cards_bp.route('/subscriptions/sync-upcoming', methods=['POST'])
+@jwt_required()
+def sync_upcoming_payments():
+    """
+    Sync and generate upcoming subscription payments for all active subscriptions.
+    Ensures each active subscription has its next payment scheduled (one month ahead only).
+    """
+    try:
+        result = SubscriptionSchedulerService.sync_all_active()
+        
+        return jsonify({
+            'message': 'Upcoming payments synced successfully',
+            'stats': result
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@cards_bp.route('/subscriptions/<int:sub_id>/process-payment', methods=['POST'])
+@jwt_required()
+def process_subscription_payment(sub_id):
+    """
+    Process a scheduled subscription payment.
+    Deducts from budget card, marks transaction as completed, and schedules next payment.
+    """
+    user_id = int(get_jwt_identity())
+    
+    try:
+        subscription = Subscription.query.get(sub_id)
+        if not subscription:
+            return jsonify({'error': 'Subscription not found'}), 404
+        
+        if subscription.card.user_id != user_id:
+            return jsonify({'error': 'Unauthorized'}), 403
+        
+        if not subscription.is_active:
+            return jsonify({'error': 'Subscription is not active'}), 400
+        
+        card = subscription.card
+        
+        if card.get_remaining_balance() < subscription.amount:
+            return jsonify({'error': 'Insufficient card balance'}), 400
+        
+        scheduled_transaction = Transaction.query.filter(
+            Transaction.transaction_metadata['subscription_id'].astext == str(sub_id),
+            Transaction.status == 'scheduled'
+        ).order_by(Transaction.created_at.asc()).first()
+        
+        card.spent_amount = (card.spent_amount or VirtualCard.to_decimal(0)) + VirtualCard.to_decimal(subscription.amount)
+        card.updated_at = datetime.utcnow()
+        
+        if scheduled_transaction:
+            scheduled_transaction.status = 'completed'
+            scheduled_transaction.completed_at = datetime.utcnow()
+        else:
+            scheduled_transaction = Transaction(
+                user_id=user_id,
+                transaction_type='subscription_payment',
+                transaction_source='budget_card',
+                amount=float(subscription.amount),
+                status='completed',
+                description=f'{subscription.service_name} - {subscription.billing_cycle} subscription',
+                transaction_metadata={
+                    'source': 'SUBSCRIPTION_PAYMENT',
+                    'subscription_id': subscription.id,
+                    'card_id': subscription.card_id,
+                    'billing_cycle': subscription.billing_cycle,
+                    'category': subscription.service_category or 'subscription',
+                    'service_name': subscription.service_name
+                },
+                completed_at=datetime.utcnow(),
+                card_id=subscription.card_id
+            )
+            db.session.add(scheduled_transaction)
+        
+        next_transaction = SubscriptionSchedulerService.process_payment_completion(scheduled_transaction)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Subscription payment processed successfully',
+            'subscription': subscription.to_dict(),
+            'transaction': scheduled_transaction.to_dict(),
+            'next_payment_scheduled': next_transaction is not None,
+            'card_balance': float(card.get_remaining_balance())
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

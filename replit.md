@@ -35,8 +35,16 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 *   **Wallet:** Balance display, top-up, peer-to-peer transfers, multi-currency support, transfer scheduling, and secure QR code payment system.
 *   **QR Code Payments:** Secure payment initiation via QR codes using `itsdangerous` signed tokens (5-minute expiry).
 *   **Transactions:** Comprehensive tracking, filtering, and statistical analysis for 15+ types, including "expected payments", balance validation, race condition protection, and automatic query invalidation.
+    - **IMPORTANT: Scheduled Transaction Design Pattern** - For scheduled/upcoming transactions (subscriptions, expected payments), the `created_at` field represents the **billing/due date**, NOT the creation timestamp. This allows calendar filtering by billing date. The frontend compensates by fetching a wider date range (current month ± 1-3 months) to ensure all relevant scheduled transactions are included in queries.
 *   **Virtual Cards:** Creation, management (freeze/unfreeze), linking to subscriptions, and payment checks.
-*   **Subscriptions:** Management of recurring payments.
+*   **Subscriptions:** Management of recurring payments with automatic upcoming payment scheduling.
+    - **Subscription Scheduler Service** (`backend/app/services/subscription_scheduler.py`) - Centralized service for managing subscription payment scheduling:
+      - `ensure_next_payment()`: Generates next subscription payment within horizon (default 31 days ahead)
+      - `sync_all_active()`: Syncs all active subscriptions to ensure upcoming payments exist
+      - `process_payment_completion()`: Post-payment hook that updates subscription dates and schedules next payment
+      - Idempotent design prevents duplicate scheduled transactions
+    - **Payment Lifecycle**: When subscription payment is processed → transaction marked as completed → next month's payment automatically scheduled → calendar shows upcoming payment in yellow
+    - **Calendar Display**: Fetches transactions with wide date range (month - 1 to month + 3) to capture all upcoming scheduled payments (due to created_at design pattern)
 *   **Savings & Goals:** Dedicated goal tracking with progress indicators, contributions, editable targets, and completion celebrations.
 *   **DarkDays Pocket:** Secure, PIN-protected savings pockets with auto-save options and emergency withdrawal.
 *   **Marketplace:** Student-to-student commerce with listings and escrow services.

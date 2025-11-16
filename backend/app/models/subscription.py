@@ -1,4 +1,5 @@
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from app.extensions import db
 
 class Subscription(db.Model):
@@ -22,6 +23,36 @@ class Subscription(db.Model):
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     cancelled_at = db.Column(db.DateTime)
+    
+    card = db.relationship('VirtualCard', backref='subscriptions', lazy=True)
+    
+    def get_next_cycle_date(self, from_date=None):
+        """
+        Calculate the next billing date based on billing cycle.
+        
+        Args:
+            from_date: Date to calculate from (default: current next_billing_date)
+        
+        Returns:
+            Next billing date or None if paused/cancelled
+        """
+        if not self.is_active or not self.auto_renew:
+            return None
+        
+        base_date = from_date or self.next_billing_date
+        if not base_date:
+            return None
+        
+        if self.billing_cycle == 'monthly':
+            return base_date + relativedelta(months=1)
+        elif self.billing_cycle == 'yearly':
+            return base_date + relativedelta(years=1)
+        elif self.billing_cycle == 'weekly':
+            return base_date + relativedelta(weeks=1)
+        elif self.billing_cycle == 'quarterly':
+            return base_date + relativedelta(months=3)
+        else:
+            return base_date + relativedelta(months=1)
     
     def to_dict(self):
         return {
