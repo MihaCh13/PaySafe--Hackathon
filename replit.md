@@ -45,6 +45,7 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
       - Idempotent design prevents duplicate scheduled transactions
     - **Payment Lifecycle**: When subscription payment is processed → transaction marked as completed → next month's payment automatically scheduled → calendar shows upcoming payment in yellow
     - **Calendar Display**: Fetches transactions with wide date range (month - 1 to month + 3) to capture all upcoming scheduled payments (due to created_at design pattern)
+    - **IMPORTANT**: To see upcoming payments in calendar, user must have active subscriptions with `next_billing_date` set, then call `/api/cards/subscriptions/sync-upcoming` endpoint to generate scheduled transactions
 *   **Savings & Goals:** Dedicated goal tracking with progress indicators, contributions, editable targets, and completion celebrations.
 *   **DarkDays Pocket:** Secure, PIN-protected savings pockets with auto-save options and emergency withdrawal.
 *   **Marketplace:** Student-to-student commerce with listings and escrow services.
