@@ -11,6 +11,33 @@ import { CurrencySelector } from '@/components/CurrencySelector';
 
 const MotionCard = motion.create(Card);
 
+// Helper to determine if transaction is income
+const isIncomeTransaction = (t: any, userId?: number): boolean => {
+  const incomeTypes = [
+    'topup',
+    'income',
+    'refund',
+    'transfer_received',
+    'loan_repayment_received',
+    'loan_received',
+    'loan_cancelled_refund',
+    'savings_withdrawal',
+    'sale',
+    'budget_withdrawal',
+  ];
+  
+  if (incomeTypes.includes(t.transaction_type)) {
+    return true;
+  }
+  
+  // Legacy transfer handling
+  if (t.transaction_type === 'transfer' && userId) {
+    return t.receiver_id === userId;
+  }
+  
+  return false;
+};
+
 export default function DashboardPage() {
   const { user, isAuthenticated } = useAuthStore();
   const { selectedCurrency } = useCurrencyStore();
@@ -390,15 +417,12 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
                     <div
                       className={`p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl shadow-soft flex-shrink-0 ${
-                        transaction.transaction_type === 'topup'
-                          ? 'bg-success-light'
-                          : transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id
+                        isIncomeTransaction(transaction, walletData?.user_id)
                           ? 'bg-success-light'
                           : 'bg-danger-light'
                       }`}
                     >
-                      {transaction.transaction_type === 'topup' || 
-                       (transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id) ? (
+                      {isIncomeTransaction(transaction, walletData?.user_id) ? (
                         <ArrowDownLeft className="h-4 w-4 sm:h-5 sm:w-5 text-success-hover" />
                       ) : (
                         <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5 text-danger-hover" />
@@ -419,17 +443,13 @@ export default function DashboardPage() {
                   </div>
                   <span
                     className={`font-bold text-base sm:text-lg flex-shrink-0 ml-2 ${
-                      transaction.transaction_type === 'topup' ||
-                      (transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id)
+                      isIncomeTransaction(transaction, walletData?.user_id)
                         ? 'text-success-hover'
                         : 'text-foreground'
                     }`}
                   >
-                    {transaction.transaction_type === 'topup' ||
-                    (transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id)
-                      ? '+'
-                      : '-'}
-                    {formatCurrency(transaction.amount, selectedCurrency)}
+                    {isIncomeTransaction(transaction, walletData?.user_id) ? '+' : '-'}
+                    {formatCurrency(Math.abs(transaction.amount), selectedCurrency)}
                   </span>
                 </motion.div>
               ))}

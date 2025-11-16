@@ -118,10 +118,10 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
     const accountPrefix = accountFilter !== 'all' ? `${getAccountLabel(accountFilter)} • ` : '';
     
     if (activeFilter === 'income') {
-      return `${accountPrefix}${incomeTransactions.length} income • ${formatCurrency(totalIncome, selectedCurrency)}`;
+      return `${accountPrefix}${incomeTransactions.length} income • +${formatCurrency(Math.abs(totalIncome), selectedCurrency)}`;
     }
     if (activeFilter === 'expenses') {
-      return `${accountPrefix}${expenseTransactions.length} expenses • ${formatCurrency(totalExpenses, selectedCurrency)}`;
+      return `${accountPrefix}${expenseTransactions.length} expenses • -${formatCurrency(Math.abs(totalExpenses), selectedCurrency)}`;
     }
     return `${accountPrefix}${accountFilteredTransactions.length} total • ${incomeTransactions.length} income, ${expenseTransactions.length} expenses`;
   };
@@ -322,7 +322,7 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
                     )}
                   >
                     {activeFilter === 'income' ? '+' : '-'}
-                    {formatCurrency(activeFilter === 'income' ? totalIncome : totalExpenses, selectedCurrency)}
+                    {formatCurrency(Math.abs(activeFilter === 'income' ? totalIncome : totalExpenses), selectedCurrency)}
                   </span>
                 </div>
               </motion.div>
@@ -368,7 +368,7 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
                         </div>
                         <div className="text-right ml-4">
                           <p className={cn('font-semibold', getAmountColor(transaction))}>
-                            {getAmountPrefix(transaction)}{formatCurrency(transaction.amount, selectedCurrency)}
+                            {getAmountPrefix(transaction)}{formatCurrency(Math.abs(transaction.amount), selectedCurrency)}
                           </p>
                           <span className="text-xs text-gray-500 capitalize">
                             {transaction.status}
