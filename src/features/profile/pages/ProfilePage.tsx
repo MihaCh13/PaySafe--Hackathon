@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
@@ -27,19 +27,23 @@ import {
   Monitor,
   Clock,
   AlertTriangle,
-  Key
+  Key,
+  Camera,
+  Trash2
 } from 'lucide-react';
 
 const MotionCard = motion.create(Card);
 
 export default function ProfilePage() {
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const { toast } = useToast();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [isChangePinDialogOpen, setIsChangePinDialogOpen] = useState(false);
   const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] = useState(false);
   const [pinStatus, setPinStatus] = useState<{ hasPin: boolean; isDefaultPin: boolean } | null>(null);
   const [isPinStatusLoading, setIsPinStatusLoading] = useState(true);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchPinStatus = async () => {
     try {
@@ -93,6 +97,77 @@ export default function ProfilePage() {
     });
   };
 
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'File Too Large',
+        description: 'Profile photo must be less than 5MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid File Type',
+        description: 'Please upload an image file',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsUploadingPhoto(true);
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      try {
+        const base64String = reader.result as string;
+        const response = await authAPI.uploadProfilePhoto(base64String);
+        updateUser(response.data.user);
+        toast({
+          title: 'Photo Updated',
+          description: 'Your profile photo has been updated successfully',
+        });
+      } catch (error: any) {
+        toast({
+          title: 'Upload Failed',
+          description: error.response?.data?.error || 'Failed to upload photo',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsUploadingPhoto(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDeletePhoto = async () => {
+    try {
+      setIsUploadingPhoto(true);
+      const response = await authAPI.deleteProfilePhoto();
+      updateUser(response.data.user);
+      toast({
+        title: 'Photo Removed',
+        description: 'Your profile photo has been removed',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Delete Failed',
+        description: error.response?.data?.error || 'Failed to delete photo',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUploadingPhoto(false);
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -123,11 +198,46 @@ export default function ProfilePage() {
       <MotionCard variants={itemVariants} className="border-0 shadow-sm">
         <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <Avatar className="h-24 w-24 border-4 border-violet-100">
-              <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-3xl font-bold">
-                {getInitials()}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative group">
+              <Avatar className="h-24 w-24 border-4 border-transparent bg-gradient-to-br from-violet-500 via-indigo-500 to-purple-500 p-0.5">
+                <div className="h-full w-full rounded-full overflow-hidden bg-white">
+                  {user?.profile_photo_url ? (
+                    <AvatarImage src={user.profile_photo_url} alt="Profile photo" className="object-cover" />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-3xl font-bold">
+                      {getInitials()}
+                    </AvatarFallback>
+                  )}
+                </div>
+              </Avatar>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                className="hidden"
+              />
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handlePhotoClick}
+                disabled={isUploadingPhoto}
+                className="absolute -bottom-1 -right-1 p-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+              >
+                <Camera className="h-4 w-4" />
+              </motion.button>
+              {user?.profile_photo_url && (
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handleDeletePhoto}
+                  disabled={isUploadingPhoto}
+                  className="absolute -top-1 -right-1 p-2 bg-red-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </motion.button>
+              )}
+            </div>
 
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-2xl font-bold text-gray-900">

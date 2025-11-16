@@ -23,6 +23,7 @@ class User(db.Model):
     isic_card_number = db.Column(db.String(50), unique=True, nullable=True)
     university = db.Column(db.String(100))
     faculty = db.Column(db.String(100))
+    profile_photo_url = db.Column(db.Text, nullable=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -59,5 +60,6 @@ class User(db.Model):
             'is_verified': self.is_verified,
             'university': self.university,
             'faculty': self.faculty,
+            'profile_photo_url': self.profile_photo_url,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }

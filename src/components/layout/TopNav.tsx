@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bell, User, LogOut, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
@@ -33,7 +33,23 @@ export default function TopNav() {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="sticky top-0 z-50 w-full m-0 border-b border-border/50 bg-surface-1/95 backdrop-blur-md shadow-soft"
     >
-      <div className="flex h-14 sm:h-16 items-center justify-end px-4 sm:px-5 md:px-6">
+      <div className="flex h-14 sm:h-16 items-center justify-between px-4 sm:px-5 md:px-6">
+        <Link to="/dashboard" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center flex-shrink-0"
+          >
+            <img 
+              src="/assets/logo.png" 
+              alt="UniPay Logo" 
+              className="h-full w-full object-contain"
+            />
+          </motion.div>
+          <span className="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-[#9b87f5] via-[#7DD3FC] to-[#60C5E8] bg-clip-text text-transparent whitespace-nowrap tracking-tight drop-shadow-sm">
+            UniPay
+          </span>
+        </Link>
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           <Link to="/notifications">
             <motion.button
@@ -53,9 +69,13 @@ export default function TopNav() {
                 className="flex items-center gap-1.5 sm:gap-2.5 rounded-xl sm:rounded-2xl hover:bg-primary-light/20 pr-2 sm:pr-3 pl-1 sm:pl-1.5 py-1 sm:py-1.5 transition-all duration-200 shadow-soft-xs hover:shadow-soft tap-target"
               >
                 <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border-2 border-primary/30 shadow-soft">
-                  <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-xs sm:text-sm font-semibold">
-                    {getInitials()}
-                  </AvatarFallback>
+                  {user?.profile_photo_url ? (
+                    <AvatarImage src={user.profile_photo_url} alt="Profile photo" className="object-cover" />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-xs sm:text-sm font-semibold">
+                      {getInitials()}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
                 <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground hidden xs:block" />
               </motion.button>

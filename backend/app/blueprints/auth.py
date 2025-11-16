@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from app.extensions import db, limiter
 from app.models import User, Wallet
-from app.utils.validators import RegisterSchema, LoginSchema, sanitize_html
+from app.utils.validators import RegisterSchema, LoginSchema, sanitize_html, validate_base64_image
+from app.utils.file_validator import validate_image_upload
 from marshmallow import ValidationError
 
 auth_bp = Blueprint('auth', __name__)
@@ -158,6 +159,58 @@ def update_user_profile():
     
     return jsonify({
         'message': 'Profile updated successfully',
+        'user': user.to_dict()
+    }), 200
+
+@auth_bp.route('/profile/photo', methods=['POST'])
+@jwt_required()
+def upload_profile_photo():
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    data = request.get_json()
+    photo_base64 = data.get('photo')
+    
+    if not photo_base64:
+        return jsonify({'error': 'No photo provided'}), 400
+    
+    if not photo_base64.startswith('data:image'):
+        photo_base64 = f"data:image/png;base64,{photo_base64}"
+    
+    is_valid, error_msg = validate_base64_image(photo_base64)
+    if not is_valid:
+        current_app.logger.warning(f"Invalid profile photo for user {user_id}: {error_msg}")
+        return jsonify({'error': f'Invalid photo: {error_msg}'}), 400
+    
+    user.profile_photo_url = photo_base64
+    db.session.commit()
+    
+    current_app.logger.info(f"Profile photo updated for user: {user.email}")
+    
+    return jsonify({
+        'message': 'Profile photo updated successfully',
+        'user': user.to_dict()
+    }), 200
+
+@auth_bp.route('/profile/photo', methods=['DELETE'])
+@jwt_required()
+def delete_profile_photo():
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    user.profile_photo_url = None
+    db.session.commit()
+    
+    current_app.logger.info(f"Profile photo deleted for user: {user.email}")
+    
+    return jsonify({
+        'message': 'Profile photo deleted successfully',
         'user': user.to_dict()
     }), 200
 

@@ -12,6 +12,7 @@ interface User {
   faculty?: string;
   phone?: string;
   is_verified?: boolean;
+  profile_photo_url?: string;
   created_at?: string;
 }
 

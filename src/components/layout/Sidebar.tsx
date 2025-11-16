@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Home, CreditCard, PiggyBank, Store, Users, User, ArrowLeftRight, Plus, Receipt, ShieldCheck, Percent, ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useSidebarStore } from '@/stores/sidebarStore';
 import { Button } from '@/components/ui/button';
@@ -42,38 +42,7 @@ export default function Sidebar() {
       transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="flex flex-col m-0 p-0 border-r border-border/50 bg-surface-1/80 backdrop-blur-sm relative shadow-soft z-40"
     >
-        <div className={cn(
-          "flex items-center border-b border-border/50 p-2.5 xs:p-3 sm:p-4",
-          isCollapsed ? "justify-center" : "justify-between"
-        )}>
-          <AnimatePresence mode="wait">
-            {!isCollapsed && (
-              <motion.div
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: 'auto' }}
-                exit={{ opacity: 0, width: 0 }}
-                transition={{ duration: 0.2 }}
-                className="flex items-center gap-2.5"
-              >
-                <Link to="/dashboard" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                    className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center flex-shrink-0"
-                  >
-                    <img 
-                      src="/assets/logo.png" 
-                      alt="UniPay Logo" 
-                      className="h-full w-full object-contain"
-                    />
-                  </motion.div>
-                  <span className="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-[#9b87f5] via-[#7DD3FC] to-[#60C5E8] bg-clip-text text-transparent whitespace-nowrap tracking-tight drop-shadow-sm">
-                    UniPay
-                  </span>
-                </Link>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        <div className="flex items-center justify-center border-b border-border/50 p-2.5 xs:p-3 sm:p-4">
           <Button
             variant="ghost"
             size="icon"
@@ -110,19 +79,11 @@ export default function Sidebar() {
                     )}
                   >
                     <Icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'text-primary')} />
-                    <AnimatePresence mode="wait">
-                      {!isCollapsed && (
-                        <motion.span
-                          initial={{ opacity: 0, width: 0 }}
-                          animate={{ opacity: 1, width: 'auto' }}
-                          exit={{ opacity: 0, width: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="whitespace-nowrap overflow-hidden text-sm"
-                        >
-                          {item.label}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
+                    {!isCollapsed && (
+                      <span className="whitespace-nowrap overflow-hidden text-sm">
+                        {item.label}
+                      </span>
+                    )}
                   </motion.div>
                 </Link>
               );
