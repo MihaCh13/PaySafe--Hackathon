@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CreditCard, Plus, Lock, Wallet } from 'lucide-react';
+import { CreditCard, Plus, Lock, Wallet, ArrowUpCircle, MinusCircle, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
@@ -276,6 +276,12 @@ export default function BudgetCardsPage() {
   const budgetCards = cardsData?.cards?.filter((card: any) => card.card_purpose === 'budget') || [];
   const subscriptionCards = cardsData?.cards?.filter((card: any) => card.card_purpose === 'subscription') || [];
 
+  const getProgressColor = (percentage: number) => {
+    if (percentage < 50) return 'bg-green-500';
+    if (percentage < 80) return 'bg-yellow-500';
+    return 'bg-red-500';
+  };
+
   const renderMainWalletCard = () => {
     if (!walletData) return null;
     return (
@@ -363,97 +369,87 @@ export default function BudgetCardsPage() {
     return (
       <MotionCard
         key={card.id}
-        className="overflow-hidden border-2 h-[180px]"
-        style={{ borderColor: card.color || '#e5e7eb' }}
+        className="overflow-hidden border-2"
+        style={{ borderColor: card.color }}
       >
-        <CardContent className="p-3 h-full flex flex-col justify-between">
-          <div className="flex justify-between items-start mb-1">
-            <div className="flex-1">
-              <p className="text-xs text-gray-500 font-medium">
-                {card.card_purpose === 'subscription' ? 'Subscriptions' : (card.category || 'Budget')}
-              </p>
-              <h3 className="font-semibold text-sm">{card.card_name}</h3>
-            </div>
-            {card.icon && <span className="text-base">{card.icon}</span>}
-          </div>
-          
-          <div className="space-y-2">
-            {/* Symmetrical Layout: Budget Loaded (Left) vs Remaining Balance (Right) */}
-            <div className="flex justify-between items-center gap-2">
-              {/* Left: Budget Loaded */}
-              <div className="flex-1 text-left">
-                <div className="text-xs text-gray-500 font-medium mb-0.5">Budget Loaded</div>
-                <div className="text-sm font-bold text-gray-900">
-                  {formatCurrency(card.allocated_amount || 0, selectedCurrency)}
-                </div>
-              </div>
-              
-              {/* Right: Remaining Balance */}
-              <div className="flex-1 text-right">
-                <div className="text-xs text-green-600 font-medium mb-0.5">Remaining Balance</div>
-                <div className="text-sm font-bold text-green-600">
-                  {formatCurrency(card.remaining_balance || 0, selectedCurrency)}
-                </div>
-              </div>
-            </div>
-            
-            {/* Center: Amount Spent */}
-            <div className="text-center py-1.5 px-2 bg-red-50 rounded-lg border border-red-200">
-              <div className="text-xs text-red-700 font-medium mb-0.5">Amount Spent</div>
-              <div className="text-sm font-semibold text-red-600">
-                {formatCurrency(card.spent_amount || 0, selectedCurrency)}
-              </div>
-            </div>
-            
-            {/* Thin Progress Bar */}
+        <CardContent className="p-6">
+          <div className="flex justify-between items-start mb-4">
             <div>
-              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <p className="text-sm text-gray-500">
+                {card.card_purpose === 'subscription' ? 'Subscriptions' : card.category}
+              </p>
+              <h3 className="font-semibold text-lg">{card.card_name}</h3>
+            </div>
+            <span className="text-2xl">{card.icon}</span>
+          </div>
+          <div className="space-y-3 mb-4">
+            {/* Remaining Balance - Most Prominent */}
+            <div className="text-center py-2 px-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+              <div className="text-xs text-green-700 font-medium mb-1">Available Balance</div>
+              <div className="text-2xl font-bold text-green-700">
+                {formatCurrency(card.remaining_balance || 0, selectedCurrency)}
+              </div>
+            </div>
+            
+            {/* Budget Overview */}
+            <div className="flex justify-between text-sm">
+              <div>
+                <div className="text-xs text-gray-500">Total Budget</div>
+                <div className="font-semibold">{formatCurrency(card.allocated_amount || 0, selectedCurrency)}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-gray-500">Spent</div>
+                <div className="font-semibold text-red-600">{formatCurrency(card.spent_amount || 0, selectedCurrency)}</div>
+              </div>
+            </div>
+            
+            {/* Progress Bar */}
+            <div>
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-violet-600 transition-all"
+                  className={`h-full transition-all ${getProgressColor(card.spent_percentage || 0)}`}
                   style={{ width: `${Math.min(card.spent_percentage || 0, 100)}%` }}
                 />
               </div>
-              <div className="flex justify-between text-xs text-gray-400 mt-0.5">
-                <span>0%</span>
-                <span className="font-medium text-gray-600">{(card.spent_percentage || 0).toFixed(0)}% used</span>
-                <span>100%</span>
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>Budget Usage</span>
+                <span className="font-semibold">{(card.spent_percentage || 0).toFixed(0)}%</span>
               </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-3 gap-1 mt-1">
+          <div className="flex gap-2">
             <Button
               size="sm"
               variant="outline"
-              className="h-7 text-xs px-1"
-              onClick={() => {
-                setSelectedCardId(card.id);
-                card.card_purpose === 'budget' ? setBudgetDetailOpen(true) : setSubscriptionDetailOpen(true);
-              }}
-            >
-              Details
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7 text-xs px-1"
               onClick={() => {
                 setSelectedCardId(card.id);
                 setAllocateDialogOpen(true);
               }}
             >
-              Add
+              <ArrowUpCircle className="h-4 w-4 mr-1" />
+              Add Funds
             </Button>
             <Button
               size="sm"
               variant="outline"
-              className="h-7 text-xs px-1"
               onClick={() => {
                 setSelectedCardId(card.id);
                 setSpendDialogOpen(true);
               }}
             >
+              <MinusCircle className="h-4 w-4 mr-1" />
               Spend
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setSelectedCardId(card.id);
+                card.card_purpose === 'budget' ? setBudgetDetailOpen(true) : setSubscriptionDetailOpen(true);
+              }}
+            >
+              <Info className="h-4 w-4 mr-1" />
+              Details
             </Button>
           </div>
         </CardContent>
