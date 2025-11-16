@@ -185,7 +185,7 @@ export default function CalendarGrid({
 
           return (
             <motion.button
-              key={index}
+              key={date ? date.getTime() : `empty-${index}`}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.01 }}
