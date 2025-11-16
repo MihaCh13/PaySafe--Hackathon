@@ -1,0 +1,159 @@
+🚨 Prompt — Fix Activity / All Transactions / Calendar (accurate, structured)
+
+Please investigate and fix the Activity module, All Transactions list, and Calendar view. There are multiple serious data and UI mismatches that must be corrected. Below are the exact problems, required behavior, acceptance criteria and example checks.
+
+1) COUNTS MISMATCH — All Transactions vs Income/Expenses
+
+Problem:
+
+The top counter shows All (35), while the breakdown shows Income (7) and Expenses (14). 7 + 14 != 35. The All counter is incorrect.
+
+Required fix:
+
+Recompute All as the exact union (not double-counted sum) of all relevant transaction sources: Income + Expenses + Upcoming (if they are included) — with clear definition whether All includes upcoming or only settled transactions.
+
+Remove duplicates and ensure every transaction is counted exactly once.
+
+Acceptance criteria / Tests:
+
+Show example list of transactions counted for All and verify counts (provide a debug list).
+
+Reconcile numbers: if Income=7 and Expenses=14 and Upcoming=14, explain how All=35 is derived or correct it.
+
+2) UPCOMING PAYMENTS (dates in future shown as DEC transactions)
+
+Problem:
+
+Transactions scheduled for future dates (e.g., December) are being displayed as settled transactions in All / calendar and shown in red as expenses, even though today is November.
+
+Upcoming payments are shown as if they already happened.
+
+Required fix:
+
+Future (scheduled) payments must be treated as Upcoming and shown in yellow (not red), and must not be treated as settled/posted until their date/time passes and the backend marks them completed.
+
+Move the Upcoming / Expected Payments block into the All Transactions listing UI, adjacent to the All / Income / Expenses filters (so users see upcoming payments in the same context).
+
+Acceptance criteria / Tests:
+
+Scheduled payments with date > today appear in yellow and under Upcoming.
+
+They do not affect Income/Expenses totals until completed.
+
+Example: two December scheduled charges must not appear in November All as red/settled.
+
+3) CALENDAR COLOR CODING & MISCLASSIFIED TRANSACTIONS
+
+Problem:
+
+Calendar color coding is broken: incoming transactions (income) are not shown in green; many incomes are absent in green. Some dates that should be green are empty; some displayed items are misclassified as expenses.
+
+Example: Money received on 30 Oct is not green; 26 Oct income is missing or misrepresented as expense. Some entries that exist are labeled as expense when they are incomes.
+
+Required fix:
+
+Implement and enforce 4 color states for each calendar day/event:
+
+Green — day has income(s) (incoming funds to user account).
+
+Red — day has expense(s) (money out from user account, any source: main account, budget cards, subscription payments).
+
+Yellow — day has only upcoming/scheduled payments (future-dated).
+
+Mixed — day contains both income and expense (composed/multi-color or a clear mixed indicator).
+
+Ensure every transaction's type (income vs expense vs scheduled) is determined correctly from data source and tagged appropriately before rendering.
+
+Acceptance criteria / Tests:
+
+Verify the following example dates render correctly:
+
+30 Oct (known income) → green.
+
+26 Oct (known income) → green.
+
+15 Oct (two events) → mixed / appropriate colors.
+
+Clicking a day shows list of transactions for that day with correct type labels and amounts.
+
+4) DATA SOURCES & AGGREGATION: SYNCHRONIZATION ISSUES
+
+Problem:
+
+Activity / Calendar / All Transactions appear to pull from inconsistent sources: Budget Cards, Subscriptions, Calendar-scheduled items, Transfer History, and backend transaction logs. This causes missing entries and mismatches.
+
+Required fix:
+
+Define canonical transaction sources (e.g., backend ledger / transaction table) and ensure all UI components pull from the same single source of truth or a reconciled aggregation layer.
+
+Include scheduled subscription charges, calendar-scheduled payments, budget card transfers, and manual entries.
+
+Implement de-duplication logic and consistent timezone/date handling so future-dated items aren’t shown as past.
+
+Acceptance criteria / Tests:
+
+Provide a reconciliation report for a sample time window (e.g., Oct 1–31) showing which data source contributes which transactions and final merged list.
+
+No duplicates, every transaction appears in Activity and calendar appropriately.
+
+5) UPCOMING / EXPECTED PAYMENTS UI PLACEMENT
+
+Problem:
+
+Upcoming / Expected Payments are currently shown separately below calendar; users miss them in the All view.
+
+Required fix:
+
+Move “Upcoming / Expected Payments” inside the All Transactions view, near the filters (All / Income / Expenses), and visually mark them as Upcoming (yellow).
+
+Upcoming items may also remain below calendar but must be present in All context as well.
+
+Acceptance criteria / Tests:
+
+Upcoming section visible in All view and counts included/excluded correctly based on policy.
+
+6) NOTIFICATIONS & VISUAL FEEDBACK (related)
+
+Problem:
+
+When transactions post or are scheduled, the system is not creating consistent visual notifications or Activity entries (some incomes are missing and trigger no alerts).
+
+Required fix:
+
+Ensure posting of income/expense triggers:
+
+calendar color update,
+
+entry in All Transactions and Activity,
+
+notification (badge on bell + notification entry).
+
+Scheduled items should optionally create a “scheduled notification” or an upcoming notification separate from posted ones.
+
+7) PRIORITY & DELIVERY REQUEST
+
+Please treat this as high priority. Deliverables must include:
+
+A short diagnostics log explaining root causes found (data source mismatches, timezone bugs, aggregation errors, UI mapping issues).
+
+A list of code/DB changes made.
+
+Screenshots or a demo clip showing corrected behavior for the example dates (30 Oct, 26 Oct, upcoming Dec charges).
+
+Automated or manual test cases validating counts and calendar color mapping.
+
+Example verification checklist to attach with the fix
+
+ All counter now equals the correct union of transactions; provide the debug list used to compute All=35.
+
+ Future-dated entries appear as Upcoming (yellow) and not as red expenses.
+
+ 30 Oct and 26 Oct incomes show green in calendar.
+
+ Clicking a calendar day lists exact transactions with correct type (Income/Expense/Scheduled).
+
+ Upcoming payments moved into All Transactions view.
+
+ Activity calculator now includes past and scheduled transactions.
+
+ Notifications generated for posted incomes/expenses.
