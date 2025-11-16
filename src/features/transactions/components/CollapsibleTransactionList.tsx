@@ -67,7 +67,12 @@ export default function CollapsibleTransactionList({
     
     // Legacy transfer handling
     if (t.transaction_type === 'transfer') {
-      return t.receiver_id === t.user_id;
+      // If sender/receiver IDs exist, use them
+      if (t.receiver_id !== undefined && t.sender_id !== undefined) {
+        return t.receiver_id === t.user_id;
+      }
+      // Otherwise, use amount sign for self-transfers
+      return t.amount >= 0;
     }
     
     return false;
@@ -93,7 +98,6 @@ export default function CollapsibleTransactionList({
       'budget_allocation',
       'budget_expense',
       'withdrawal',
-      'transfer', // Legacy transfers are handled below
     ];
     
     if (expenseTypes.includes(t.transaction_type)) {
@@ -102,11 +106,18 @@ export default function CollapsibleTransactionList({
     
     // Legacy transfer handling: sender is expense
     if (t.transaction_type === 'transfer') {
-      return t.sender_id === t.user_id;
+      // If sender/receiver IDs exist, use them
+      if (t.receiver_id !== undefined && t.sender_id !== undefined) {
+        return t.sender_id === t.user_id;
+      }
+      // Otherwise, use amount sign for self-transfers (negative = expense)
+      return t.amount < 0;
     }
     
     // Expected/scheduled payments that aren't income are expenses
-    if (t.status === 'scheduled' || (t.metadata && (t.metadata as any).source === 'USER_EXPECTED_PAYMENT')) {
+    // Check transaction_metadata first, fallback to metadata
+    const metadata = (t as any).transaction_metadata || t.metadata;
+    if (t.status === 'scheduled' || (metadata && (metadata as any).source === 'USER_EXPECTED_PAYMENT')) {
       return true;
     }
     
@@ -207,7 +218,7 @@ export default function CollapsibleTransactionList({
     }
     
     const isIncome = isIncomeTransaction(transaction);
-    return isIncome ? 'text-green-600' : 'text-gray-900';
+    return isIncome ? 'text-green-600' : 'text-red-600';
   };
 
   const getAmountPrefix = (transaction: Transaction) => {

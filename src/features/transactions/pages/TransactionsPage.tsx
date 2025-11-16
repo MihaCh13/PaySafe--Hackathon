@@ -90,7 +90,9 @@ export default function TransactionsPage() {
   });
   
   const upcomingTransactions = expectedPayments.filter((t: any) => {
-    const txDate = new Date(t.created_at);
+    // Use scheduled_for, fallback to transaction_metadata.payment_date, then created_at
+    const scheduledDate = t.scheduled_for || t.transaction_metadata?.payment_date || t.created_at;
+    const txDate = new Date(scheduledDate);
     return txDate > today;
   });
   
@@ -105,7 +107,9 @@ export default function TransactionsPage() {
   const upcomingTotals = upcomingTransactions.reduce((acc: { income: number; expenses: number }, payment: any) => {
     const isIncomeType = incomeTypes.includes(payment.transaction_type);
     const isExpenseType = expenseTypes.includes(payment.transaction_type);
-    const isManualExpected = payment.metadata && payment.metadata.source === 'USER_EXPECTED_PAYMENT';
+    // Check transaction_metadata first, fallback to metadata
+    const metadata = payment.transaction_metadata || payment.metadata;
+    const isManualExpected = metadata && metadata.source === 'USER_EXPECTED_PAYMENT';
     
     if (isIncomeType) {
       // Known income type
@@ -134,32 +138,13 @@ export default function TransactionsPage() {
     return sum + Math.abs(sub.amount);
   }, 0);
   
-  // Calculate stats from ACTUAL displayed transactions (settled only)
-  // This ensures All = Income + Expenses counters match what's shown in the list
-  const settledIncomeTransactions = settledTransactions.filter((t: any) => {
-    if (incomeTypes.includes(t.transaction_type)) return true;
-    // Legacy transfer handling
-    if (t.transaction_type === 'transfer') return t.receiver_id === t.user_id;
-    return false;
-  });
-  
-  const settledExpenseTransactions = settledTransactions.filter((t: any) => {
-    // Check if it's income first
-    if (incomeTypes.includes(t.transaction_type)) return false;
-    if (t.transaction_type === 'transfer') return t.sender_id === t.user_id;
-    
-    if (expenseTypes.includes(t.transaction_type)) return true;
-    return false;
-  });
-  
-  const settledIncomeTotal = settledIncomeTransactions.reduce((sum: number, t: any) => sum + Math.abs(t.amount), 0);
-  const settledExpensesTotal = settledExpenseTransactions.reduce((sum: number, t: any) => sum + Math.abs(t.amount), 0);
-  
+  // Use backend stats for summary cards (correctly filtered to last 12 months)
+  // The CollapsibleTransactionList will show ALL settled transactions with its own accurate counters
   const stats = {
-    total_income: settledIncomeTotal,
-    total_expenses: settledExpensesTotal,
-    transaction_count: settledTransactions.length,
-    period_label: statsData?.period_label || 'All Time',
+    total_income: statsData?.total_income || 0,
+    total_expenses: statsData?.total_expenses || 0,
+    transaction_count: statsData?.transaction_count || 0,
+    period_label: statsData?.period_label || 'Last 12 Months',
     upcoming_income: upcomingTotals.income,
     upcoming_expenses: upcomingTotals.expenses + upcomingSubscriptionExpenses,
     upcoming_total: upcomingTotals.income + upcomingTotals.expenses + upcomingSubscriptionExpenses,
