@@ -283,14 +283,6 @@ export default function TransfersPage() {
               <ScanLine className="h-4 w-4 mr-2" />
               Scan QR Code
             </Button>
-            <Button
-              variant="outline"
-              className="w-full border-indigo-200 hover:bg-indigo-50"
-              onClick={() => setShowBankDialog(true)}
-            >
-              <Banknote className="h-4 w-4 mr-2" />
-              Bank Transfer / IBAN
-            </Button>
           </CardContent>
         </MotionCard>
 
@@ -309,24 +301,29 @@ export default function TransfersPage() {
           <CardContent className="pt-6 space-y-4">
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Share your username:</p>
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-xl font-bold text-violet-600">@{user?.username || 'loading...'}</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setShowQRDialog(true);
-                    if (!qrToken) loadQRToken();
-                  }}
-                  className="flex items-center gap-2"
-                >
-                  <QrCode className="h-4 w-4" />
-                  Show QR Code
-                </Button>
-              </div>
+              <p className="text-xl font-bold text-violet-600">@{user?.username || 'loading...'}</p>
             </div>
+            <Button
+              variant="outline"
+              className="w-full border-green-200 hover:bg-green-50"
+              onClick={() => {
+                setShowQRDialog(true);
+                if (!qrToken) loadQRToken();
+              }}
+            >
+              <QrCode className="h-4 w-4 mr-2" />
+              Show QR Code
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full border-emerald-200 hover:bg-emerald-50"
+              onClick={() => setShowBankDialog(true)}
+            >
+              <Banknote className="h-4 w-4 mr-2" />
+              Receive via Bank Transfer / IBAN
+            </Button>
             <p className="text-sm text-gray-500 text-center">
-              Others can send you money using this username or by scanning your QR code
+              Share your username, QR code, or bank details to receive money
             </p>
           </CardContent>
         </MotionCard>
