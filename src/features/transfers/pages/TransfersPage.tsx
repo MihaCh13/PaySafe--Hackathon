@@ -40,6 +40,15 @@ export default function TransfersPage() {
   const [qrToken, setQrToken] = useState<string>('');
   const [showBankDialog, setShowBankDialog] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [sendBankDialogOpen, setSendBankDialogOpen] = useState(false);
+  const [bankRecipientName, setBankRecipientName] = useState('');
+  const [bankRecipientIBAN, setBankRecipientIBAN] = useState('');
+  const [bankTransferAmount, setBankTransferAmount] = useState('');
+  const [savedRecipients, setSavedRecipients] = useState<Array<{id: string, name: string, iban: string}>>(() => {
+    const stored = localStorage.getItem('unipay_saved_recipients');
+    return stored ? JSON.parse(stored) : [];
+  });
+  const [showSavedRecipients, setShowSavedRecipients] = useState(true);
   const scannerRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const queryClient = useQueryClient();
@@ -111,6 +120,45 @@ export default function TransfersPage() {
         amount: amountInUSD,
       });
     }
+  };
+
+  const handleBankTransfer = () => {
+    if (!bankRecipientName || !bankRecipientIBAN || !bankTransferAmount || Number(bankTransferAmount) <= 0) {
+      toast.error('Please fill in all fields with valid data');
+      return;
+    }
+
+    const amountInUSD = convertToUSD(Number(bankTransferAmount), selectedCurrency);
+
+    toast.success(
+      `Bank transfer initiated!\n${formatCurrency(amountInUSD, selectedCurrency)} to ${bankRecipientName}\nIBAN: ${bankRecipientIBAN}`,
+      { duration: 5000 }
+    );
+
+    const recipientExists = savedRecipients.find(r => r.iban === bankRecipientIBAN);
+    if (!recipientExists) {
+      const newRecipient = {
+        id: Date.now().toString(),
+        name: bankRecipientName,
+        iban: bankRecipientIBAN,
+      };
+      const updatedRecipients = [...savedRecipients, newRecipient];
+      setSavedRecipients(updatedRecipients);
+      localStorage.setItem('unipay_saved_recipients', JSON.stringify(updatedRecipients));
+      toast.info('Recipient saved for future transfers');
+    }
+
+    setSendBankDialogOpen(false);
+    setBankRecipientName('');
+    setBankRecipientIBAN('');
+    setBankTransferAmount('');
+  };
+
+  const handleSelectSavedRecipient = (recipient: {id: string, name: string, iban: string}) => {
+    setBankRecipientName(recipient.name);
+    setBankRecipientIBAN(recipient.iban);
+    setShowSavedRecipients(false);
+    toast.success(`Selected ${recipient.name}`);
   };
 
   const startQRScanner = async () => {
@@ -282,6 +330,14 @@ export default function TransfersPage() {
             >
               <ScanLine className="h-4 w-4 mr-2" />
               Scan QR Code
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full border-indigo-200 hover:bg-indigo-50"
+              onClick={() => setSendBankDialogOpen(true)}
+            >
+              <Banknote className="h-4 w-4 mr-2" />
+              Send via Bank / IBAN
             </Button>
           </CardContent>
         </MotionCard>
@@ -743,6 +799,104 @@ export default function TransfersPage() {
                 💡 <strong>Note:</strong> Bank transfers may take 1-2 business days to process. For instant transfers, use the QR code or username methods.
               </p>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={sendBankDialogOpen} onOpenChange={setSendBankDialogOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Send Money via Bank / IBAN</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="p-3 bg-violet-50 dark:bg-violet-950 rounded-lg border border-violet-200">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-medium text-violet-900 dark:text-violet-100">
+                  Saved Recipients {savedRecipients.length > 0 && `(${savedRecipients.length})`}
+                </p>
+                {savedRecipients.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowSavedRecipients(!showSavedRecipients)}
+                    className="text-xs"
+                  >
+                    {showSavedRecipients ? 'Hide' : 'Show'}
+                  </Button>
+                )}
+              </div>
+              {savedRecipients.length === 0 ? (
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  Recipients you send money to will be saved here for quick access in the future.
+                  <br />
+                  <span className="text-violet-600 dark:text-violet-400 font-medium">
+                    (Stored locally - will be synced to backend in production)
+                  </span>
+                </p>
+              ) : showSavedRecipients ? (
+                <div className="space-y-2 mt-2 max-h-[200px] overflow-y-auto">
+                  {savedRecipients.map((recipient) => (
+                    <button
+                      key={recipient.id}
+                      onClick={() => handleSelectSavedRecipient(recipient)}
+                      className="w-full p-3 bg-white dark:bg-gray-800 rounded-lg border hover:border-violet-400 transition-all text-left"
+                    >
+                      <p className="font-medium text-sm">{recipient.name}</p>
+                      <p className="text-xs text-gray-500 font-mono">{recipient.iban}</p>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bank-recipient-name">Recipient Name</Label>
+              <Input
+                id="bank-recipient-name"
+                placeholder="John Doe"
+                value={bankRecipientName}
+                onChange={(e) => setBankRecipientName(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bank-iban">IBAN / Account Number</Label>
+              <Input
+                id="bank-iban"
+                placeholder="GB29 NWBK 6016 1331 9268 19"
+                value={bankRecipientIBAN}
+                onChange={(e) => setBankRecipientIBAN(e.target.value)}
+                className="font-mono"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bank-transfer-amount">Amount</Label>
+              <Input
+                id="bank-transfer-amount"
+                type="number"
+                min="1"
+                step="0.01"
+                placeholder="100.00"
+                value={bankTransferAmount}
+                onChange={(e) => setBankTransferAmount(e.target.value)}
+              />
+            </div>
+
+            <div className="p-3 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200">
+              <p className="text-sm text-amber-800 dark:text-amber-200">
+                ⚠️ <strong>Important:</strong> Bank transfers are currently a UI demo. In a production app, this would integrate with a payment processor like Stripe or a banking API.
+              </p>
+            </div>
+
+            <Button
+              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
+              onClick={handleBankTransfer}
+              disabled={!bankRecipientName || !bankRecipientIBAN || !bankTransferAmount || Number(bankTransferAmount) <= 0}
+            >
+              <Banknote className="h-4 w-4 mr-2" />
+              Send via Bank Transfer
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
