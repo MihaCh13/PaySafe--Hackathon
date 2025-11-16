@@ -78,7 +78,12 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
       - Prominent green gradient "Available Balance" box at top showing remaining_balance in large text
       - Financial overview row: Total Budget (allocated_amount) left, Spent (spent_amount) right in red
       - Green→Yellow→Red progress bar based on spending percentage (<50% green, <80% yellow, ≥80% red)
-      - Three action buttons with icons: Add Funds (ArrowUpCircle), Spend (MinusCircle), Details (Info)
+      - **Action Buttons (Redesigned 2-Row Layout)**:
+        - Row 1: "Add Funds" (green gradient) and "Spend" (orange-red gradient) side-by-side
+        - Row 2: "View Details" (violet outline) spanning full width
+        - Color-coded gradients: Green for funding actions, orange-red for spending, violet for secondary actions
+        - Enhanced readability with font-medium, larger icons (h-4 w-4), and proper spacing
+        - Improved visual hierarchy with primary actions (row 1) and secondary actions (row 2)
       - Subscription cards behave identically to budget cards with full financial tracking (allocated_amount, spent_amount, remaining_balance, spent_percentage)
       - Backend VirtualCard model supports financial methods (get_remaining_balance, get_spent_percentage) for both budget and subscription purposes
     - **Tab Consistency & Accurate Counters**: 
