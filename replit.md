@@ -5,6 +5,33 @@ UniPay is a digital wallet application designed for students, integrating financ
 
 ## Recent Changes
 
+### November 16, 2025 - Navigation & Profile Photo Feature
+**Enhanced user experience with persistent logo placement and profile photo upload functionality.**
+
+#### Navigation Improvements ✅
+- **Logo Always Visible:** Moved UniPay logo and text from collapsible Sidebar to TopNav (always-visible header)
+- **Simplified Sidebar:** Sidebar now contains only the collapse/expand arrow button, no logo
+- **Consistent Across All Pages:** Logo remains visible on every page regardless of sidebar state
+
+#### Profile Photo Feature ✅
+- **Database Field:** Added `profile_photo_url` (TEXT) column to User model for Base64 image storage
+- **Upload Endpoint:** `POST /api/auth/profile/photo` with Base64 validation (validates image format and size)
+- **Delete Endpoint:** `DELETE /api/auth/profile/photo` to remove profile photos
+- **Frontend Components:**
+  - Camera icon button with gradient background (violet to indigo) on profile avatar
+  - Delete button (red trash icon) appears when photo is uploaded
+  - Gradient border (4px) around avatar using app's signature colors
+  - File validation: max 5MB, images only
+  - Upload/delete with loading states and toast notifications
+- **Avatar Display:** Profile photos shown in ProfilePage and TopNav dropdown
+- **Fallback:** Gradient avatar with user initials when no photo uploaded
+
+**Technical Implementation:**
+- Base64 image storage (consistent with ISIC photo pattern)
+- Client-side and server-side validation
+- Proper error handling and user feedback
+- Secure endpoints with JWT authentication
+
 ### November 11, 2025 - Sprint 2: Performance & Data Integrity (COMPLETE)
 **Security hardening and performance optimization for production readiness.**
 

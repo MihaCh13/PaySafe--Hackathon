@@ -3,7 +3,6 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 from app.extensions import db, limiter
 from app.models import User, Wallet
 from app.utils.validators import RegisterSchema, LoginSchema, sanitize_html, validate_base64_image
-from app.utils.file_validator import validate_image_upload
 from marshmallow import ValidationError
 
 auth_bp = Blueprint('auth', __name__)
