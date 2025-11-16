@@ -1,0 +1,73 @@
+Profile Section – Fixes Needed
+
+Profile Photo Border
+
+The circular border around the profile picture is way too thick.
+
+It must be thinner, softer, and gradient-based (in a purple/phone-gradient style), matching the overall UI color scheme of the application.
+
+Profile Photo Button
+
+The Add Photo / Change Profile Picture button must not appear under the profile picture.
+
+Instead, it should be placed in line with the other two buttons:
+
+Edit Profile
+
+Change PIN
+
+Logo Visibility
+
+Please increase the size of the app logo (the wallet icon) slightly so it's easier to see and more visually balanced.
+
+✅ Transfers Section – Fixes Needed
+Current Issue
+
+In the Send Money section, the button for Bank Transfer / iBank is incorrectly implemented.
+
+When clicked, it shows the user’s own bank details, which is wrong.
+
+Correct Behavior
+
+In Send Money, this button should allow the user to:
+
+Enter someone else’s IBAN/bank details
+
+Enter the amount
+
+Send money to another user’s bank account
+
+Correct Placement
+
+The current Bank Transfer / IBAN button should be moved entirely to the Receive Money section.
+
+✅ Receive Money Section – Fixes Needed
+
+There is a green, dotted container showing the user's username.
+The Scan QR Code button should NOT be inside that container.
+
+Instead:
+
+The Scan QR Code button must be placed right below the dotted container.
+
+Below that button, there should be the Receive Money via Bank Transfer / IBAN option (with the user’s bank details).
+
+The button for receiving money via bank transfer must show:
+
+The user’s own bank account information, so they can give it to someone else.
+
+👉 Summary (Short)
+
+Make the profile picture border thin, elegant, gradient-colored.
+
+Move the Add/Change Photo button next to Edit Profile and Change PIN.
+
+Slightly increase the wallet logo size.
+
+Move the current Bank Transfer/IBAN button from Send Money to Receive Money.
+
+In Send Money, allow sending money via IBAN to someone else.
+
+In Receive Money, place Scan QR Code below the dotted username box.
+
+In Receive Money, show the user's bank details for incoming transfers.

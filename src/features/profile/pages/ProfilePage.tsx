@@ -198,9 +198,9 @@ export default function ProfilePage() {
       <MotionCard variants={itemVariants} className="border-0 shadow-sm">
         <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <div className="relative group flex flex-col items-center gap-3">
-              <Avatar className="h-32 w-32 border-[6px] border-transparent bg-gradient-to-br from-violet-500 via-indigo-500 to-purple-600 p-1 shadow-xl">
-                <div className="h-full w-full rounded-full overflow-hidden bg-white">
+            <div className="relative group">
+              <div className="relative p-[2px] rounded-full bg-gradient-to-br from-violet-400 via-indigo-400 to-purple-500 shadow-lg">
+                <Avatar className="h-32 w-32">
                   {user?.profile_photo_url ? (
                     <AvatarImage src={user.profile_photo_url} alt="Profile photo" className="object-cover" />
                   ) : (
@@ -208,43 +208,16 @@ export default function ProfilePage() {
                       {getInitials()}
                     </AvatarFallback>
                   )}
-                </div>
-              </Avatar>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                className="hidden"
-              />
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex gap-2"
-              >
-                <Button
-                  onClick={handlePhotoClick}
-                  disabled={isUploadingPhoto}
-                  size="sm"
-                  className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-md"
-                >
-                  <Camera className="h-4 w-4 mr-2" />
-                  {isUploadingPhoto ? 'Uploading...' : user?.profile_photo_url ? 'Replace Photo' : 'Add Photo'}
-                </Button>
-                {user?.profile_photo_url && (
-                  <Button
-                    onClick={handleDeletePhoto}
-                    disabled={isUploadingPhoto}
-                    size="sm"
-                    variant="destructive"
-                    className="shadow-md"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Remove
-                  </Button>
-                )}
-              </motion.div>
+                </Avatar>
+              </div>
             </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="hidden"
+            />
 
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-2xl font-bold text-gray-900">
@@ -253,6 +226,17 @@ export default function ProfilePage() {
               <p className="text-gray-600 mt-1">@{user?.username}</p>
               
               <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handlePhotoClick}
+                    disabled={isUploadingPhoto}
+                  >
+                    <Camera className="h-4 w-4 mr-2" />
+                    {isUploadingPhoto ? 'Uploading...' : user?.profile_photo_url ? 'Change Photo' : 'Add Photo'}
+                  </Button>
+                </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button variant="outline" size="sm" onClick={() => setIsEditProfileDialogOpen(true)}>
                     <Edit className="h-4 w-4 mr-2" />
@@ -265,6 +249,19 @@ export default function ProfilePage() {
                     Change PIN
                   </Button>
                 </motion.div>
+                {user?.profile_photo_url && (
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleDeletePhoto}
+                      disabled={isUploadingPhoto}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Remove Photo
+                    </Button>
+                  </motion.div>
+                )}
               </div>
             </div>
           </div>
