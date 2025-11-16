@@ -65,11 +65,14 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
       - Uppercase card type labels, masked card numbers, frozen status badges
       - Consistent 180px height with compact layout
     - **Budget & Subscription Cards**:
-      - Universal three-value layout: Loaded / Spent (red emphasis) / Remaining (green emphasis)
-      - Subscription cards now behave exactly like budget cards (reloadable, show balances)
+      - Polished symmetrical layout: Budget Loaded (left) / Amount Spent (center, red emphasis) / Remaining Balance (right, green emphasis)
+      - Thin progress bar with percentage indicator showing spending progress (0-100%)
+      - Subscription cards behave identically to budget cards with full financial tracking (allocated_amount, spent_amount, remaining_balance, spent_percentage)
+      - Backend VirtualCard model supports financial methods (get_remaining_balance, get_spent_percentage) for both budget and subscription purposes
       - Compact 180px height with tight spacing
       - Three action buttons: Details, Add, Spend
-    - **Tab Consistency**: All tabs (All, Payment, Budget, Subscription) show Main Wallet Card + Payment Cards + relevant budget/subscription cards in the same compact style
+    - **Tab Consistency & Accurate Counters**: All tabs (All, Payment, Budget, Subscription) show Main Wallet Card + Payment Cards + relevant budget/subscription cards in the same compact style
+      - Tab counters accurately reflect displayed cards: main wallet (1) + payment cards + category-specific cards
     - **No Excessive White Space**: Fixed height (h-[180px]), reduced padding (p-3/p-4), smaller buttons (h-7/h-8), compact text (text-xs/text-sm)
 
 ### System Design Choices
