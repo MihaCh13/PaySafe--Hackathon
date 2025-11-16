@@ -41,6 +41,7 @@ export default function CalendarGrid({
     );
   };
 
+  // Helper to determine if transaction is income
   const isIncomeTransaction = (transaction: any) => {
     const incomeTypes = [
       'topup',
@@ -59,12 +60,60 @@ export default function CalendarGrid({
       return true;
     }
 
-    // Legacy support: transfers where user is the receiver
-    if (transaction.transaction_type === 'transfer' && transaction.receiver_id) {
-      return true; // Note: We can't check user_id here, but transfer_received should be used for new transactions
+    // Legacy transfer handling
+    if (transaction.transaction_type === 'transfer') {
+      // If sender/receiver IDs exist, use them
+      if (transaction.receiver_id !== undefined && transaction.sender_id !== undefined) {
+        return transaction.receiver_id === transaction.user_id;
+      }
+      // Otherwise, use amount sign for self-transfers
+      return transaction.amount >= 0;
     }
 
     return false;
+  };
+
+  // Helper to determine if transaction is expense
+  // MUST match CollapsibleTransactionList logic for consistency
+  const isExpenseTransaction = (transaction: any) => {
+    // First check: if it's income, it's NOT an expense
+    if (isIncomeTransaction(transaction)) {
+      return false;
+    }
+
+    // ALL expense types from backend (verified against backend code)
+    const expenseTypes = [
+      'payment',                    // Generic payments
+      'purchase',                   // Marketplace purchases
+      'transfer_sent',              // Sent transfers
+      'card_payment',               // Virtual card payments
+      'subscription_payment',       // Subscription charges
+      'loan_disbursement',          // Loan given out
+      'loan_repayment',             // Loan repayments made
+      'loan_cancelled_return',      // Cancelled loan return
+      'savings_deposit',            // Deposit to savings
+      'budget_allocation',          // Budget card funding
+      'budget_expense',             // Budget card spending
+      'withdrawal',                 // Withdrawals
+    ];
+
+    if (expenseTypes.includes(transaction.transaction_type)) {
+      return true;
+    }
+
+    // Legacy transfer handling: sender is expense
+    if (transaction.transaction_type === 'transfer') {
+      if (transaction.receiver_id !== undefined && transaction.sender_id !== undefined) {
+        return transaction.sender_id === transaction.user_id;
+      }
+      return transaction.amount < 0;
+    }
+
+    // SAFE FALLBACK: For unknown types, use amount sign
+    // Negative amount = expense (outgoing)
+    // Positive/zero amount = NOT expense (likely missed income type)
+    // Note: Scheduled payments are handled separately in calendar display logic
+    return transaction.amount < 0;
   };
 
   // Helper to get timezone-safe local date key (YYYY-MM-DD)
@@ -83,15 +132,16 @@ export default function CalendarGrid({
 
     if (dayTransactions.length === 0) return '';
 
-    const hasUpcoming = dayTransactions.some((t: any) => 
-      t.status === 'scheduled' || 
-      (t.metadata && t.metadata.source === 'USER_EXPECTED_PAYMENT')
-    );
+    const hasUpcoming = dayTransactions.some((t: any) => {
+      const metadata = t.transaction_metadata || t.metadata;
+      return t.status === 'scheduled' || 
+        (metadata && metadata.source === 'USER_EXPECTED_PAYMENT');
+    });
     const hasIncome = dayTransactions.some((t: any) => 
       isIncomeTransaction(t) && t.status !== 'scheduled'
     );
     const hasExpense = dayTransactions.some((t: any) => 
-      !isIncomeTransaction(t) && t.status !== 'scheduled'
+      isExpenseTransaction(t) && t.status !== 'scheduled'
     );
 
     // Prioritize upcoming payments (show yellow)
