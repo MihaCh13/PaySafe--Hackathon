@@ -372,17 +372,20 @@ export default function BudgetCardsPage() {
         className="border-2"
         style={{ borderColor: card.color }}
       >
-        <CardContent className="p-6">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-sm text-gray-500">
+        <CardContent className="p-6 flex flex-col h-full">
+          {/* Fixed Height Header Section - Accommodates 1-2 line names */}
+          <div className="flex justify-between items-start min-h-[60px] mb-4">
+            <div className="flex-1 pr-2">
+              <p className="text-sm text-gray-500 leading-tight">
                 {card.card_purpose === 'subscription' ? 'Subscriptions' : card.category}
               </p>
-              <h3 className="font-semibold text-lg">{card.card_name}</h3>
+              <h3 className="font-semibold text-lg leading-tight mt-0.5 line-clamp-2">{card.card_name}</h3>
             </div>
-            <span className="text-2xl">{card.icon}</span>
+            <span className="text-2xl flex-shrink-0">{card.icon}</span>
           </div>
-          <div className="space-y-3 mb-4">
+          
+          {/* Content Section with Consistent Spacing */}
+          <div className="space-y-3 flex-1">
             {/* Remaining Balance - Most Prominent */}
             <div className="text-center py-2 px-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
               <div className="text-xs text-green-700 font-medium mb-1">Available Balance</div>
@@ -418,8 +421,8 @@ export default function BudgetCardsPage() {
             </div>
           </div>
           
-          {/* Action Buttons - Improved Layout */}
-          <div className="space-y-2 mt-4">
+          {/* Action Buttons - Fixed Position at Bottom */}
+          <div className="space-y-2 mt-4 pt-4 border-t border-gray-100">
             {/* Row 1: Add Funds + Spend */}
             <div className="grid grid-cols-2 gap-2">
               <Button
