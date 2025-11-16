@@ -223,24 +223,26 @@ export default function EnhancedMarketplacePage() {
                     <EscrowStatusBadge status={listing.is_available ? 'available' : 'completed'} />
                   </div>
                 </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">{listing.title}</h3>
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">{listing.description}</p>
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-xl font-bold text-violet-600">{formatCurrency(listing.price, selectedCurrency)}</p>
-                    <span className="text-[10px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-medium">
-                      {listing.category}
-                    </span>
-                  </div>
-                  {(listing.university || listing.faculty) && (
-                    <div className="text-xs text-gray-500 mb-3 space-y-1">
-                      {listing.university && <p>📚 {listing.university}</p>}
-                      {listing.faculty && <p>🏛️ {listing.faculty}</p>}
+                <CardContent className="p-4 flex flex-col h-full">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">{listing.title}</h3>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{listing.description}</p>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xl font-bold text-violet-600">{formatCurrency(listing.price, selectedCurrency)}</p>
+                      <span className="text-[10px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-medium">
+                        {listing.category}
+                      </span>
                     </div>
-                  )}
+                    {(listing.university || listing.faculty) && (
+                      <div className="text-xs text-gray-500 space-y-1">
+                        {listing.university && <p className="line-clamp-1">📚 {listing.university}</p>}
+                        {listing.faculty && <p className="line-clamp-1">🏛️ {listing.faculty}</p>}
+                      </div>
+                    )}
+                  </div>
                   <Button
                     size="sm"
-                    className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
+                    className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 mt-3"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleViewDetails(listing);

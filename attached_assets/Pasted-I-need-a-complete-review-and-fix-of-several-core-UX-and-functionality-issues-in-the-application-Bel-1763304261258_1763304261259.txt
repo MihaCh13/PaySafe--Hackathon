@@ -1,0 +1,60 @@
+I need a complete review and fix of several core UX and functionality issues in the application. Below is a consolidated list of problems and required improvements:
+
+1. Notifications System – MUST Be Fully Functional
+
+The notifications system should work consistently across the entire application.
+Here are the required behaviors:
+
+a) Notification Indicator in the Top Navbar
+
+In the main top navigation bar (the white bar with the profile picture), there is a bell icon.
+
+Whenever any notification exists, the bell icon must display a red indicator dot or a badge showing the number of unread notifications.
+
+If new notifications arrive, the indicator should appear immediately.
+
+b) Notifications for All Financial Actions
+
+The user should receive notifications for every transaction-related event, including:
+
+Sending money (via QR code, username, or bank account).
+
+Receiving money (via QR code or bank details).
+
+Any income or expense entry should generate a notification.
+
+Loading or paying with any of the user’s Budget Cards → must trigger a notification.
+
+Paying with the Dark Days Pocket → must trigger a notification that money was withdrawn.
+
+c) Real-Time Pop-Up Notifications
+
+When a notification occurs, it must appear instantly as a pop-up, similar to how mobile apps display alerts.
+
+These pop-ups should show on top of the application view, not only in the notifications page.
+
+2. Marketplace Layout Issues
+
+There are major UI alignment problems in the Marketplace section:
+
+a) “View Details” Button Should Always Be Aligned
+
+The View Details button must appear at the same vertical position for all listings, regardless of how long the description text is.
+
+Long text should not overlap the button.
+
+If the text is too long, automatically truncate it with ... so layout is always clean and consistent.
+
+3. ICIC Discounts Section Issues
+
+In the Partner Merchants Preview:
+
+The ICIC Discounts are missing, even though they appear in the ICIC Discounts section.
+
+These discounts must always be visible, even if the user has not uploaded their ICIC card yet.
+
+The discounts are part of the platform content and should always be displayed.
+
+Overall Goal
+
+Please fix these issues to ensure consistent UX, correct notification logic, and proper UI alignment across all components of the application.

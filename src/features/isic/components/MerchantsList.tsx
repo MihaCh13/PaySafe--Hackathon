@@ -13,7 +13,6 @@ interface MerchantsListProps {
 }
 
 export default function MerchantsList({ preview = false }: MerchantsListProps) {
-  const { isAuthenticated } = useAuthStore();
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
 
   const { data: merchantsData, isLoading } = useQuery({
@@ -22,7 +21,6 @@ export default function MerchantsList({ preview = false }: MerchantsListProps) {
       const response = await isicAPI.getMerchants(selectedCategory);
       return response.data;
     },
-    enabled: isAuthenticated,
   });
 
   const categories = ['All categories', 'Accommodation', 'Culture', 'Entertainment', 'Food and drink', 'Services', 'Shopping', 'Sport', 'Study', 'Travel', 'Other'];

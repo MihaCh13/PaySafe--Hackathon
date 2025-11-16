@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bell, User, LogOut, ChevronDown } from 'lucide-react';
 import {
@@ -14,6 +15,7 @@ import { motion } from 'framer-motion';
 
 export default function TopNav() {
   const { user, logout } = useAuthStore();
+  const { unreadCount } = useNotificationStore();
 
   const handleLogout = async () => {
     await logout();
@@ -51,13 +53,22 @@ export default function TopNav() {
           </span>
         </Link>
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
-          <Link to="/notifications">
+          <Link to="/notifications" className="relative">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl hover:bg-primary-light/30 transition-all duration-200 shadow-soft-xs hover:shadow-soft tap-target"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl hover:bg-primary-light/30 transition-all duration-200 shadow-soft-xs hover:shadow-soft tap-target relative"
             >
               <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground hover:text-primary transition-colors" />
+              {unreadCount > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-1 -right-1 h-5 w-5 sm:h-5 sm:w-5 bg-red-500 text-white text-[10px] sm:text-xs font-bold rounded-full flex items-center justify-center shadow-lg ring-2 ring-white"
+                >
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </motion.span>
+              )}
             </motion.button>
           </Link>
 

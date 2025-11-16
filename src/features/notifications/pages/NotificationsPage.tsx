@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,95 +11,45 @@ import {
   TrendingUp, 
   Gift,
   AlertCircle,
-  Info
+  Info,
+  Send,
+  QrCode,
+  Banknote
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNotificationStore } from '@/stores/notificationStore';
 
 const MotionCard = motion.create(Card);
 
-interface Notification {
-  id: number;
-  type: 'payment' | 'transfer' | 'security' | 'info' | 'achievement';
-  title: string;
-  message: string;
-  timestamp: Date;
-  read: boolean;
-  icon: any;
-  color: string;
-}
+const iconMap: Record<string, any> = {
+  DollarSign,
+  CreditCard,
+  TrendingUp,
+  Gift,
+  AlertCircle,
+  Info,
+  Send,
+  QrCode,
+  Banknote,
+};
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: 1,
-      type: 'transfer',
-      title: 'Money Received',
-      message: 'You received $50.00 from @john_doe',
-      timestamp: new Date(Date.now() - 1000 * 60 * 5),
-      read: false,
-      icon: DollarSign,
-      color: 'green',
-    },
-    {
-      id: 2,
-      type: 'payment',
-      title: 'Payment Successful',
-      message: 'Your top-up of $100.00 was successful',
-      timestamp: new Date(Date.now() - 1000 * 60 * 30),
-      read: false,
-      icon: CreditCard,
-      color: 'blue',
-    },
-    {
-      id: 3,
-      type: 'achievement',
-      title: 'Savings Goal Reached!',
-      message: 'Congratulations! You\'ve reached your "New Laptop" savings goal',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-      read: true,
-      icon: Gift,
-      color: 'yellow',
-    },
-    {
-      id: 4,
-      type: 'info',
-      title: 'New Feature Available',
-      message: 'Check out our new Marketplace feature for student trading!',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
-      read: true,
-      icon: Info,
-      color: 'violet',
-    },
-    {
-      id: 5,
-      type: 'security',
-      title: 'Security Alert',
-      message: 'New login detected from Chrome on Windows',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
-      read: true,
-      icon: AlertCircle,
-      color: 'red',
-    },
-  ]);
+  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotificationStore();
 
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const markAsRead = (id: number) => {
-    setNotifications(prev =>
-      prev.map(n => (n.id === id ? { ...n, read: true } : n))
-    );
+  const handleMarkAsRead = (id: number) => {
+    markAsRead(id);
     toast.success('Marked as read');
   };
 
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  const handleMarkAllAsRead = () => {
+    markAllAsRead();
     toast.success('All notifications marked as read');
   };
 
-  const deleteNotification = (id: number) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+  const handleDeleteNotification = (id: number) => {
+    deleteNotification(id);
     toast.success('Notification deleted');
   };
 
@@ -167,7 +117,7 @@ export default function NotificationsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={markAllAsRead}
+              onClick={handleMarkAllAsRead}
             >
               <Check className="h-4 w-4 mr-1" />
               Mark All Read
@@ -187,7 +137,7 @@ export default function NotificationsPage() {
       ) : (
         <div className="space-y-3">
           {filteredNotifications.map((notification) => {
-            const Icon = notification.icon;
+            const Icon = iconMap[notification.icon] || Info;
             const colors = getColorClasses(notification.color);
             
             return (
@@ -213,7 +163,7 @@ export default function NotificationsPage() {
                             {notification.message}
                           </p>
                           <p className="text-xs text-gray-500 mt-2">
-                            {getRelativeTime(notification.timestamp)}
+                            {getRelativeTime(new Date(notification.timestamp))}
                           </p>
                         </div>
                         <div className="flex gap-1">
@@ -221,7 +171,7 @@ export default function NotificationsPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => markAsRead(notification.id)}
+                              onClick={() => handleMarkAsRead(notification.id)}
                               className="h-8 w-8 p-0"
                             >
                               <Check className="h-4 w-4" />
@@ -230,7 +180,7 @@ export default function NotificationsPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => deleteNotification(notification.id)}
+                            onClick={() => handleDeleteNotification(notification.id)}
                             className="h-8 w-8 p-0 hover:text-red-600"
                           >
                             <X className="h-4 w-4" />
