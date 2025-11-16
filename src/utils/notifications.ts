@@ -1,5 +1,6 @@
 import { useNotificationStore } from '@/stores/notificationStore';
 import { toast } from 'sonner';
+import { formatCurrency, type Currency } from '@/stores/currencyStore';
 
 export const createNotification = (
   title: string,
@@ -27,90 +28,90 @@ export const createNotification = (
   }
 };
 
-export const notifyMoneyReceived = (amount: number, from: string) => {
+export const notifyMoneyReceived = (amount: number, from: string, currency: Currency = 'USD', showToast = false) => {
   createNotification(
     'Money Received',
-    `You received $${amount.toFixed(2)} from @${from}`,
+    `You received ${formatCurrency(amount, currency)} from @${from}`,
     'transfer',
     'green',
     'DollarSign',
-    true
+    showToast
   );
 };
 
-export const notifyMoneySent = (amount: number, to: string) => {
+export const notifyMoneySent = (amount: number, to: string, currency: Currency = 'USD', showToast = false) => {
   createNotification(
     'Money Sent',
-    `You sent $${amount.toFixed(2)} to @${to}`,
+    `You sent ${formatCurrency(amount, currency)} to @${to}`,
     'transfer',
     'blue',
     'Send',
-    true
+    showToast
   );
 };
 
-export const notifyBudgetCardPayment = (amount: number, cardName: string) => {
+export const notifyBudgetCardPayment = (amount: number, cardName: string, currency: Currency = 'USD', showToast = false) => {
   createNotification(
     'Budget Card Payment',
-    `Paid $${amount.toFixed(2)} with ${cardName}`,
+    `Paid ${formatCurrency(amount, currency)} with ${cardName}`,
     'budget_card',
     'violet',
     'CreditCard',
-    true
+    showToast
   );
 };
 
-export const notifyDarkDaysPocketWithdrawal = (amount: number) => {
+export const notifyDarkDaysPocketWithdrawal = (amount: number, currency: Currency = 'USD', showToast = false) => {
   createNotification(
     'Dark Days Pocket Withdrawal',
-    `Emergency withdrawal of $${amount.toFixed(2)} from Dark Days Pocket`,
+    `Emergency withdrawal of ${formatCurrency(amount, currency)} from Dark Days Pocket`,
     'dark_days',
     'red',
     'AlertCircle',
-    true
+    showToast
   );
 };
 
-export const notifyTopUp = (amount: number, method: string) => {
+export const notifyTopUp = (amount: number, method: string, currency: Currency = 'USD', showToast = false) => {
   createNotification(
     'Top-up Successful',
-    `Your wallet was topped up with $${amount.toFixed(2)} via ${method}`,
+    `Your wallet was topped up with ${formatCurrency(amount, currency)} via ${method}`,
     'payment',
     'green',
     'TrendingUp',
-    true
+    showToast
   );
 };
 
-export const notifyQRPaymentReceived = (amount: number) => {
+export const notifyQRPaymentReceived = (amount: number, currency: Currency = 'USD', showToast = false) => {
   createNotification(
     'QR Payment Received',
-    `You received $${amount.toFixed(2)} via QR code`,
+    `You received ${formatCurrency(amount, currency)} via QR code`,
     'transfer',
     'green',
     'QrCode',
-    true
+    showToast
   );
 };
 
-export const notifyQRPaymentSent = (amount: number) => {
+export const notifyQRPaymentSent = (amount: number, currency: Currency = 'USD', showToast = false) => {
   createNotification(
     'QR Payment Sent',
-    `You sent $${amount.toFixed(2)} via QR code`,
+    `You sent ${formatCurrency(amount, currency)} via QR code`,
     'transfer',
     'blue',
     'QrCode',
-    true
+    showToast
   );
 };
 
-export const notifyBankTransfer = (amount: number, recipient: string) => {
+export const notifyBankTransfer = (amount: number, recipient: string, currency: Currency = 'USD', showToast = false) => {
   createNotification(
     'Bank Transfer Initiated',
-    `Transfer of $${amount.toFixed(2)} to ${recipient} is being processed`,
+    `Transfer of ${formatCurrency(amount, currency)} to ${recipient} is being processed`,
     'transfer',
     'blue',
     'Banknote',
-    true
+    showToast
   );
 };

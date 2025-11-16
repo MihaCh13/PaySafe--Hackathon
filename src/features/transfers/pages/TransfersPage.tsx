@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { useCurrencyStore, formatCurrency, convertToUSD } from '@/stores/currencyStore';
 import { QRCodeSVG } from 'qrcode.react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { notifyMoneySent, notifyBankTransfer } from '@/utils/notifications';
 
 const MotionCard = motion.create(Card);
 
@@ -72,11 +73,12 @@ export default function TransfersPage() {
   const transferMutation = useMutation({
     mutationFn: ({ recipient, amount }: { recipient: string; amount: number }) =>
       walletAPI.transfer(recipient, amount),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['wallet'] });
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       setSendDialogOpen(false);
       toast.success('Transfer successful!');
+      notifyMoneySent(variables.amount, variables.recipient, selectedCurrency);
       setRecipientUsername('');
       setAmount('');
     },
@@ -134,6 +136,8 @@ export default function TransfersPage() {
       `Bank transfer initiated!\n${formatCurrency(amountInUSD, selectedCurrency)} to ${bankRecipientName}\nIBAN: ${bankRecipientIBAN}`,
       { duration: 5000 }
     );
+    
+    notifyBankTransfer(amountInUSD, bankRecipientName, selectedCurrency);
 
     const recipientExists = savedRecipients.find(r => r.iban === bankRecipientIBAN);
     if (!recipientExists) {

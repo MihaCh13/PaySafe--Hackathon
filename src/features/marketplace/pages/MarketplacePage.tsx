@@ -206,7 +206,7 @@ export default function EnhancedMarketplacePage() {
             ))}
           </div>
         ) : filteredListings.length > 0 ? (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-fr">
             {filteredListings.map((listing: any, index: number) => (
               <MotionCard
                 key={listing.id}
@@ -214,16 +214,16 @@ export default function EnhancedMarketplacePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ scale: 1.02 }}
-                className="border-0 shadow-sm cursor-pointer overflow-hidden"
+                className="border-0 shadow-sm cursor-pointer overflow-hidden flex flex-col"
                 onClick={() => handleViewDetails(listing)}
               >
-                <div className="aspect-square bg-gradient-to-br from-violet-50 via-indigo-50 to-purple-50 flex items-center justify-center relative">
+                <div className="aspect-square bg-gradient-to-br from-violet-50 via-indigo-50 to-purple-50 flex items-center justify-center relative flex-shrink-0">
                   <ShoppingBag className="h-20 w-20 text-violet-300" />
                   <div className="absolute top-2 right-2">
                     <EscrowStatusBadge status={listing.is_available ? 'available' : 'completed'} />
                   </div>
                 </div>
-                <CardContent className="p-4 flex flex-col h-full">
+                <CardContent className="p-4 flex flex-col flex-1">
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">{listing.title}</h3>
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">{listing.description}</p>

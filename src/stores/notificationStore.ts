@@ -25,29 +25,8 @@ interface NotificationState {
 export const useNotificationStore = create<NotificationState>()(
   persist(
     (set, get) => ({
-      notifications: [
-        {
-          id: 1,
-          type: 'transfer',
-          title: 'Money Received',
-          message: 'You received $50.00 from @john_doe',
-          timestamp: new Date(Date.now() - 1000 * 60 * 5),
-          read: false,
-          icon: 'DollarSign',
-          color: 'green',
-        },
-        {
-          id: 2,
-          type: 'payment',
-          title: 'Payment Successful',
-          message: 'Your top-up of $100.00 was successful',
-          timestamp: new Date(Date.now() - 1000 * 60 * 30),
-          read: false,
-          icon: 'CreditCard',
-          color: 'blue',
-        },
-      ],
-      unreadCount: 2,
+      notifications: [],
+      unreadCount: 0,
 
       addNotification: (notification) => {
         const newNotification: Notification = {
