@@ -80,48 +80,9 @@ export default function CollapsibleTransactionList({
 
   // Helper to determine if transaction is expense
   const isExpenseTransaction = (t: Transaction): boolean => {
-    // If it's income, it's not an expense (even if scheduled)
-    if (isIncomeTransaction(t)) {
-      return false;
-    }
-    
-    const expenseTypes = [
-      'payment',
-      'purchase',
-      'transfer_sent',
-      'card_payment',
-      'subscription_payment',
-      'loan_disbursement',
-      'loan_repayment',
-      'loan_cancelled_return',
-      'savings_deposit',
-      'budget_allocation',
-      'budget_expense',
-      'withdrawal',
-    ];
-    
-    if (expenseTypes.includes(t.transaction_type)) {
-      return true;
-    }
-    
-    // Legacy transfer handling: sender is expense
-    if (t.transaction_type === 'transfer') {
-      // If sender/receiver IDs exist, use them
-      if (t.receiver_id !== undefined && t.sender_id !== undefined) {
-        return t.sender_id === t.user_id;
-      }
-      // Otherwise, use amount sign for self-transfers (negative = expense)
-      return t.amount < 0;
-    }
-    
-    // Expected/scheduled payments that aren't income are expenses
-    // Check transaction_metadata first, fallback to metadata
-    const metadata = (t as any).transaction_metadata || t.metadata;
-    if (t.status === 'scheduled' || (metadata && (metadata as any).source === 'USER_EXPECTED_PAYMENT')) {
-      return true;
-    }
-    
-    return false;
+    // SIMPLIFIED LOGIC: Any transaction that's not income is an expense
+    // This ensures we don't miss any transaction types
+    return !isIncomeTransaction(t);
   };
 
   // Apply account filter first
