@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { transactionsAPI } from '@/lib/api';
+import { transactionsAPI, expectedPaymentsAPI, subscriptionsAPI } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -34,6 +34,30 @@ export default function TransactionsPage() {
     staleTime: 0,
   });
 
+  // Fetch expected payments (manually scheduled)
+  const { data: expectedPaymentsData, refetch: refetchExpectedPayments } = useQuery({
+    queryKey: ['expected-payments'],
+    queryFn: async () => {
+      const response = await expectedPaymentsAPI.getAll();
+      return response.data;
+    },
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+
+  // Fetch subscription statistics (includes upcoming payments)
+  const { data: subscriptionStatsData, refetch: refetchSubscriptionStats } = useQuery({
+    queryKey: ['subscription-stats'],
+    queryFn: async () => {
+      const response = await subscriptionsAPI.getStatistics();
+      return response.data;
+    },
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+
   // Fetch accurate stats from backend (calculated from transactions in selected period)
   const { data: statsData, refetch: refetchStats, isRefetching: isRefetchingStats } = useQuery({
     queryKey: ['transaction-stats', 'last_12_months'],
@@ -46,7 +70,11 @@ export default function TransactionsPage() {
     staleTime: 0,
   });
 
-  const transactions = transactionsData?.transactions || [];
+  const regularTransactions = transactionsData?.transactions || [];
+  const expectedPayments = expectedPaymentsData?.expected_payments || [];
+  
+  // Merge all transactions including expected payments
+  const transactions = [...regularTransactions, ...expectedPayments];
   const stats = {
     total_income: statsData?.total_income || 0,
     total_expenses: statsData?.total_expenses || 0,
@@ -86,7 +114,12 @@ export default function TransactionsPage() {
 
   const handleRefresh = async () => {
     try {
-      await Promise.all([refetchTransactions(), refetchStats()]);
+      await Promise.all([
+        refetchTransactions(), 
+        refetchStats(), 
+        refetchExpectedPayments(),
+        refetchSubscriptionStats()
+      ]);
       toast.success('Activity refreshed successfully');
     } catch (error) {
       toast.error('Failed to refresh activity');

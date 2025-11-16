@@ -154,6 +154,7 @@ export const isicAPI = {
 };
 
 export const expectedPaymentsAPI = {
+  getAll: () => api.get('/expected-payments'),
   create: (data: any) => api.post('/expected-payments', data),
   update: (id: number, data: any) => api.put(`/expected-payments/${id}`, data),
   delete: (id: number) => api.delete(`/expected-payments/${id}`),

@@ -7,6 +7,24 @@ from dateutil.relativedelta import relativedelta
 
 expected_payments_bp = Blueprint('expected_payments', __name__)
 
+@expected_payments_bp.route('', methods=['GET'])
+@expected_payments_bp.route('/', methods=['GET'])
+@jwt_required()
+def get_expected_payments():
+    """Get all expected/scheduled payments for the current user"""
+    user_id = int(get_jwt_identity())
+    
+    # Get all scheduled transactions (expected payments)
+    scheduled_transactions = Transaction.query.filter_by(
+        user_id=user_id,
+        status='scheduled'
+    ).order_by(Transaction.created_at.desc()).all()
+    
+    return jsonify({
+        'expected_payments': [t.to_dict() for t in scheduled_transactions],
+        'count': len(scheduled_transactions)
+    }), 200
+
 @expected_payments_bp.route('', methods=['POST'])
 @expected_payments_bp.route('/', methods=['POST'])
 @jwt_required()
