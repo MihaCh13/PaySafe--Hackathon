@@ -29,7 +29,8 @@ import {
   AlertTriangle,
   Key,
   Camera,
-  Trash2
+  Trash2,
+  X
 } from 'lucide-react';
 
 const MotionCard = motion.create(Card);
@@ -209,6 +210,18 @@ export default function ProfilePage() {
                     </AvatarFallback>
                   )}
                 </Avatar>
+                {user?.profile_photo_url && (
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleDeletePhoto}
+                    disabled={isUploadingPhoto}
+                    className="absolute -top-1 -right-1 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-all disabled:opacity-50 z-10"
+                    title="Remove photo"
+                  >
+                    <X className="h-4 w-4" />
+                  </motion.button>
+                )}
               </div>
             </div>
             <input
@@ -249,19 +262,6 @@ export default function ProfilePage() {
                     Change PIN
                   </Button>
                 </motion.div>
-                {user?.profile_photo_url && (
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={handleDeletePhoto}
-                      disabled={isUploadingPhoto}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Remove Photo
-                    </Button>
-                  </motion.div>
-                )}
               </div>
             </div>
           </div>
