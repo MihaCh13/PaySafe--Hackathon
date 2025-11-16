@@ -24,8 +24,6 @@ class Subscription(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     cancelled_at = db.Column(db.DateTime)
     
-    card = db.relationship('VirtualCard', backref='subscriptions', lazy=True)
-    
     def get_next_cycle_date(self, from_date=None):
         """
         Calculate the next billing date based on billing cycle.
