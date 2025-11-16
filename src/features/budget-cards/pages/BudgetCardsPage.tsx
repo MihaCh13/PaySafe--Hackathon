@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cardsAPI, walletAPI } from '@/lib/api';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
@@ -115,7 +115,7 @@ export default function BudgetCardsPage() {
   });
 
   const spendMutation = useMutation({
-    mutationFn: ({ cardId, amount, description, cardName }: { cardId: number; amount: number; description?: string; cardName?: string }) =>
+    mutationFn: ({ cardId, amount, description }: { cardId: number; amount: number; description?: string; cardName?: string }) =>
       cardsAPI.spendFromCard(cardId, amount, description),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['cards'] });
@@ -275,12 +275,6 @@ export default function BudgetCardsPage() {
   const paymentCards = cardsData?.cards?.filter((card: any) => card.card_purpose === 'payment') || [];
   const budgetCards = cardsData?.cards?.filter((card: any) => card.card_purpose === 'budget') || [];
   const subscriptionCards = cardsData?.cards?.filter((card: any) => card.card_purpose === 'subscription') || [];
-
-  const getProgressColor = (percentage: number) => {
-    if (percentage < 50) return 'bg-green-500';
-    if (percentage < 80) return 'bg-yellow-500';
-    return 'bg-red-500';
-  };
 
   return (
     <AnimatedSection className="space-y-6 max-w-7xl mx-auto" stagger>
@@ -578,28 +572,27 @@ export default function BudgetCardsPage() {
             {/* Main Wallet Card - Primary Card */}
             {walletData && (
               <MotionCard 
-                className="overflow-hidden border-none shadow-lg"
+                className="overflow-hidden border-none shadow-lg h-[180px]"
                 style={{
                   background: 'linear-gradient(135deg, #9b87f5 0%, #7DD3FC 50%, #60C5E8 100%)',
-                  minHeight: '180px',
                 }}
               >
-                <CardContent className="p-5 h-full flex flex-col justify-between">
+                <CardContent className="p-4 h-full flex flex-col justify-between">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <p className="text-xs text-white/80 font-medium uppercase tracking-wide mb-1">Main Wallet Card</p>
-                      <h3 className="font-bold text-white text-base">Primary Balance</h3>
+                    <div className="flex-1">
+                      <p className="text-xs text-white/80 font-semibold uppercase tracking-wide">Main Wallet Card</p>
+                      <h3 className="font-semibold text-white text-sm mt-0.5">Primary Balance</h3>
                     </div>
-                    <Wallet className="h-5 w-5 text-white/90" />
+                    <Wallet className="h-4 w-4 text-white/90 flex-shrink-0" />
                   </div>
-                  <div className="mt-3">
-                    <p className="text-sm text-white/90 mb-2">**** **** **** {(walletData.id || '0000').toString().slice(-4).padStart(4, '0')}</p>
-                    <p className="text-lg font-bold text-white mb-3">{formatCurrency(walletData.balance || 0, selectedCurrency)}</p>
+                  <div className="space-y-1">
+                    <p className="text-xs text-white/90">**** **** **** {(walletData.id || '0000').toString().slice(-4).padStart(4, '0')}</p>
+                    <p className="text-base font-bold text-white">{formatCurrency(walletData.balance || 0, selectedCurrency)}</p>
                   </div>
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30"
+                    className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30 h-8 text-xs"
                   >
                     View Details
                   </Button>
@@ -609,47 +602,43 @@ export default function BudgetCardsPage() {
 
             {/* Payment Cards with Gradients */}
             {paymentCards.map((card: any) => {
-              // Determine card type and gradient based on card name
               const isOneTime = card.card_name.toLowerCase().includes('one-time');
               const cardType = isOneTime ? 'ONE-TIME CARD' : 'STANDARD DIGITAL CARD';
               const cardGradient = isOneTime 
-                ? 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)' // Orange for One-Time
-                : 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)'; // Purple for Standard
+                ? 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)'
+                : 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)';
               
               return (
                 <MotionCard 
                   key={card.id}
-                  className="overflow-hidden border-none shadow-lg"
+                  className="overflow-hidden border-none shadow-lg h-[180px]"
                   style={{
                     background: cardGradient,
-                    minHeight: '180px',
                   }}
                 >
-                  <CardContent className="p-5 h-full flex flex-col justify-between">
+                  <CardContent className="p-4 h-full flex flex-col justify-between">
                     <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-xs text-white/80 font-medium uppercase tracking-wide mb-1">
+                      <div className="flex-1">
+                        <p className="text-xs text-white/80 font-semibold uppercase tracking-wide">
                           {cardType}
                         </p>
-                        <h3 className="font-bold text-white text-base">{card.card_name}</h3>
+                        <h3 className="font-semibold text-white text-sm mt-0.5">{card.card_name}</h3>
                       </div>
-                      <CreditCard className="h-5 w-5 text-white/90" />
+                      <CreditCard className="h-4 w-4 text-white/90 flex-shrink-0" />
                     </div>
-                    <div className="mt-3">
-                      <p className="text-sm text-white/90 mb-2">**** **** **** {card.card_number_last4}</p>
-                      <div className="flex items-center gap-2 mb-3">
-                        {card.is_frozen && (
-                          <Badge variant="secondary" className="bg-white/20 text-white border-white/30 text-xs">
-                            <Lock className="h-3 w-3 mr-1" />
-                            Frozen
-                          </Badge>
-                        )}
-                      </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-white/90">**** **** **** {card.card_number_last4}</p>
+                      {card.is_frozen && (
+                        <Badge variant="secondary" className="bg-white/20 text-white border-white/30 text-xs w-fit">
+                          <Lock className="h-3 w-3 mr-1" />
+                          Frozen
+                        </Badge>
+                      )}
                     </div>
                     <Button
                       size="sm"
                       variant="secondary"
-                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30"
+                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30 h-8 text-xs"
                       onClick={() => {
                         setSelectedCardId(card.id);
                         setPaymentDetailOpen(true);
