@@ -44,7 +44,15 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 *   **ISIC Discounts:** Integration for student card-based discounts.
 *   **Security Settings:** PIN management, visual-only features for email verification, 2FA, active sessions, rate limiting, and session timeout.
 *   **Notifications:** Comprehensive notification system with persistent bell icon badge, Zustand store with localStorage persistence, toast notifications for all financial actions (transfers, top-ups, budget card spending), and currency-aware notification helpers that format amounts based on user's selected currency.
-*   **Budget Cards:** Enhanced visual hierarchy with prominently displayed available balance in green highlight box, comprehensive budget overview showing total budget and spent amounts, progress bar with color-coded usage indicators, and full multi-currency support. Automatic query invalidation ensures Dashboard Recent Transactions displays all transaction types including budget card payments.
+*   **Budget Cards:** Redesigned with user-friendly three-value structure for immediate understanding:
+    - **Left**: Initial Budget Loaded (total deposited)
+    - **Center**: Amount Spent with red emphasis box
+    - **Right**: Remaining Balance (emphasized in green)
+    - Symmetrical layout with clear numerical values visible at a glance
+    - Thin progress bar below as optional visual indicator (0%-100% with percentage used)
+    - Full multi-currency support throughout
+    - Consistent layout across both "All" and "Budget" tabs
+    - Automatic query invalidation ensures Dashboard Recent Transactions displays all transaction types including budget card payments
 
 ### System Design Choices
 *   **Database Schema:** Core entities include Users, Wallets, Transactions, VirtualCards, Subscriptions, SavingsPockets, Goals, Marketplace (Listings, Orders), Loans, Repayments, and ISIC models.
