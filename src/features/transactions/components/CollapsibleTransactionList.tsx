@@ -79,10 +79,52 @@ export default function CollapsibleTransactionList({
   };
 
   // Helper to determine if transaction is expense
+  // COMPREHENSIVE list of ALL expense transaction types from backend
   const isExpenseTransaction = (t: Transaction): boolean => {
-    // SIMPLIFIED LOGIC: Any transaction that's not income is an expense
-    // This ensures we don't miss any transaction types
-    return !isIncomeTransaction(t);
+    // First check: if it's income, it's NOT an expense
+    if (isIncomeTransaction(t)) {
+      return false;
+    }
+    
+    // ALL expense types from backend (verified against backend code)
+    const expenseTypes = [
+      'payment',                    // Generic payments
+      'purchase',                   // Marketplace purchases
+      'transfer_sent',              // Sent transfers
+      'card_payment',               // Virtual card payments
+      'subscription_payment',       // Subscription charges
+      'loan_disbursement',          // Loan given out
+      'loan_repayment',             // Loan repayments made
+      'loan_cancelled_return',      // Cancelled loan return
+      'savings_deposit',            // Deposit to savings
+      'budget_allocation',          // Budget card funding
+      'budget_expense',             // Budget card spending
+      'withdrawal',                 // Withdrawals
+    ];
+    
+    if (expenseTypes.includes(t.transaction_type)) {
+      return true;
+    }
+    
+    // Legacy transfer handling: sender is expense
+    if (t.transaction_type === 'transfer') {
+      if (t.receiver_id !== undefined && t.sender_id !== undefined) {
+        return t.sender_id === t.user_id;
+      }
+      return t.amount < 0;
+    }
+    
+    // Expected/scheduled payments that aren't income are expenses
+    const metadata = (t as any).transaction_metadata || t.metadata;
+    if (t.status === 'scheduled' || (metadata && (metadata as any).source === 'USER_EXPECTED_PAYMENT')) {
+      return true;
+    }
+    
+    // SAFE FALLBACK: For unknown types, use amount sign
+    // Negative amount = expense (outgoing)
+    // Positive/zero amount = NOT expense (likely missed income type or neutral transaction)
+    // This is safer than defaulting ALL unknown types to expense
+    return t.amount < 0;
   };
 
   // Apply account filter first
