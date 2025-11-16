@@ -53,6 +53,14 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
     - Full multi-currency support throughout
     - Consistent layout across both "All" and "Budget" tabs
     - Automatic query invalidation ensures Dashboard Recent Transactions displays all transaction types including budget card payments
+*   **Payment Cards Section:** Compact rectangular card tiles with gradient designs:
+    - **Main Wallet Card**: Primary balance card with app's signature violet-cyan gradient, displays current balance
+    - **One-Time Card**: Orange gradient (#F97316 to #FB923C) for one-time payment cards
+    - **Standard Digital Card**: Purple gradient (#8B5CF6 to #A78BFA) for standard payment cards
+    - Fixed height (180px), no excessive white space
+    - Consistent structure: card type (uppercase label), masked card number, "View Details" button at same position
+    - Gradient selection based on card type, not array index
+    - All cards display card icon, frozen status badge when applicable
 
 ### System Design Choices
 *   **Database Schema:** Core entities include Users, Wallets, Transactions, VirtualCards, Subscriptions, SavingsPockets, Goals, Marketplace (Listings, Orders), Loans, Repayments, and ISIC models.
