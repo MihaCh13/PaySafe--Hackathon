@@ -369,7 +369,9 @@ export default function BudgetCardsPage() {
         <CardContent className="p-3 h-full flex flex-col justify-between">
           <div className="flex justify-between items-start mb-1">
             <div className="flex-1">
-              <p className="text-xs text-gray-500 font-medium">{card.category || card.card_purpose === 'subscription' ? 'Subscriptions' : 'Budget'}</p>
+              <p className="text-xs text-gray-500 font-medium">
+                {card.card_purpose === 'subscription' ? 'Subscriptions' : (card.category || 'Budget')}
+              </p>
               <h3 className="font-semibold text-sm">{card.card_name}</h3>
             </div>
             {card.icon && <span className="text-base">{card.icon}</span>}

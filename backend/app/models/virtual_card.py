@@ -90,13 +90,13 @@ class VirtualCard(db.Model):
     # Budget Card Methods
     def get_remaining_balance(self):
         """Get remaining budget (allocated - spent)"""
-        if self.card_purpose != 'budget':
+        if self.card_purpose not in ['budget', 'subscription']:
             return 0
         return float(self.allocated_amount - self.spent_amount)
     
     def get_spent_percentage(self):
         """Get percentage of budget spent"""
-        if self.card_purpose != 'budget' or self.allocated_amount == 0:
+        if self.card_purpose not in ['budget', 'subscription'] or self.allocated_amount == 0:
             return 0
         return float((self.spent_amount / self.allocated_amount) * 100)
     
