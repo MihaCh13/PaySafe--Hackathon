@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { cardsAPI } from '@/lib/api';
+import { cardsAPI, walletAPI } from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CreditCard, Plus, Lock, Unlock, ArrowUpCircle, MinusCircle, Calendar, Pause, Play, Trash2 } from 'lucide-react';
+import { CreditCard, Plus, Lock, Unlock, ArrowUpCircle, MinusCircle, Calendar, Pause, Play, Trash2, Wallet } from 'lucide-react';
 import { toast } from 'sonner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
@@ -74,6 +74,15 @@ export default function BudgetCardsPage() {
         queryClient.invalidateQueries({ queryKey: ['cards'] });
       }
       return response.data;
+    },
+  });
+
+  // Fetch wallet data for main card
+  const { data: walletData } = useQuery({
+    queryKey: ['wallet'],
+    queryFn: async () => {
+      const response = await walletAPI.getWallet();
+      return response.data.wallet;
     },
   });
 
@@ -566,32 +575,92 @@ export default function BudgetCardsPage() {
 
         <TabsContent value="payment" className="space-y-4 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {paymentCards.map((card: any) => (
-              <MotionCard key={card.id}>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
+            {/* Main Wallet Card - Primary Card */}
+            {walletData && (
+              <MotionCard 
+                className="overflow-hidden border-none shadow-lg"
+                style={{
+                  background: 'linear-gradient(135deg, #9b87f5 0%, #7DD3FC 50%, #60C5E8 100%)',
+                  minHeight: '180px',
+                }}
+              >
+                <CardContent className="p-5 h-full flex flex-col justify-between">
+                  <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-sm text-gray-500">Payment Card</p>
-                      <h3 className="font-semibold text-lg">{card.card_name}</h3>
+                      <p className="text-xs text-white/80 font-medium uppercase tracking-wide mb-1">Main Wallet Card</p>
+                      <h3 className="font-bold text-white text-base">Primary Balance</h3>
                     </div>
-                    <CreditCard className="h-6 w-6 text-violet-600" />
+                    <Wallet className="h-5 w-5 text-white/90" />
                   </div>
-                  <p className="text-gray-600 mb-4">**** **** **** {card.card_number_last4}</p>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant={card.is_frozen ? 'default' : 'secondary'}
-                      onClick={() =>
-                        card.is_frozen ? unfreezeMutation.mutate(card.id) : freezeMutation.mutate(card.id)
-                      }
-                    >
-                      {card.is_frozen ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-                      {card.is_frozen ? 'Unfreeze' : 'Freeze'}
-                    </Button>
+                  <div className="mt-3">
+                    <p className="text-sm text-white/90 mb-2">**** **** **** {(walletData.id || '0000').toString().slice(-4).padStart(4, '0')}</p>
+                    <p className="text-lg font-bold text-white mb-3">{formatCurrency(walletData.balance || 0, selectedCurrency)}</p>
                   </div>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30"
+                  >
+                    View Details
+                  </Button>
                 </CardContent>
               </MotionCard>
-            ))}
+            )}
+
+            {/* Payment Cards with Gradients */}
+            {paymentCards.map((card: any) => {
+              // Determine card type and gradient based on card name
+              const isOneTime = card.card_name.toLowerCase().includes('one-time');
+              const cardType = isOneTime ? 'ONE-TIME CARD' : 'STANDARD DIGITAL CARD';
+              const cardGradient = isOneTime 
+                ? 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)' // Orange for One-Time
+                : 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)'; // Purple for Standard
+              
+              return (
+                <MotionCard 
+                  key={card.id}
+                  className="overflow-hidden border-none shadow-lg"
+                  style={{
+                    background: cardGradient,
+                    minHeight: '180px',
+                  }}
+                >
+                  <CardContent className="p-5 h-full flex flex-col justify-between">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-xs text-white/80 font-medium uppercase tracking-wide mb-1">
+                          {cardType}
+                        </p>
+                        <h3 className="font-bold text-white text-base">{card.card_name}</h3>
+                      </div>
+                      <CreditCard className="h-5 w-5 text-white/90" />
+                    </div>
+                    <div className="mt-3">
+                      <p className="text-sm text-white/90 mb-2">**** **** **** {card.card_number_last4}</p>
+                      <div className="flex items-center gap-2 mb-3">
+                        {card.is_frozen && (
+                          <Badge variant="secondary" className="bg-white/20 text-white border-white/30 text-xs">
+                            <Lock className="h-3 w-3 mr-1" />
+                            Frozen
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30"
+                      onClick={() => {
+                        setSelectedCardId(card.id);
+                        setPaymentDetailOpen(true);
+                      }}
+                    >
+                      View Details
+                    </Button>
+                  </CardContent>
+                </MotionCard>
+              );
+            })}
           </div>
         </TabsContent>
 
