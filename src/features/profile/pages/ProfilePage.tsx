@@ -198,13 +198,13 @@ export default function ProfilePage() {
       <MotionCard variants={itemVariants} className="border-0 shadow-sm">
         <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <div className="relative group">
-              <Avatar className="h-24 w-24 border-4 border-transparent bg-gradient-to-br from-violet-500 via-indigo-500 to-purple-500 p-0.5">
+            <div className="relative group flex flex-col items-center gap-3">
+              <Avatar className="h-32 w-32 border-[6px] border-transparent bg-gradient-to-br from-violet-500 via-indigo-500 to-purple-600 p-1 shadow-xl">
                 <div className="h-full w-full rounded-full overflow-hidden bg-white">
                   {user?.profile_photo_url ? (
                     <AvatarImage src={user.profile_photo_url} alt="Profile photo" className="object-cover" />
                   ) : (
-                    <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-3xl font-bold">
+                    <AvatarFallback className="bg-gradient-to-br from-violet-500 via-indigo-500 to-purple-500 text-white text-4xl font-bold">
                       {getInitials()}
                     </AvatarFallback>
                   )}
@@ -217,26 +217,33 @@ export default function ProfilePage() {
                 onChange={handlePhotoChange}
                 className="hidden"
               />
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={handlePhotoClick}
-                disabled={isUploadingPhoto}
-                className="absolute -bottom-1 -right-1 p-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex gap-2"
               >
-                <Camera className="h-4 w-4" />
-              </motion.button>
-              {user?.profile_photo_url && (
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={handleDeletePhoto}
+                <Button
+                  onClick={handlePhotoClick}
                   disabled={isUploadingPhoto}
-                  className="absolute -top-1 -right-1 p-2 bg-red-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+                  size="sm"
+                  className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-md"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </motion.button>
-              )}
+                  <Camera className="h-4 w-4 mr-2" />
+                  {isUploadingPhoto ? 'Uploading...' : user?.profile_photo_url ? 'Replace Photo' : 'Add Photo'}
+                </Button>
+                {user?.profile_photo_url && (
+                  <Button
+                    onClick={handleDeletePhoto}
+                    disabled={isUploadingPhoto}
+                    size="sm"
+                    variant="destructive"
+                    className="shadow-md"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remove
+                  </Button>
+                )}
+              </motion.div>
             </div>
 
             <div className="flex-1 text-center md:text-left">

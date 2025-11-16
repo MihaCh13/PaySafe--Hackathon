@@ -1,0 +1,46 @@
+Please audit and fully fix all UI and functionality inconsistencies across the app, especially in the Profile and Transfer sections. Here are the required adjustments:
+
+1. Profile Photo Behavior
+
+The profile photo control must use a button labeled 'Add Photo' if the user has no profile picture, and 'Replace Photo' if they already have one.
+
+If no photo is uploaded, do not display an empty white or gray circle; instead, show a circle filled with the app's signature gradient background, containing the user's initials.
+
+Restore the gradient border around the profile photo. It should match the full UI style of the app — smooth, colorful, and consistent with the design system, not a flat or dull purple.
+
+2. NavBar & Logo Placement
+
+The UniPay logo + text must appear only in the always-visible top navigation bar.
+
+The collapsible side NavBar must not show the UniPay logo or the text.
+
+The collapsible NavBar should contain only the collapse/expand arrow, and this arrow must always be visible and functional.
+
+3. Transfers Section (Send/Receive Money)
+
+The 'Show QR Code' button next to the Username loads very slowly; please optimize or fix the loading behavior.
+
+The section labels must be corrected:
+
+'Scan QR Code' → should appear in Send Money
+
+'Show QR Code' → should remain in its proper place (receive/request)
+
+Restore the button that allowed sending money via bank account / IBAN, using the app’s UI color palette and proper styling.
+
+4. Activity Sync Issues
+
+Transactions from the backend (e.g., completed transactions dated 30.10 and others) are not being reflected in the Activity section.
+
+Please investigate and fix the synchronization between the transaction data and the Activity feed so that all completed transfers appear correctly and immediately.
+
+5. Missing or Lost UI Features
+
+Several UI elements, animations, and design features that were previously implemented no longer appear.
+Please restore all earlier UI/UX enhancements across all sections, including:
+
+consistent animations when switching between pages (Dashboard, Top-Up, Transfers, Activity, Saving Goals, Budget Cards, Dark Day Pockets, IC Discounts, Marketplace, etc.)
+
+proper color usage, spacing, and component layout as originally specified.
+
+Please update all of these areas to match the intended UI, styling, and functional behavior of the UniPay application."
