@@ -417,38 +417,41 @@ export default function BudgetCardsPage() {
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-3 gap-2 mt-4">
             <Button
               size="sm"
               variant="outline"
+              className="w-full text-xs"
               onClick={() => {
                 setSelectedCardId(card.id);
                 setAllocateDialogOpen(true);
               }}
             >
-              <ArrowUpCircle className="h-4 w-4 mr-1" />
+              <ArrowUpCircle className="h-3 w-3 mr-1" />
               Add Funds
             </Button>
             <Button
               size="sm"
               variant="outline"
+              className="w-full text-xs"
               onClick={() => {
                 setSelectedCardId(card.id);
                 setSpendDialogOpen(true);
               }}
             >
-              <MinusCircle className="h-4 w-4 mr-1" />
+              <MinusCircle className="h-3 w-3 mr-1" />
               Spend
             </Button>
             <Button
               size="sm"
               variant="outline"
+              className="w-full text-xs"
               onClick={() => {
                 setSelectedCardId(card.id);
                 card.card_purpose === 'budget' ? setBudgetDetailOpen(true) : setSubscriptionDetailOpen(true);
               }}
             >
-              <Info className="h-4 w-4 mr-1" />
+              <Info className="h-3 w-3 mr-1" />
               Details
             </Button>
           </div>
