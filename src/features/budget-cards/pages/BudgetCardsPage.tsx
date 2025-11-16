@@ -367,30 +367,59 @@ export default function BudgetCardsPage() {
         style={{ borderColor: card.color || '#e5e7eb' }}
       >
         <CardContent className="p-3 h-full flex flex-col justify-between">
-          <div className="flex justify-between items-start mb-2">
+          <div className="flex justify-between items-start mb-1">
             <div className="flex-1">
-              <p className="text-xs text-gray-500 font-medium">{card.category || 'Budget'}</p>
+              <p className="text-xs text-gray-500 font-medium">{card.category || card.card_purpose === 'subscription' ? 'Subscriptions' : 'Budget'}</p>
               <h3 className="font-semibold text-sm">{card.card_name}</h3>
             </div>
-            {card.icon && <span className="text-lg">{card.icon}</span>}
+            {card.icon && <span className="text-base">{card.icon}</span>}
           </div>
           
-          <div className="flex-1 flex flex-col justify-center space-y-1.5">
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-gray-500">Loaded:</span>
-              <span className="font-bold">{formatCurrency(card.allocated_amount || 0, selectedCurrency)}</span>
+          <div className="space-y-2">
+            {/* Symmetrical Layout: Budget Loaded (Left) vs Remaining Balance (Right) */}
+            <div className="flex justify-between items-center gap-2">
+              {/* Left: Budget Loaded */}
+              <div className="flex-1 text-left">
+                <div className="text-xs text-gray-500 font-medium mb-0.5">Budget Loaded</div>
+                <div className="text-sm font-bold text-gray-900">
+                  {formatCurrency(card.allocated_amount || 0, selectedCurrency)}
+                </div>
+              </div>
+              
+              {/* Right: Remaining Balance */}
+              <div className="flex-1 text-right">
+                <div className="text-xs text-green-600 font-medium mb-0.5">Remaining Balance</div>
+                <div className="text-sm font-bold text-green-600">
+                  {formatCurrency(card.remaining_balance || 0, selectedCurrency)}
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between items-center text-xs bg-red-50 rounded px-2 py-1">
-              <span className="text-red-700 font-medium">Spent:</span>
-              <span className="font-bold text-red-600">{formatCurrency(card.spent_amount || 0, selectedCurrency)}</span>
+            
+            {/* Center: Amount Spent */}
+            <div className="text-center py-1.5 px-2 bg-red-50 rounded-lg border border-red-200">
+              <div className="text-xs text-red-700 font-medium mb-0.5">Amount Spent</div>
+              <div className="text-sm font-semibold text-red-600">
+                {formatCurrency(card.spent_amount || 0, selectedCurrency)}
+              </div>
             </div>
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-green-600 font-medium">Remaining:</span>
-              <span className="font-bold text-green-600">{formatCurrency(card.remaining_balance || 0, selectedCurrency)}</span>
+            
+            {/* Thin Progress Bar */}
+            <div>
+              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-violet-600 transition-all"
+                  style={{ width: `${Math.min(card.spent_percentage || 0, 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-xs text-gray-400 mt-0.5">
+                <span>0%</span>
+                <span className="font-medium text-gray-600">{(card.spent_percentage || 0).toFixed(0)}% used</span>
+                <span>100%</span>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-1 mt-2">
+          <div className="grid grid-cols-3 gap-1 mt-1">
             <Button
               size="sm"
               variant="outline"
@@ -545,10 +574,10 @@ export default function BudgetCardsPage() {
 
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">All ({cardsData?.cards?.length || 0})</TabsTrigger>
-          <TabsTrigger value="payment">Payment ({paymentCards.length})</TabsTrigger>
-          <TabsTrigger value="budget">Budget ({budgetCards.length})</TabsTrigger>
-          <TabsTrigger value="subscription">Subscriptions ({subscriptionCards.length})</TabsTrigger>
+          <TabsTrigger value="all">All ({(walletData ? 1 : 0) + paymentCards.length + budgetCards.length + subscriptionCards.length})</TabsTrigger>
+          <TabsTrigger value="payment">Payment ({(walletData ? 1 : 0) + paymentCards.length})</TabsTrigger>
+          <TabsTrigger value="budget">Budget ({(walletData ? 1 : 0) + paymentCards.length + budgetCards.length})</TabsTrigger>
+          <TabsTrigger value="subscription">Subscriptions ({(walletData ? 1 : 0) + paymentCards.length + subscriptionCards.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4 mt-6">

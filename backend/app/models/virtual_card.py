@@ -196,6 +196,12 @@ class VirtualCard(db.Model):
             data['color'] = self.color
             data['icon'] = self.icon
             
+            # Financial data (same as budget cards)
+            data['allocated_amount'] = float(self.allocated_amount)
+            data['spent_amount'] = float(self.spent_amount)
+            data['remaining_balance'] = self.get_remaining_balance()
+            data['spent_percentage'] = self.get_spent_percentage()
+            
             # Get subscription summary
             subscriptions_list = self.subscriptions.all()
             data['subscription_count'] = len(subscriptions_list)
