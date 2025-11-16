@@ -20,6 +20,7 @@ import { AnimatedSection } from '@/components/animations/AnimatedSection';
 import { AnimatedDiv } from '@/components/animations/AnimatedDiv';
 import { MotionCard } from '@/components/animations/MotionCard';
 import { fadeUp, listItem } from '@/lib/animations';
+import { notifyBudgetCardPayment } from '@/utils/notifications';
 
 export default function BudgetCardsPage() {
   const { selectedCurrency } = useCurrencyStore();
@@ -105,13 +106,17 @@ export default function BudgetCardsPage() {
   });
 
   const spendMutation = useMutation({
-    mutationFn: ({ cardId, amount, description }: { cardId: number; amount: number; description?: string }) =>
+    mutationFn: ({ cardId, amount, description, cardName }: { cardId: number; amount: number; description?: string; cardName?: string }) =>
       cardsAPI.spendFromCard(cardId, amount, description),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['cards'] });
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transaction-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
       setSpendDialogOpen(false);
       setSpendAmount('');
       toast.success('Expense recorded successfully');
+      notifyBudgetCardPayment(variables.amount, variables.cardName || 'Budget Card', selectedCurrency);
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || 'Failed to record expense');
@@ -249,9 +254,11 @@ export default function BudgetCardsPage() {
   const handleSpend = () => {
     if (selectedCardId && spendAmount) {
       const amountInUSD = convertToUSD(Number(spendAmount), selectedCurrency);
+      const selectedCard = cardsData?.cards?.find((card: any) => card.id === selectedCardId);
       spendMutation.mutate({
         cardId: selectedCardId,
         amount: amountInUSD,
+        cardName: selectedCard?.card_name || 'Budget Card',
       });
     }
   };
@@ -577,20 +584,39 @@ export default function BudgetCardsPage() {
                     </div>
                     <span className="text-2xl">{card.icon}</span>
                   </div>
-                  <div className="space-y-2 mb-4">
+                  <div className="space-y-3 mb-4">
+                    {/* Remaining Balance - Most Prominent */}
+                    <div className="text-center py-2 px-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                      <div className="text-xs text-green-700 font-medium mb-1">Available Balance</div>
+                      <div className="text-2xl font-bold text-green-700">
+                        ${card.remaining_balance?.toFixed(2)}
+                      </div>
+                    </div>
+                    
+                    {/* Budget Overview */}
                     <div className="flex justify-between text-sm">
-                      <span>Allocated: ${card.allocated_amount?.toFixed(2)}</span>
-                      <span>Spent: ${card.spent_amount?.toFixed(2)}</span>
+                      <div>
+                        <div className="text-xs text-gray-500">Total Budget</div>
+                        <div className="font-semibold">${card.allocated_amount?.toFixed(2)}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500">Spent</div>
+                        <div className="font-semibold text-red-600">${card.spent_amount?.toFixed(2)}</div>
+                      </div>
                     </div>
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full transition-all ${getProgressColor(card.spent_percentage)}`}
-                        style={{ width: `${Math.min(card.spent_percentage, 100)}%` }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Remaining: ${card.remaining_balance?.toFixed(2)}</span>
-                      <span>{card.spent_percentage?.toFixed(0)}%</span>
+                    
+                    {/* Progress Bar */}
+                    <div>
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all ${getProgressColor(card.spent_percentage)}`}
+                          style={{ width: `${Math.min(card.spent_percentage, 100)}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>Budget Usage</span>
+                        <span className="font-semibold">{card.spent_percentage?.toFixed(0)}%</span>
+                      </div>
                     </div>
                   </div>
                   <div className="flex gap-2">

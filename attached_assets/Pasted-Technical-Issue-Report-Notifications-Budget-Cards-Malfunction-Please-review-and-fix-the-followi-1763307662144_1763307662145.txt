@@ -1,0 +1,70 @@
+Technical Issue Report – Notifications & Budget Cards Malfunction
+
+Please review and fix the following critical issues in the system. The notifications and transaction display logic are currently not functioning as expected.
+
+1. Notifications Are Not Working At All
+
+I performed two transfers of $15 each from one of my Budget Cards, and the system did not behave correctly:
+
+No notification appeared in the Notifications section.
+
+No real-time notification pop-up was displayed on the screen.
+
+The bell icon in the navbar did not show any indicator or badge.
+
+There was no “New Notification” inside the notifications page.
+
+This means the notifications system is completely non-functional for essential actions.
+
+2. Transactions Are Not Shown in Most Menus
+
+Even though the transfer was successfully executed, the transaction appeared only in the Activity section.
+
+It was not visible in:
+
+The dashboard’s Recent Transactions section
+
+The Recent Transfers menu
+
+The general Transfers overview
+
+This is a major issue because financial operations must be reflected everywhere they are expected.
+
+3. Budget Cards – Incorrect and Incomplete Balance Display
+
+The Budget Cards have multiple problems:
+
+They show how much money has been spent,
+but they don’t show the remaining balance on the card.
+
+There is no clear visual indication of:
+
+current balance
+
+total budget
+
+amount spent
+
+amount left
+
+This makes the Budget Cards unusable for actual budgeting — users need to know exactly how much money remains available.
+
+4. Missing Real-Time Alerts for Important Events
+
+When transferring money:
+
+No alert appeared on the screen (like mobile apps normally do).
+
+No push-style notification was shown.
+
+The user receives zero feedback that a financial action has occurred.
+
+For any financial event (payments, loading cards, transfers, incoming money), the system must immediately show:
+
+a live pop-up alert
+
+a notification in the Notifications section
+
+a badge or red dot on the bell icon
+
+None of these are happening right now.
