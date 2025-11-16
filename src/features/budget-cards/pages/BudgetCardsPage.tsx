@@ -417,42 +417,47 @@ export default function BudgetCardsPage() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-2 mt-4">
+          
+          {/* Action Buttons - Improved Layout */}
+          <div className="space-y-2 mt-4">
+            {/* Row 1: Add Funds + Spend */}
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                size="sm"
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium shadow-sm"
+                onClick={() => {
+                  setSelectedCardId(card.id);
+                  setAllocateDialogOpen(true);
+                }}
+              >
+                <ArrowUpCircle className="h-4 w-4 mr-1.5" />
+                Add Funds
+              </Button>
+              <Button
+                size="sm"
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium shadow-sm"
+                onClick={() => {
+                  setSelectedCardId(card.id);
+                  setSpendDialogOpen(true);
+                }}
+              >
+                <MinusCircle className="h-4 w-4 mr-1.5" />
+                Spend
+              </Button>
+            </div>
+            
+            {/* Row 2: Details (Full Width) */}
             <Button
               size="sm"
               variant="outline"
-              className="w-full text-xs"
-              onClick={() => {
-                setSelectedCardId(card.id);
-                setAllocateDialogOpen(true);
-              }}
-            >
-              <ArrowUpCircle className="h-3 w-3 mr-1" />
-              Add Funds
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full text-xs"
-              onClick={() => {
-                setSelectedCardId(card.id);
-                setSpendDialogOpen(true);
-              }}
-            >
-              <MinusCircle className="h-3 w-3 mr-1" />
-              Spend
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full text-xs"
+              className="w-full border-violet-200 hover:bg-violet-50 hover:border-violet-300 text-violet-700 font-medium"
               onClick={() => {
                 setSelectedCardId(card.id);
                 card.card_purpose === 'budget' ? setBudgetDetailOpen(true) : setSubscriptionDetailOpen(true);
               }}
             >
-              <Info className="h-3 w-3 mr-1" />
-              Details
+              <Info className="h-4 w-4 mr-1.5" />
+              View Details
             </Button>
           </div>
         </CardContent>
