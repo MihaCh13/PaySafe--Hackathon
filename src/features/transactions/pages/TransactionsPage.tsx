@@ -71,17 +71,38 @@ export default function TransactionsPage() {
   });
 
   const regularTransactions = transactionsData?.transactions || [];
-  const expectedPayments = expectedPaymentsData?.expected_payments || [];
+  const expectedPaymentsRaw = expectedPaymentsData?.expected_payments || [];
   
-  // Merge all transactions including expected payments
-  const transactions = [...regularTransactions, ...expectedPayments];
+  // Fix duplicate IDs: Prefix expected payment IDs to prevent React key collisions
+  const expectedPayments = expectedPaymentsRaw.map((payment: any) => ({
+    ...payment,
+    id: `expected-${payment.id}`,
+    is_upcoming: true, // Mark as upcoming for classification
+  }));
+  
+  // Separate settled (past/today) from upcoming (future) transactions
+  const today = new Date();
+  today.setHours(23, 59, 59, 999); // End of today
+  
+  const settledTransactions = regularTransactions.filter((t: any) => {
+    const txDate = new Date(t.created_at);
+    return txDate <= today;
+  });
+  
+  const upcomingTransactions = expectedPayments.filter((t: any) => {
+    const txDate = new Date(t.created_at);
+    return txDate > today;
+  });
+  
+  // Merge only settled transactions for calendar and All view
+  const transactions = [...settledTransactions];
   
   // Shared transaction type classification
   const incomeTypes = ['topup', 'income', 'refund', 'transfer_received', 'loan_repayment_received', 'loan_received', 'loan_cancelled_refund', 'savings_withdrawal', 'sale', 'budget_withdrawal'];
   const expenseTypes = ['purchase', 'transfer_sent', 'card_payment', 'subscription_payment', 'loan_disbursement', 'loan_repayment', 'loan_cancelled_return', 'savings_deposit', 'budget_allocation', 'budget_expense', 'withdrawal'];
   
-  // Calculate expected payment totals using transaction_type first, then metadata+sign fallback
-  const upcomingTotals = expectedPayments.reduce((acc: { income: number; expenses: number }, payment: any) => {
+  // Calculate upcoming payment totals (only future-dated transactions)
+  const upcomingTotals = upcomingTransactions.reduce((acc: { income: number; expenses: number }, payment: any) => {
     const isIncomeType = incomeTypes.includes(payment.transaction_type);
     const isExpenseType = expenseTypes.includes(payment.transaction_type);
     const isManualExpected = payment.metadata && payment.metadata.source === 'USER_EXPECTED_PAYMENT';
@@ -93,7 +114,7 @@ export default function TransactionsPage() {
       // Known expense type
       acc.expenses += Math.abs(payment.amount);
     } else if (isManualExpected) {
-      // Ambiguous type from manual creation - use amount sign
+      // Ambiguous type from manual creation
       // Manual expected payments use type='payment' and store as positive
       // Treat as expense (since manual expected payments are typically expenses)
       acc.expenses += Math.abs(payment.amount);
@@ -113,10 +134,32 @@ export default function TransactionsPage() {
     return sum + Math.abs(sub.amount);
   }, 0);
   
+  // Calculate stats from ACTUAL displayed transactions (settled only)
+  // This ensures All = Income + Expenses counters match what's shown in the list
+  const settledIncomeTransactions = settledTransactions.filter((t: any) => {
+    if (incomeTypes.includes(t.transaction_type)) return true;
+    // Legacy transfer handling
+    if (t.transaction_type === 'transfer') return t.receiver_id === t.user_id;
+    return false;
+  });
+  
+  const settledExpenseTransactions = settledTransactions.filter((t: any) => {
+    // Check if it's income first
+    if (incomeTypes.includes(t.transaction_type)) return false;
+    if (t.transaction_type === 'transfer') return t.sender_id === t.user_id;
+    
+    if (expenseTypes.includes(t.transaction_type)) return true;
+    return false;
+  });
+  
+  const settledIncomeTotal = settledIncomeTransactions.reduce((sum: number, t: any) => sum + Math.abs(t.amount), 0);
+  const settledExpensesTotal = settledExpenseTransactions.reduce((sum: number, t: any) => sum + Math.abs(t.amount), 0);
+  
   const stats = {
-    total_income: statsData?.total_income || 0,
-    total_expenses: statsData?.total_expenses || 0,
-    transaction_count: statsData?.transaction_count || 0,
+    total_income: settledIncomeTotal,
+    total_expenses: settledExpensesTotal,
+    transaction_count: settledTransactions.length,
+    period_label: statsData?.period_label || 'All Time',
     upcoming_income: upcomingTotals.income,
     upcoming_expenses: upcomingTotals.expenses + upcomingSubscriptionExpenses,
     upcoming_total: upcomingTotals.income + upcomingTotals.expenses + upcomingSubscriptionExpenses,
@@ -378,73 +421,14 @@ export default function TransactionsPage() {
           </div>
         </div>
 
-        {/* Upcoming Payments Section */}
-        {(expectedPayments.length > 0 || subscriptionStatsData?.upcoming_payments?.length > 0) && (
-          <MotionCard variants={itemVariants} className="border-0 shadow-sm bg-yellow-50 border-l-4 border-yellow-400">
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <CalendarIcon className="h-5 w-5 text-yellow-600" />
-                  Upcoming / Expected Payments
-                </CardTitle>
-                <div className="text-right">
-                  <p className="text-xs text-gray-600">Total Upcoming</p>
-                  <p className="text-xl font-bold text-yellow-700">{formatCurrency(stats.upcoming_total, selectedCurrency)}</p>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {expectedPayments.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Manually Scheduled</h4>
-                  {expectedPayments.slice(0, 5).map((payment: any) => (
-                    <div key={payment.id} className="flex justify-between items-center py-2 border-b border-yellow-200 last:border-0">
-                      <div>
-                        <p className="font-medium text-gray-900">{payment.description || 'Expected Payment'}</p>
-                        <p className="text-xs text-gray-600">
-                          {new Date(payment.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </p>
-                      </div>
-                      <span className="font-semibold text-yellow-700">
-                        {formatCurrency(Math.abs(payment.amount), selectedCurrency)}
-                      </span>
-                    </div>
-                  ))}
-                  {expectedPayments.length > 5 && (
-                    <p className="text-xs text-gray-600 mt-2">+ {expectedPayments.length - 5} more expected payments</p>
-                  )}
-                </div>
-              )}
-              
-              {subscriptionStatsData?.upcoming_payments && subscriptionStatsData.upcoming_payments.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Upcoming Subscriptions</h4>
-                  {subscriptionStatsData.upcoming_payments.slice(0, 5).map((sub: any) => (
-                    <div key={`sub-${sub.id || sub.subscription_id}`} className="flex justify-between items-center py-2 border-b border-yellow-200 last:border-0">
-                      <div>
-                        <p className="font-medium text-gray-900">{sub.service_name}</p>
-                        <p className="text-xs text-gray-600">
-                          {sub.next_billing_date && new Date(sub.next_billing_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </p>
-                      </div>
-                      <span className="font-semibold text-yellow-700">
-                        {formatCurrency(Math.abs(sub.amount), selectedCurrency)}
-                      </span>
-                    </div>
-                  ))}
-                  {subscriptionStatsData.upcoming_payments.length > 5 && (
-                    <p className="text-xs text-gray-600 mt-2">+ {subscriptionStatsData.upcoming_payments.length - 5} more subscriptions</p>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </MotionCard>
-        )}
-
         <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible">
           <CardContent className="p-0">
-            {transactions.length > 0 ? (
-              <CollapsibleTransactionList transactions={transactions} />
+            {(transactions.length > 0 || upcomingTransactions.length > 0) ? (
+              <CollapsibleTransactionList 
+                transactions={transactions} 
+                upcomingTransactions={upcomingTransactions}
+                subscriptionUpcoming={subscriptionStatsData?.upcoming_payments || []}
+              />
             ) : (
               <div className="p-6 text-center py-12">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">

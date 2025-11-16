@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Receipt, Wallet, Umbrella, CreditCard } from 'lucide-react';
+import { ChevronDown, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Receipt, Wallet, Umbrella, CreditCard, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 interface Transaction {
-  id: number;
+  id: number | string;
   user_id: number;
   transaction_type: string;
   transaction_source?: string;
@@ -16,16 +16,31 @@ interface Transaction {
   sender_id?: number;
   receiver_id?: number;
   metadata?: any;
+  is_upcoming?: boolean;
+}
+
+interface SubscriptionPayment {
+  id: number;
+  subscription_id?: number;
+  service_name: string;
+  amount: number;
+  next_billing_date?: string;
 }
 
 interface CollapsibleTransactionListProps {
   transactions: Transaction[];
+  upcomingTransactions?: Transaction[];
+  subscriptionUpcoming?: SubscriptionPayment[];
 }
 
-type FilterType = 'all' | 'income' | 'expenses';
+type FilterType = 'all' | 'income' | 'expenses' | 'upcoming';
 type AccountType = 'all' | 'main_wallet' | 'dark_days' | 'budget_card';
 
-export default function CollapsibleTransactionList({ transactions }: CollapsibleTransactionListProps) {
+export default function CollapsibleTransactionList({ 
+  transactions, 
+  upcomingTransactions = [], 
+  subscriptionUpcoming = [] 
+}: CollapsibleTransactionListProps) {
   const { selectedCurrency } = useCurrencyStore();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
@@ -107,16 +122,37 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
   const incomeTransactions = accountFilteredTransactions.filter(isIncomeTransaction);
   const expenseTransactions = accountFilteredTransactions.filter(isExpenseTransaction);
 
+  // Combine upcoming transactions and subscriptions
+  // Keep original amount sign to preserve income/expense classification
+  const allUpcomingItems = [
+    ...upcomingTransactions,
+    ...subscriptionUpcoming.map(sub => ({
+      id: `sub-upcoming-${sub.id || sub.subscription_id}`,
+      user_id: 0,
+      transaction_type: 'subscription_payment',
+      amount: sub.amount, // Preserve original sign for classification
+      description: sub.service_name,
+      created_at: sub.next_billing_date || new Date().toISOString(),
+      status: 'upcoming',
+      metadata: { source: 'SUBSCRIPTION_UPCOMING' },
+      is_upcoming: true,
+    } as Transaction))
+  ];
+
+  const totalUpcoming = allUpcomingItems.reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
   // Filter transactions based on active filter (layered on top of account filter)
   const filteredTransactions =
     activeFilter === 'income'
       ? incomeTransactions
       : activeFilter === 'expenses'
       ? expenseTransactions
+      : activeFilter === 'upcoming'
+      ? allUpcomingItems
       : accountFilteredTransactions;
 
-  const totalIncome = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
-  const totalExpenses = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
+  const totalIncome = incomeTransactions.reduce((sum, t) => sum + Math.abs(t.amount), 0);
+  const totalExpenses = expenseTransactions.reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   const getAccountLabel = (account: AccountType) => {
     switch (account) {
@@ -131,17 +167,28 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
     const accountPrefix = accountFilter !== 'all' ? `${getAccountLabel(accountFilter)} • ` : '';
     
     if (activeFilter === 'income') {
-      return `${accountPrefix}${incomeTransactions.length} income • +${formatCurrency(Math.abs(totalIncome), selectedCurrency)}`;
+      return `${accountPrefix}${incomeTransactions.length} income • +${formatCurrency(totalIncome, selectedCurrency)}`;
     }
     if (activeFilter === 'expenses') {
-      return `${accountPrefix}${expenseTransactions.length} expenses • -${formatCurrency(Math.abs(totalExpenses), selectedCurrency)}`;
+      return `${accountPrefix}${expenseTransactions.length} expenses • -${formatCurrency(totalExpenses, selectedCurrency)}`;
+    }
+    if (activeFilter === 'upcoming') {
+      return `${accountPrefix}${allUpcomingItems.length} upcoming • ${formatCurrency(totalUpcoming, selectedCurrency)}`;
     }
     return `${accountPrefix}${accountFilteredTransactions.length} total • ${incomeTransactions.length} income, ${expenseTransactions.length} expenses`;
   };
 
   const getTransactionIcon = (transaction: Transaction) => {
-    const isIncome = isIncomeTransaction(transaction);
+    // Upcoming transactions show in yellow
+    if (transaction.is_upcoming || transaction.status === 'upcoming') {
+      return (
+        <div className="p-2 rounded-full bg-yellow-100">
+          <Calendar className="h-4 w-4 text-yellow-600" />
+        </div>
+      );
+    }
 
+    const isIncome = isIncomeTransaction(transaction);
     return isIncome ? (
       <div className="p-2 rounded-full bg-green-100">
         <ArrowDownLeft className="h-4 w-4 text-green-600" />
@@ -154,6 +201,11 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
   };
 
   const getAmountColor = (transaction: Transaction) => {
+    // Upcoming transactions show in yellow
+    if (transaction.is_upcoming || transaction.status === 'upcoming') {
+      return 'text-yellow-700';
+    }
+    
     const isIncome = isIncomeTransaction(transaction);
     return isIncome ? 'text-green-600' : 'text-gray-900';
   };
@@ -247,6 +299,21 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
                   <TrendingDown className="h-4 w-4" />
                   Expenses ({expenseTransactions.length})
                 </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setActiveFilter('upcoming')}
+                  className={cn(
+                    'px-4 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-2',
+                    activeFilter === 'upcoming'
+                      ? 'bg-yellow-600 text-white shadow-md'
+                      : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  )}
+                >
+                  <Calendar className="h-4 w-4" />
+                  Upcoming ({allUpcomingItems.length})
+                </motion.button>
               </div>
               
               {/* Account type filter */}
@@ -326,16 +393,21 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
               >
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">
-                    {activeFilter === 'income' ? 'Total Income' : 'Total Expenses'}
+                    {activeFilter === 'income' ? 'Total Income' : activeFilter === 'expenses' ? 'Total Expenses' : 'Total Upcoming'}
                   </span>
                   <span
                     className={cn(
                       'text-lg font-bold',
-                      activeFilter === 'income' ? 'text-green-600' : 'text-red-600'
+                      activeFilter === 'income' ? 'text-green-600' : activeFilter === 'expenses' ? 'text-red-600' : 'text-yellow-700'
                     )}
                   >
-                    {activeFilter === 'income' ? '+' : '-'}
-                    {formatCurrency(Math.abs(activeFilter === 'income' ? totalIncome : totalExpenses), selectedCurrency)}
+                    {activeFilter === 'income' ? '+' : activeFilter === 'expenses' ? '-' : ''}
+                    {formatCurrency(
+                      Math.abs(
+                        activeFilter === 'income' ? totalIncome : activeFilter === 'expenses' ? totalExpenses : totalUpcoming
+                      ), 
+                      selectedCurrency
+                    )}
                   </span>
                 </div>
               </motion.div>
