@@ -62,11 +62,20 @@ export const walletAPI = {
 };
 
 export const transactionsAPI = {
-  getTransactions: (page: number = 1, per_page: number = 20, type?: string, date_from?: string, date_to?: string) => 
-    api.get('/transactions', { params: { page, per_page, type, date_from, date_to } }),
+  getTransactions: (page: number = 1, per_page: number = 20, type?: string, date_from?: string, date_to?: string) => {
+    const params: any = { page, per_page };
+    if (type) params.type = type;
+    if (date_from) params.date_from = date_from;
+    if (date_to) params.date_to = date_to;
+    return api.get('/transactions', { params });
+  },
   getTransaction: (id: number) => api.get(`/transactions/${id}`),
-  getStats: (period: string = 'last_12_months', date_from?: string, date_to?: string) => 
-    api.get('/transactions/stats', { params: { period, date_from, date_to } }),
+  getStats: (period: string = 'last_12_months', date_from?: string, date_to?: string) => {
+    const params: any = { period };
+    if (date_from) params.date_from = date_from;
+    if (date_to) params.date_to = date_to;
+    return api.get('/transactions/stats', { params });
+  },
 };
 
 export const cardsAPI = {
