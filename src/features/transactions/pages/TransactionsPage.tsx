@@ -4,7 +4,8 @@ import { transactionsAPI } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Receipt, ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus } from 'lucide-react';
+import { Receipt, ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
 import CalendarGrid from '@/features/timeline/components/CalendarGrid';
 import CompactColorLegend from '@/features/timeline/components/CompactColorLegend';
 import DayDetailModal from '@/features/timeline/components/DayDetailModal';
@@ -22,21 +23,27 @@ export default function TransactionsPage() {
   const [showExpectedPaymentModal, setShowExpectedPaymentModal] = useState(false);
 
   // Fetch transactions for display (list & calendar)
-  const { data: transactionsData } = useQuery({
+  const { data: transactionsData, refetch: refetchTransactions, isRefetching: isRefetchingTransactions } = useQuery({
     queryKey: ['all-transactions'],
     queryFn: async () => {
       const response = await transactionsAPI.getTransactions(1, 1000);
       return response.data;
     },
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
   });
 
   // Fetch accurate stats from backend (calculated from transactions in selected period)
-  const { data: statsData } = useQuery({
+  const { data: statsData, refetch: refetchStats, isRefetching: isRefetchingStats } = useQuery({
     queryKey: ['transaction-stats', 'last_12_months'],
     queryFn: async () => {
       const response = await transactionsAPI.getStats('last_12_months');
       return response.data;
     },
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
   });
 
   const transactions = transactionsData?.transactions || [];
@@ -77,6 +84,15 @@ export default function TransactionsPage() {
     setDetailModalOpen(true);
   };
 
+  const handleRefresh = async () => {
+    try {
+      await Promise.all([refetchTransactions(), refetchStats()]);
+      toast.success('Activity refreshed successfully');
+    } catch (error) {
+      toast.error('Failed to refresh activity');
+    }
+  };
+
   const currentMonthName = currentDate.toLocaleDateString('en-US', {
     month: 'long',
     year: 'numeric',
@@ -103,7 +119,19 @@ export default function TransactionsPage() {
       className="space-y-6 max-w-7xl mx-auto"
     >
       <motion.div variants={itemVariants} className="text-center mb-2">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Activity</h1>
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900">Activity</h1>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isRefetchingTransactions || isRefetchingStats}
+            className="gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${(isRefetchingTransactions || isRefetchingStats) ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
         <p className="text-gray-600">Track your transactions and upcoming payments</p>
       </motion.div>
 
