@@ -22,12 +22,33 @@ export default function TransactionsPage() {
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [showExpectedPaymentModal, setShowExpectedPaymentModal] = useState(false);
 
-  // Fetch transactions for display (list & calendar)
+  // Fetch ALL transactions for display (list & calendar) - handle pagination
   const { data: transactionsData, refetch: refetchTransactions, isRefetching: isRefetchingTransactions } = useQuery({
     queryKey: ['all-transactions'],
     queryFn: async () => {
-      const response = await transactionsAPI.getTransactions(1, 1000);
-      return response.data;
+      let allTransactions: any[] = [];
+      let currentPage = 1;
+      let hasMore = true;
+      
+      // Fetch all pages
+      while (hasMore) {
+        const response = await transactionsAPI.getTransactions(currentPage, 1000);
+        const data = response.data;
+        
+        allTransactions = [...allTransactions, ...(data.transactions || [])];
+        
+        // Check if there are more pages (backend returns 'pages' field for total pages)
+        hasMore = data.pages && currentPage < data.pages;
+        currentPage++;
+        
+        // Safety break to prevent infinite loops (max 100 pages = 100k transactions)
+        if (currentPage > 100) break;
+      }
+      
+      return { 
+        transactions: allTransactions,
+        total: allTransactions.length 
+      };
     },
     refetchOnWindowFocus: true,
     refetchOnMount: true,
@@ -150,12 +171,23 @@ export default function TransactionsPage() {
     upcoming_total: upcomingTotals.income + upcomingTotals.expenses + upcomingSubscriptionExpenses,
   };
 
+  // Helper to get timezone-safe local date key (YYYY-MM-DD)
+  const getLocalDateKey = (dateString: string): string => {
+    // Extract date part directly from ISO string to avoid timezone conversion
+    // "2024-11-16T12:00:00Z" → "2024-11-16"
+    // "2024-11-16" → "2024-11-16"
+    if (dateString.includes('T')) {
+      return dateString.split('T')[0];
+    }
+    // Fallback: if no 'T', assume it's already in YYYY-MM-DD format
+    return dateString.substring(0, 10);
+  };
+
   const groupTransactionsByDate = () => {
     const grouped: Record<string, any[]> = {};
     
     transactions.forEach((transaction: any) => {
-      const date = new Date(transaction.created_at);
-      const dateKey = date.toISOString().split('T')[0];
+      const dateKey = getLocalDateKey(transaction.created_at);
       
       if (!grouped[dateKey]) {
         grouped[dateKey] = [];
@@ -426,14 +458,22 @@ export default function TransactionsPage() {
         </MotionCard>
       </motion.div>
 
-      {selectedDate && (
-        <DayDetailModal
-          date={selectedDate}
-          transactions={transactionsByDate[selectedDate.toISOString().split('T')[0]] || []}
-          open={detailModalOpen}
-          onClose={() => setDetailModalOpen(false)}
-        />
-      )}
+      {selectedDate && (() => {
+        // Get timezone-safe date key for the selected date
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+        const dateKey = `${year}-${month}-${day}`;
+        
+        return (
+          <DayDetailModal
+            date={selectedDate}
+            transactions={transactionsByDate[dateKey] || []}
+            open={detailModalOpen}
+            onClose={() => setDetailModalOpen(false)}
+          />
+        );
+      })()}
 
       <ExpectedPaymentModal
         open={showExpectedPaymentModal}

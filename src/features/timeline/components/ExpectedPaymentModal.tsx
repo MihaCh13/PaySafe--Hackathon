@@ -46,7 +46,11 @@ export default function ExpectedPaymentModal({
         notes: payment.metadata?.notes || '',
       });
     } else if (selectedDate) {
-      const dateStr = selectedDate.toISOString().split('T')[0];
+      // Get timezone-safe local date key (YYYY-MM-DD) for Date object
+      const year = selectedDate.getFullYear();
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(selectedDate.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
       setFormData(prev => ({ ...prev, date: dateStr }));
     }
   }, [payment, selectedDate]);
