@@ -343,6 +343,9 @@ export default function TransfersPage() {
               <Banknote className="h-4 w-4 mr-2" />
               Send via Bank / IBAN
             </Button>
+            <p className="text-sm text-gray-500 dark:text-gray-400 pt-2">
+              Enter a username, scan a QR code, or use bank details to send money instantly.
+            </p>
           </CardContent>
         </MotionCard>
 
@@ -359,12 +362,6 @@ export default function TransfersPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-6 space-y-3">
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Multiple ways to receive money:{' '}
-              <span className="font-semibold text-green-600">
-                Username, QR Code, or Bank Details
-              </span>
-            </p>
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Share your username:</p>
               <p className="text-xl font-bold text-violet-600">@{user?.username || 'loading...'}</p>
@@ -388,12 +385,6 @@ export default function TransfersPage() {
               <Banknote className="h-4 w-4 mr-2" />
               View Bank Details / IBAN
             </Button>
-            <div className="p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
-              <p className="text-xs text-green-700 dark:text-green-400 leading-relaxed">
-                <span className="font-semibold">💡 Quick Tips:</span> Ask senders to use your username (@{user?.username}) for instant transfers. 
-                For larger amounts or bank transfers, share your QR code or bank details above. All methods are secure and instant.
-              </p>
-            </div>
           </CardContent>
         </MotionCard>
       </div>
