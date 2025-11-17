@@ -115,3 +115,14 @@ export const notifyBankTransfer = (amount: number, recipient: string, currency: 
     showToast
   );
 };
+
+export const notifyCardTopUp = (amount: number, cardName: string, currency: Currency = 'USD', showToast = false) => {
+  createNotification(
+    'Card Topped Up',
+    `${formatCurrency(amount, currency)} added to ${cardName}`,
+    'budget_card',
+    'violet',
+    'CreditCard',
+    showToast
+  );
+};

@@ -12,6 +12,7 @@ import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
 import { useCurrencyStore, formatCurrency, convertCurrency, convertToUSD } from '@/stores/currencyStore';
 import { QRCodeSVG } from 'qrcode.react';
+import { notifyTopUp } from '@/utils/notifications';
 
 const MotionCard = motion.create(Card);
 
@@ -42,6 +43,7 @@ export default function TopupPage() {
       queryClient.invalidateQueries({ queryKey: ['all-transactions'] });
       queryClient.invalidateQueries({ queryKey: ['transaction-stats'] });
       toast.success(`Successfully added ${formatCurrency(variables.amount, selectedCurrency)} to your wallet!`);
+      notifyTopUp(variables.amount, variables.method, selectedCurrency);
       setAmount('');
     },
     onError: (error: any) => {

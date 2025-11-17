@@ -20,7 +20,7 @@ import { AnimatedSection } from '@/components/animations/AnimatedSection';
 import { AnimatedDiv } from '@/components/animations/AnimatedDiv';
 import { MotionCard } from '@/components/animations/MotionCard';
 import { fadeUp, listItem } from '@/lib/animations';
-import { notifyBudgetCardPayment } from '@/utils/notifications';
+import { notifyBudgetCardPayment, notifyCardTopUp } from '@/utils/notifications';
 
 export default function BudgetCardsPage() {
   const { selectedCurrency } = useCurrencyStore();
@@ -101,13 +101,15 @@ export default function BudgetCardsPage() {
   });
 
   const allocateMutation = useMutation({
-    mutationFn: ({ cardId, amount }: { cardId: number; amount: number }) =>
+    mutationFn: ({ cardId, amount, cardName }: { cardId: number; amount: number; cardName?: string }) =>
       cardsAPI.allocateFunds(cardId, amount),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['cards'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
       setAllocateDialogOpen(false);
       setAllocateAmount('');
       toast.success('Funds allocated successfully');
+      notifyCardTopUp(variables.amount, variables.cardName || 'Budget Card', selectedCurrency);
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || 'Failed to allocate funds');
@@ -253,9 +255,11 @@ export default function BudgetCardsPage() {
   const handleAllocate = () => {
     if (selectedCardId && allocateAmount) {
       const amountInUSD = convertToUSD(Number(allocateAmount), selectedCurrency);
+      const selectedCard = cardsData?.cards?.find((card: any) => card.id === selectedCardId);
       allocateMutation.mutate({
         cardId: selectedCardId,
         amount: amountInUSD,
+        cardName: selectedCard?.card_name,
       });
     }
   };
