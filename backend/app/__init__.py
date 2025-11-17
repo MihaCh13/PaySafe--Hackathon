@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from werkzeug.exceptions import HTTPException
 from config import config
 from app.extensions import db, jwt, socketio, cors, migrate, limiter
 import logging
@@ -43,6 +44,11 @@ def create_app(config_name='development'):
     @app.errorhandler(Exception)
     def handle_exception(e):
         """Handle unhandled exceptions"""
+        # Pass through HTTP exceptions (401, 403, 422, etc.) to their specific handlers
+        if isinstance(e, HTTPException):
+            return e
+        
+        # Log and handle unexpected exceptions
         app.logger.error(f'Unhandled exception: {str(e)}', exc_info=True)
         # Don't expose internal errors in production
         if app.debug:

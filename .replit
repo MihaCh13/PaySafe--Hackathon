@@ -51,11 +51,15 @@ localPort = 34081
 externalPort = 3002
 
 [[ports]]
+<<<<<<< HEAD
 localPort = 38789
 externalPort = 4200
 
 [[ports]]
 localPort = 46019
+=======
+localPort = 41259
+>>>>>>> bfd06a085b303667b0628ed927a7e336ae9555c8
 externalPort = 3003
 
 [deployment]
