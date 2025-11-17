@@ -156,10 +156,10 @@ export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysC
             <Button
               onClick={onEmergencyAccess}
               variant="outline"
-              className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+              className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300 text-xs"
             >
-              <Lock className="h-4 w-4 mr-2" />
-              Emergency Access
+              <Lock className="h-3.5 w-3.5 mr-1.5" />
+              Emergency
             </Button>
           </div>
 

@@ -136,8 +136,8 @@ export function SavingsReportWidget({
                     {formatCurrency(milestone, selectedCurrency)}
                   </p>
                   {isUnlocked && (
-                    <Badge variant="secondary" className="mt-1 text-xs bg-violet-100 text-violet-700">
-                      Unlocked!
+                    <Badge variant="secondary" className="mt-1.5 text-[10px] px-1.5 py-0.5 bg-violet-100 text-violet-700 leading-tight">
+                      Unlocked
                     </Badge>
                   )}
                 </div>
