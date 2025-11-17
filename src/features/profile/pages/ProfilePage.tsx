@@ -7,9 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
-import { authAPI } from '@/lib/api';
+import { authAPI, savingsAPI, transactionsAPI } from '@/lib/api';
 import { ChangePinDialog } from '../components/ChangePinDialog';
 import { EditProfileDialog } from '../components/EditProfileDialog';
+import { useQuery } from '@tanstack/react-query';
 import { 
   User, 
   Mail, 
@@ -45,6 +46,33 @@ export default function ProfilePage() {
   const [isPinStatusLoading, setIsPinStatusLoading] = useState(true);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: savingsPocketsData } = useQuery({
+    queryKey: ['savings-pockets'],
+    queryFn: async () => {
+      const response = await savingsAPI.getPockets();
+      return response.data;
+    },
+  });
+
+  const { data: savingsGoalsData } = useQuery({
+    queryKey: ['savings-goals'],
+    queryFn: async () => {
+      const response = await savingsAPI.getGoals();
+      return response.data;
+    },
+  });
+
+  const { data: transactionsData } = useQuery({
+    queryKey: ['transactions-count'],
+    queryFn: async () => {
+      const response = await transactionsAPI.getTransactions(1, 1000);
+      return response.data;
+    },
+  });
+
+  const completedGoals = savingsGoalsData?.goals?.filter((goal: any) => goal.is_completed)?.length || 0;
+  const totalTransactions = transactionsData?.total_count || transactionsData?.transactions?.length || 0;
 
   const fetchPinStatus = async () => {
     try {
@@ -353,7 +381,7 @@ export default function ProfilePage() {
                 <Target className="h-5 w-5 text-violet-600" />
                 <p className="text-sm font-medium text-violet-900">Savings Goals</p>
               </div>
-              <p className="text-2xl font-bold text-violet-700">0</p>
+              <p className="text-2xl font-bold text-violet-700">{completedGoals}</p>
               <p className="text-xs text-violet-600 mt-1">Goals completed</p>
             </div>
 
@@ -362,7 +390,7 @@ export default function ProfilePage() {
                 <TrendingUp className="h-5 w-5 text-green-600" />
                 <p className="text-sm font-medium text-green-900">Transactions</p>
               </div>
-              <p className="text-2xl font-bold text-green-700">0</p>
+              <p className="text-2xl font-bold text-green-700">{totalTransactions}</p>
               <p className="text-xs text-green-600 mt-1">Total transactions</p>
             </div>
 
