@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { transactionsAPI } from '@/lib/api';
+import { transactionsAPI, expectedPaymentsAPI, subscriptionsAPI } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
@@ -32,14 +32,67 @@ export default function FinanceTimelinePage() {
     },
   });
 
-  const transactions = transactionsData?.transactions || [];
+  const { data: expectedPaymentsData } = useQuery({
+    queryKey: ['expected-payments'],
+    queryFn: async () => {
+      const response = await expectedPaymentsAPI.getAll();
+      return response.data;
+    },
+  });
+
+  const { data: subscriptionsData } = useQuery({
+    queryKey: ['subscriptions-active'],
+    queryFn: async () => {
+      const response = await subscriptionsAPI.getSubscriptions('active');
+      return response.data;
+    },
+  });
+
+  const regularTransactions = transactionsData?.transactions || [];
+  const expectedPaymentsRaw = expectedPaymentsData?.expected_payments || [];
+  const activeSubscriptions = subscriptionsData?.subscriptions || [];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const expectedPayments = expectedPaymentsRaw
+    .filter((payment: any) => {
+      const scheduledDate = payment.scheduled_for || payment.transaction_metadata?.payment_date || payment.created_at;
+      const paymentDate = new Date(scheduledDate);
+      return paymentDate >= today;
+    })
+    .map((payment: any) => ({
+      ...payment,
+      id: `expected-${payment.id}`,
+      is_upcoming: true,
+      status: 'scheduled',
+    }));
+
+  const upcomingSubscriptionTransactions = activeSubscriptions
+    .filter((sub: any) => sub.next_billing_date && new Date(sub.next_billing_date) >= today)
+    .map((sub: any) => ({
+      id: `sub-upcoming-${sub.id}`,
+      user_id: 0,
+      transaction_type: 'subscription_payment',
+      amount: -Math.abs(sub.monthly_cost),
+      description: sub.service_name,
+      created_at: sub.next_billing_date,
+      status: 'scheduled',
+      metadata: { source: 'SUBSCRIPTION_UPCOMING', subscription_id: sub.id },
+      is_upcoming: true,
+    }));
+
+  const transactions = [...regularTransactions, ...expectedPayments, ...upcomingSubscriptionTransactions];
 
   const groupTransactionsByDate = () => {
     const grouped: Record<string, any[]> = {};
     
     transactions.forEach((transaction: any) => {
       const date = new Date(transaction.created_at);
-      const dateKey = date.toISOString().split('T')[0];
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const dateKey = `${year}-${month}-${day}`;
       
       if (!grouped[dateKey]) {
         grouped[dateKey] = [];
@@ -130,7 +183,7 @@ export default function FinanceTimelinePage() {
       {selectedDate && (
         <DayDetailModal
           date={selectedDate}
-          transactions={transactionsByDate[selectedDate.toISOString().split('T')[0]] || []}
+          transactions={transactionsByDate[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`] || []}
           open={detailModalOpen}
           onClose={() => setDetailModalOpen(false)}
         />
