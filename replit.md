@@ -36,7 +36,14 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 *   **QR Code Payments:** Secure payment initiation via QR codes using `itsdangerous` signed tokens (5-minute expiry).
 *   **Transactions:** Comprehensive tracking, filtering, and statistical analysis for 15+ types, including "expected payments", balance validation, race condition protection, and automatic query invalidation.
     - **IMPORTANT: Scheduled Transaction Design Pattern** - For scheduled/upcoming transactions (subscriptions, expected payments), the `created_at` field represents the **billing/due date**, NOT the creation timestamp. This allows calendar filtering by billing date. The frontend compensates by fetching a wider date range (current month ± 1-3 months) to ensure all relevant scheduled transactions are included in queries.
-    - **Finance Timeline Calendar** - The calendar displays upcoming payments in yellow by fetching data from three sources: regular transactions (via transactions API), expected payments (via expected payments API), and upcoming subscription payments (via subscriptions statistics API). All upcoming items are marked with `status: 'scheduled'` and `is_upcoming: true` to ensure proper color coding. Date grouping uses local timezone to avoid timezone-related mismatches between transaction dates and calendar cells.
+    - **Finance Timeline Calendar** - The calendar displays upcoming payments in yellow by fetching data from three sources: 
+      - Regular transactions (via `/api/transactions` with extended date range: month-1 to month+3)
+      - Expected payments (via `/api/expected-payments`, filtered to future dates only)
+      - Active subscriptions (via `/api/subscriptions?status=active`, extracting `next_billing_date` from each subscription)
+      - All upcoming items are marked with `status: 'scheduled'` and `is_upcoming: true` to ensure proper color coding
+      - Date grouping uses local timezone (YYYY-MM-DD format) to avoid timezone-related mismatches between transaction dates and calendar cells
+      - DayDetailModal uses matching local timezone key to retrieve transactions for clicked dates
+      - Implementation filters expected payments to exclude past/completed entries (date >= today)
 *   **Virtual Cards:** Creation, management (freeze/unfreeze), linking to subscriptions, and payment checks.
 *   **Subscriptions:** Management of recurring payments with automatic upcoming payment scheduling.
     - **Subscription Scheduler Service** (`backend/app/services/subscription_scheduler.py`) - Centralized service for managing subscription payment scheduling:
