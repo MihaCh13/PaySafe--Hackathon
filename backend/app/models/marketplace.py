@@ -28,6 +28,7 @@ class MarketplaceListing(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
+    seller = db.relationship('User', backref='marketplace_listings')
     orders = db.relationship('MarketplaceOrder', backref='listing', lazy='dynamic')
     
     def to_dict(self, include_seller=False):

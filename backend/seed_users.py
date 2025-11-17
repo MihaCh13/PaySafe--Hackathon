@@ -19,7 +19,7 @@ The script will:
 - Roll back changes if any error occurs
 """
 
-from app import create_app
+from app import create_app  # type: ignore
 from app.extensions import db
 from app.models.user import User
 from app.models.wallet import Wallet
@@ -85,7 +85,7 @@ def seed_test_users():
                     db.session.add(user)
                     db.session.flush()
                     
-                    wallet = Wallet(user_id=user.id)
+                    wallet = Wallet(user_id=user.id)  # type: ignore
                     db.session.add(wallet)
                     
                     created_count += 1

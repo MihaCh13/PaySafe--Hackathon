@@ -5,6 +5,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 
+__all__ = ['create_app']
+
 def create_app(config_name='development'):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -83,7 +85,7 @@ def create_app(config_name='development'):
         return response
     
     with app.app_context():
-        from app import models
+        from app import models  # type: ignore
     
     from app.blueprints.auth import auth_bp
     from app.blueprints.wallet import wallet_bp

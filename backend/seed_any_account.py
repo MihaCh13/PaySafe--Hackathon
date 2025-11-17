@@ -5,7 +5,7 @@ Example: python backend/seed_any_account.py student@test.com
 """
 
 import sys
-from app import create_app
+from app import create_app  # type: ignore
 from app.extensions import db
 from app.models.user import User
 from app.models.transaction import Transaction
@@ -71,7 +71,7 @@ def seed_account(email):
         
         for transfer in incoming_transfers:
             timestamp = datetime.utcnow() - timedelta(days=transfer['days_ago'])
-            transaction = Transaction(
+            transaction = Transaction(  # type: ignore
                 user_id=user.id,
                 sender_id=transfer['from_user'].id,
                 receiver_id=user.id,
@@ -93,7 +93,7 @@ def seed_account(email):
         
         for transfer in outgoing_transfers:
             timestamp = datetime.utcnow() - timedelta(days=transfer['days_ago'])
-            transaction = Transaction(
+            transaction = Transaction(  # type: ignore
                 user_id=user.id,
                 sender_id=user.id,
                 receiver_id=transfer['to_user'].id,
@@ -120,7 +120,7 @@ def seed_account(email):
         
         created_cards = []
         for card_data in budget_cards_data:
-            card = VirtualCard(user_id=user.id, card_purpose='budget', is_active=True, **card_data)
+            card = VirtualCard(user_id=user.id, card_purpose='budget', is_active=True, **card_data)  # type: ignore
             db.session.add(card)
             created_cards.append(card)
         
@@ -138,7 +138,7 @@ def seed_account(email):
         
         for card, desc, amount, days_ago in card_transactions:
             timestamp = datetime.utcnow() - timedelta(days=days_ago)
-            transaction = Transaction(
+            transaction = Transaction(  # type: ignore
                 user_id=user.id,
                 card_id=card.id,
                 transaction_type='expense',
@@ -170,7 +170,7 @@ def seed_account(email):
         
         for tx_type, amount, desc, days_ago, category in additional_transactions:
             timestamp = datetime.utcnow() - timedelta(days=days_ago)
-            transaction = Transaction(
+            transaction = Transaction(  # type: ignore
                 user_id=user.id,
                 transaction_type=tx_type,
                 amount=amount,
@@ -190,7 +190,7 @@ def seed_account(email):
         
         for desc, amount, days_future in upcoming_payments:
             due_date = datetime.utcnow() + timedelta(days=days_future)
-            transaction = Transaction(
+            transaction = Transaction(  # type: ignore
                 user_id=user.id,
                 transaction_type='reminder',
                 amount=-amount,
@@ -212,14 +212,14 @@ def seed_account(email):
         ]
         
         for goal_data in goals:
-            goal = Goal(user_id=user.id, **goal_data)
+            goal = Goal(user_id=user.id, **goal_data)  # type: ignore
             db.session.add(goal)
         
         print(f"   ✅ Created {len(goals)} savings goals")
         
         # 5. DARK DAYS POCKET
         print("\n🏦 Creating Dark Days Pocket...")
-        pocket = SavingsPocket(
+        pocket = SavingsPocket(  # type: ignore
             user_id=user.id,
             name='DarkDays Emergency Fund',
             balance=Decimal('750.00'),
@@ -242,7 +242,7 @@ def seed_account(email):
         ]
         
         for listing_data in listings:
-            listing = MarketplaceListing(seller_id=user.id, **listing_data)
+            listing = MarketplaceListing(seller_id=user.id, **listing_data)  # type: ignore
             db.session.add(listing)
         
         print(f"   ✅ Created {len(listings)} marketplace listings")
@@ -267,7 +267,7 @@ def seed_account(email):
             loan = Loan(**loan_data)
             db.session.add(loan)
             db.session.flush()
-            db.session.add(LoanRepayment(loan_id=loan.id, amount=loan_data['amount_repaid'], created_at=datetime.utcnow() - timedelta(days=15)))
+            db.session.add(LoanRepayment(loan_id=loan.id, amount=loan_data['amount_repaid'], created_at=datetime.utcnow() - timedelta(days=15)))  # type: ignore
         
         # I Owe
         i_owe = [
@@ -278,7 +278,7 @@ def seed_account(email):
             loan = Loan(**loan_data)
             db.session.add(loan)
             db.session.flush()
-            db.session.add(LoanRepayment(loan_id=loan.id, amount=loan_data['amount_repaid'], created_at=datetime.utcnow() - timedelta(days=10)))
+            db.session.add(LoanRepayment(loan_id=loan.id, amount=loan_data['amount_repaid'], created_at=datetime.utcnow() - timedelta(days=10)))  # type: ignore
         
         # History
         history = [
@@ -290,7 +290,7 @@ def seed_account(email):
             db.session.add(loan)
             db.session.flush()
             if loan_data.get('is_fully_repaid'):
-                db.session.add(LoanRepayment(loan_id=loan.id, amount=loan_data['amount'], created_at=loan_data['repaid_at']))
+                db.session.add(LoanRepayment(loan_id=loan.id, amount=loan_data['amount'], created_at=loan_data['repaid_at']))  # type: ignore
         
         print(f"   ✅ Created {len(pending) + len(owed_to_me) + len(i_owe) + len(history)} loans")
         
