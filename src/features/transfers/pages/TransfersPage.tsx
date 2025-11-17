@@ -385,6 +385,9 @@ export default function TransfersPage() {
               <Banknote className="h-4 w-4 mr-2" />
               View Bank Details / IBAN
             </Button>
+            <p className="text-sm text-gray-500 dark:text-gray-400 pt-2">
+              Share your username, QR code, or bank details to receive money.
+            </p>
           </CardContent>
         </MotionCard>
       </div>
