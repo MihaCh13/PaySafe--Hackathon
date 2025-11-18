@@ -57,13 +57,31 @@ export default function LoginPage() {
     }
   };
 
-  const handleForgotPassword = () => {
-    toast({
-      title: 'Password Reset Email Sent',
-      description: `A password reset link has been sent to ${resetEmail || 'your email'}`,
-    });
-    setShowForgotPassword(false);
-    setResetEmail('');
+  const handleForgotPassword = async () => {
+    if (!resetEmail || !resetEmail.trim()) {
+      toast({
+        title: 'Email required',
+        description: 'Please enter your email address',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      await authAPI.forgotPassword(resetEmail.trim());
+      toast({
+        title: 'Password Reset Email Sent',
+        description: 'If an account with that email exists, a password reset link has been sent.',
+      });
+      setShowForgotPassword(false);
+      setResetEmail('');
+    } catch (error: any) {
+      toast({
+        title: 'Failed to send reset email',
+        description: error.response?.data?.error || 'Please try again later',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleSocialLogin = (provider: string) => {

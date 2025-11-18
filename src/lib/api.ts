@@ -50,6 +50,8 @@ export const authAPI = {
   changePin: (password: string, new_pin: string, confirm_pin: string) => 
     api.post('/auth/change-pin', { password, new_pin, confirm_pin }),
   checkDefaultPin: () => api.get('/auth/check-default-pin'),
+  forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
+  resetPassword: (token: string, password: string) => api.post('/auth/reset-password', { token, password }),
 };
 
 export const walletAPI = {

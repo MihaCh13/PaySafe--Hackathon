@@ -3,7 +3,10 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 from app.extensions import db, limiter
 from app.models import User, Wallet
 from app.utils.validators import RegisterSchema, LoginSchema, sanitize_html, validate_base64_image
+from app.utils.email_service import send_email, get_password_reset_email_html
 from marshmallow import ValidationError
+import secrets
+from datetime import datetime, timedelta
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -108,6 +111,94 @@ def login():
         'user': user.to_dict(),
         'access_token': access_token,
         'refresh_token': refresh_token
+    }), 200
+
+@auth_bp.route('/forgot-password', methods=['POST'])
+@limiter.limit("3 per hour")
+def forgot_password():
+    """
+    Request a password reset email
+    """
+    data = request.get_json()
+    email = data.get('email', '').lower().strip()
+    
+    if not email:
+        return jsonify({'error': 'Email is required'}), 400
+    
+    user = User.query.filter_by(email=email).first()
+    
+    if user:
+        reset_token = secrets.token_urlsafe(32)
+        user.reset_token = reset_token
+        user.reset_token_expiry = datetime.utcnow() + timedelta(hours=1)
+        db.session.commit()
+        
+        frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:5173')
+        reset_link = f"{frontend_url}/reset-password?token={reset_token}"
+        
+        try:
+            html_content = get_password_reset_email_html(reset_link, user.username)
+            send_email(
+                to_email=user.email,
+                subject='Reset Your UniPay Password',
+                html_content=html_content
+            )
+            current_app.logger.info(f"Password reset email sent to {user.email}")
+        except Exception as e:
+            current_app.logger.error(f"Failed to send password reset email: {str(e)}")
+            return jsonify({'error': 'Failed to send reset email. Please try again later.'}), 500
+    else:
+        current_app.logger.warning(f"Password reset requested for non-existent email: {email}")
+    
+    return jsonify({
+        'message': 'If an account with that email exists, a password reset link has been sent.'
+    }), 200
+
+@auth_bp.route('/reset-password', methods=['POST'])
+@limiter.limit("5 per hour")
+def reset_password():
+    """
+    Reset password using a valid reset token
+    """
+    data = request.get_json()
+    token = data.get('token', '').strip()
+    new_password = data.get('password', '')
+    
+    if not token:
+        return jsonify({'error': 'Reset token is required'}), 400
+    
+    if not new_password or len(new_password) < 8:
+        return jsonify({'error': 'Password must be at least 8 characters'}), 400
+    
+    user = User.query.filter_by(reset_token=token).first()
+    
+    if not user:
+        current_app.logger.warning(f"Invalid reset token used: {token[:10]}...")
+        return jsonify({'error': 'Invalid or expired reset token'}), 400
+    
+    if not user.is_active:
+        current_app.logger.warning(f"Password reset attempt for inactive account: {user.email}")
+        user.reset_token = None
+        user.reset_token_expiry = None
+        db.session.commit()
+        return jsonify({'error': 'Account is deactivated'}), 403
+    
+    if not user.reset_token_expiry or user.reset_token_expiry < datetime.utcnow():
+        current_app.logger.warning(f"Expired reset token used for user: {user.email}")
+        user.reset_token = None
+        user.reset_token_expiry = None
+        db.session.commit()
+        return jsonify({'error': 'Reset token has expired. Please request a new one.'}), 400
+    
+    user.set_password(new_password)
+    user.reset_token = None
+    user.reset_token_expiry = None
+    db.session.commit()
+    
+    current_app.logger.info(f"Password successfully reset for user: {user.email}")
+    
+    return jsonify({
+        'message': 'Password has been reset successfully. You can now login with your new password.'
     }), 200
 
 @auth_bp.route('/me', methods=['GET'])
