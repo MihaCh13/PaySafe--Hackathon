@@ -20,6 +20,10 @@ class User(db.Model):
     
     pin_hash = db.Column(db.String(255), nullable=True)
     
+    # Password reset fields
+    reset_token = db.Column(db.String(255), nullable=True, index=True)
+    reset_token_expiry = db.Column(db.DateTime, nullable=True)
+    
     isic_card_number = db.Column(db.String(50), unique=True, nullable=True)
     university = db.Column(db.String(100))
     faculty = db.Column(db.String(100))
