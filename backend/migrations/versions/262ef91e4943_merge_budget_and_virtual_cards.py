@@ -41,7 +41,7 @@ def downgrade():
     # Check if any budget cards exist
     conn = op.get_bind()
     result = conn.execute(sa.text("SELECT COUNT(*) FROM virtual_cards WHERE card_purpose = 'budget'"))
-    budget_card_count = result.scalar()
+    budget_card_count = result.scalar() or 0
     
     if budget_card_count > 0:
         raise Exception(
