@@ -25,6 +25,8 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     
+    FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+    
     UPLOAD_FOLDER = 'uploads'
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 
