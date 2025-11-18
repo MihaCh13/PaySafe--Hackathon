@@ -4,7 +4,6 @@ import { isicAPI } from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useAuthStore } from '@/store/authStore';
 import { Store, TrendingDown, Globe, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
