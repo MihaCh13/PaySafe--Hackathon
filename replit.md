@@ -31,7 +31,13 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 *   **Frontend:** React 18 and Vite. State management via Zustand (client-side) and TanStack Query (server-side). Axios for HTTP requests with JWT interceptors, and React Router DOM for navigation.
 
 **Core Feature Specifications:**
-*   **Authentication:** User registration, login with password visibility, JWT token management, PIN setup/change.
+*   **Authentication:** User registration with enhanced validation (username regex, password confirmation, field-specific error messages), login with password visibility, JWT token management, PIN setup/change, and complete password reset flow with email notifications.
+    - **Password Reset:** Secure forgot password functionality with token-based email verification:
+      - Backend routes: `/api/auth/forgot-password` (generates secure token, sends email) and `/api/auth/reset-password` (validates token, updates password)
+      - Email service using SMTP with HTML templates styled in UniPay brand colors (#9b87f5, #7DD3FC, #60C5E8)
+      - Security measures: 1-hour token expiry, rate limiting (3 requests/hour for forgot password, 5 requests/hour for reset), secure token generation (secrets.token_urlsafe), single-use tokens, active user validation
+      - Frontend: Forgot password dialog in LoginPage and dedicated ResetPasswordPage with token validation, password strength requirements, and comprehensive error handling
+      - Requires SMTP configuration via environment variables: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_FROM_EMAIL, SMTP_FROM_NAME
 *   **Wallet:** Balance display, top-up, peer-to-peer transfers, multi-currency support, transfer scheduling, and secure QR code payment system.
 *   **QR Code Payments:** Secure payment initiation via QR codes using `itsdangerous` signed tokens (5-minute expiry).
 *   **Transactions:** Comprehensive tracking, filtering, and statistical analysis for 15+ types, including "expected payments", balance validation, race condition protection, and automatic query invalidation.
