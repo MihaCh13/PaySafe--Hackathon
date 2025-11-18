@@ -27,7 +27,7 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 *   **DarkDays Pocket:** Secure, PIN-protected savings pockets with auto-save options.
 *   **Marketplace:** Student-to-student commerce with listings and escrow services.
 *   **P2P Lending:** Request-approval system with approval workflows and loan lifecycle tracking.
-*   **ISIC Discounts:** Integration for student card-based discounts.
+*   **ISIC Discounts:** Integration for student card-based discounts with 50 active merchant partners across 10 categories (Accommodation, Culture, Entertainment, Food & Drink, Services, Shopping, Sport, Study, Travel, Other). Features include online/in-store discount detection, QR code verification, automatic discount calculation, and savings history tracking. Major partnerships include KFC, Subway, Starbucks, Under Armour, JetBrains, FlixBUS, QATAR Airways, and Bulgarian State Railways (БДЖ).
 *   **Security Settings:** PIN management, visual-only features for email verification, 2FA, active sessions, rate limiting, and session timeout.
 *   **Notifications:** Comprehensive system with persistent bell icon badge, Zustand store with localStorage persistence, toast notifications for financial actions, and currency-aware formatting.
 *   **Budget Cards & Payment Cards Section:** Redesigned with compact, consistent card tiles and reusable components. Main Wallet Card, Payment Cards (One-Time & Standard), Budget Cards, and Subscription Cards feature consistent layouts, color-coded gradients, financial overviews (allocated, spent, remaining balance), and redesigned action buttons in a 2-row layout with fixed positioning. Progress bars indicate spending percentage, and tab counters accurately reflect displayed cards.
