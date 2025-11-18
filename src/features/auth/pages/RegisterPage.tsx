@@ -75,9 +75,13 @@ export default function RegisterPage() {
       // Handle backend validation errors by displaying them on specific fields
       const errorMessage = error.response?.data?.error || 'Registration failed. Please try again.';
       const validationDetails = error.response?.data?.details;
+      const errorMessageLower = errorMessage.toLowerCase();
+      
+      // Track whether any field-level errors were set (to suppress generic toast)
+      let hasFieldError = false;
       
       // If backend returns field-specific validation errors, display them on the fields
-      if (validationDetails) {
+      if (validationDetails && Object.keys(validationDetails).length > 0) {
         Object.keys(validationDetails).forEach((field) => {
           setError(field as any, {
             type: 'manual',
@@ -86,14 +90,42 @@ export default function RegisterPage() {
               : validationDetails[field],
           });
         });
+        hasFieldError = true;
       }
       
-      // Show toast notification for general errors
-      toast({
-        title: 'Registration failed',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+      // Map common backend error messages to specific fields (for errors not in details object)
+      if (errorMessageLower.includes('username already taken') || 
+          (errorMessageLower.includes('username') && errorMessageLower.includes('taken'))) {
+        setError('username', {
+          type: 'manual',
+          message: 'This username is already taken. Please choose another.',
+        });
+        hasFieldError = true;
+      } else if (errorMessageLower.includes('email already registered') || 
+                 (errorMessageLower.includes('email') && errorMessageLower.includes('registered'))) {
+        setError('email', {
+          type: 'manual',
+          message: 'This email is already registered. Please use a different email or sign in.',
+        });
+        hasFieldError = true;
+      } else if (errorMessageLower.includes('password') && 
+                 !errorMessageLower.includes('invalid email or password')) {
+        // Show password error only if it's a validation error, not a login error
+        setError('password', {
+          type: 'manual',
+          message: errorMessage,
+        });
+        hasFieldError = true;
+      }
+      
+      // Show toast notification only for general errors (not field-specific)
+      if (!hasFieldError) {
+        toast({
+          title: 'Registration failed',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      }
     }
   };
 
