@@ -11,20 +11,32 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 
+// Validation schema matching backend requirements
 const registerSchema = z.object({
   email: z.string().email('Invalid email format').min(1, 'Email is required'),
-  username: z.string().min(3, 'Username must be at least 3 characters').max(80, 'Username too long'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  // Username: only letters, numbers, underscores, and dashes (matching backend regex)
+  username: z.string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username must be at most 30 characters')
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, underscores, and dashes'),
+  // Password: minimum 8 characters (matching backend requirement)
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  // Password confirmation to prevent typos
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
   first_name: z.string().min(1, 'First name is required'),
   last_name: z.string().min(1, 'Last name is required'),
   university: z.string().optional(),
   faculty: z.string().optional(),
+  // PIN: exactly 4 numeric digits
   pin: z.string()
     .length(4, 'PIN must be exactly 4 digits')
     .regex(/^\d+$/, 'PIN must contain only numbers'),
   confirmPin: z.string()
     .length(4, 'PIN must be exactly 4 digits')
     .regex(/^\d+$/, 'PIN must contain only numbers'),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ['confirmPassword'],
 }).refine((data) => data.pin === data.confirmPin, {
   message: "PINs don't match",
   path: ['confirmPin'],
@@ -40,6 +52,7 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -47,7 +60,8 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      const { confirmPin, ...registrationData } = data;
+      // Remove confirmation fields before sending to backend
+      const { confirmPin, confirmPassword, ...registrationData } = data;
       const response = await authAPI.register(registrationData);
       const { user, access_token, refresh_token } = response.data;
       
@@ -58,9 +72,26 @@ export default function RegisterPage() {
       });
       navigate('/dashboard');
     } catch (error: any) {
+      // Handle backend validation errors by displaying them on specific fields
+      const errorMessage = error.response?.data?.error || 'Registration failed. Please try again.';
+      const validationDetails = error.response?.data?.details;
+      
+      // If backend returns field-specific validation errors, display them on the fields
+      if (validationDetails) {
+        Object.keys(validationDetails).forEach((field) => {
+          setError(field as any, {
+            type: 'manual',
+            message: Array.isArray(validationDetails[field]) 
+              ? validationDetails[field][0] 
+              : validationDetails[field],
+          });
+        });
+      }
+      
+      // Show toast notification for general errors
       toast({
         title: 'Registration failed',
-        description: error.response?.data?.error || 'Please try again',
+        description: errorMessage,
         variant: 'destructive',
       });
     }
@@ -152,9 +183,12 @@ export default function RegisterPage() {
                   autoComplete="username"
                   {...register('username')}
                   className="h-11"
+                  placeholder="john_doe123"
                 />
-                {errors.username && (
+                {errors.username ? (
                   <p className="text-sm text-danger-hover">{errors.username.message}</p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">Letters, numbers, underscores, and dashes only</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -166,8 +200,23 @@ export default function RegisterPage() {
                   {...register('password')}
                   className="h-11"
                 />
-                {errors.password && (
+                {errors.password ? (
                   <p className="text-sm text-danger-hover">{errors.password.message}</p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">Minimum 8 characters required</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-foreground font-medium">Confirm Password *</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  {...register('confirmPassword')}
+                  className="h-11"
+                />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-danger-hover">{errors.confirmPassword.message}</p>
                 )}
               </div>
               <div className="grid grid-cols-2 gap-4">
