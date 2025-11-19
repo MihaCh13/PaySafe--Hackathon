@@ -117,7 +117,6 @@ def unlink_profile():
     return jsonify({'message': 'ISIC profile unlinked successfully'}), 200
 
 @isic_bp.route('/merchants', methods=['GET'])
-@jwt_required()
 def get_merchants():
     category = request.args.get('category')
     
@@ -134,7 +133,6 @@ def get_merchants():
     }), 200
 
 @isic_bp.route('/merchants/<int:merchant_id>', methods=['GET'])
-@jwt_required()
 def get_merchant(merchant_id):
     merchant = Merchant.query.get(merchant_id)
     
