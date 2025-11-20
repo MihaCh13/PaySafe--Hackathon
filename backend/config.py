@@ -19,11 +19,11 @@ class Config:
     
     SOCKETIO_CORS_ALLOWED_ORIGINS = '*'
     
-    MAIL_SERVER = os.environ.get('MAIL_SERVER')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 587)
+    MAIL_SERVER = os.environ.get('SMTP_HOST')
+    MAIL_PORT = int(os.environ.get('SMTP_PORT') or 587)
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_USERNAME = os.environ.get('SMTP_USER')
+    MAIL_PASSWORD = os.environ.get('SMTP_PASSWORD')
     
     FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
     
