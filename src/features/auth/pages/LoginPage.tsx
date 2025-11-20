@@ -28,6 +28,8 @@ export default function LoginPage() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
 
   const {
     register,
@@ -67,20 +69,31 @@ export default function LoginPage() {
       return;
     }
 
+    setIsResettingPassword(true);
+    setResetSuccess(false);
+
     try {
       await authAPI.forgotPassword(resetEmail.trim());
+      setResetSuccess(true);
       toast({
         title: 'Password Reset Email Sent',
-        description: 'If an account with that email exists, a password reset link has been sent.',
+        description: `A password reset link has been sent to ${resetEmail}`,
       });
-      setShowForgotPassword(false);
-      setResetEmail('');
+      
+      // Close dialog after 2.5 seconds to let user see the success message
+      setTimeout(() => {
+        setShowForgotPassword(false);
+        setResetEmail('');
+        setResetSuccess(false);
+      }, 2500);
     } catch (error: any) {
       toast({
         title: 'Failed to send reset email',
         description: error.response?.data?.error || 'Please try again later',
         variant: 'destructive',
       });
+    } finally {
+      setIsResettingPassword(false);
     }
   };
 
@@ -244,30 +257,84 @@ export default function LoginPage() {
           <DialogHeader>
             <DialogTitle className="text-foreground">Reset Password</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Enter your email address and we'll send you a link to reset your password.
+              {resetSuccess 
+                ? "Check your inbox for the reset link"
+                : "Enter your email address and we'll send you a link to reset your password."
+              }
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="reset-email" className="text-foreground font-medium">Email</Label>
-              <Input
-                id="reset-email"
-                type="email"
-                placeholder="student@university.edu"
-                value={resetEmail}
-                onChange={(e) => setResetEmail(e.target.value)}
-                className="h-11"
-              />
-            </div>
+            {resetSuccess ? (
+              <div className="rounded-lg bg-success/10 border border-success/20 p-4 text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <svg
+                    className="h-12 w-12 text-success"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <p className="text-sm font-medium text-success mb-1">Email Sent Successfully!</p>
+                <p className="text-xs text-muted-foreground">
+                  A password reset link has been sent to <span className="font-medium text-foreground">{resetEmail}</span>
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="reset-email" className="text-foreground font-medium">Email</Label>
+                <Input
+                  id="reset-email"
+                  type="email"
+                  placeholder="student@university.edu"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && resetEmail.trim()) {
+                      handleForgotPassword();
+                    }
+                  }}
+                  className="h-11"
+                  disabled={isResettingPassword}
+                />
+              </div>
+            )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowForgotPassword(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleForgotPassword} disabled={!resetEmail} className="shadow-soft">
-              <Mail className="mr-2 h-4 w-4" />
-              Send Reset Link
-            </Button>
+            {!resetSuccess && (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowForgotPassword(false)}
+                  disabled={isResettingPassword}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleForgotPassword} 
+                  disabled={!resetEmail || isResettingPassword} 
+                  className="shadow-soft"
+                >
+                  {isResettingPassword ? (
+                    <>
+                      <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="mr-2 h-4 w-4" />
+                      Send Reset Link
+                    </>
+                  )}
+                </Button>
+              </>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
