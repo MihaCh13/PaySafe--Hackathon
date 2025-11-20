@@ -3,6 +3,14 @@
 ## Overview
 UniPay is a digital wallet application for students, integrating financial services with lifestyle features. It aims to be an essential financial tool, offering secure digital payments, subscription management, student discounts, savings goal tracking, and peer-to-peer lending and marketplace functionalities. UniPay provides convenience, security, customized benefits, and fosters financial literacy and independence among students.
 
+## Recent Changes
+
+### November 20, 2025 - Production Readiness Updates
+*   **SMTP Configuration Fixed:** Updated `backend/config.py` to use `SMTP_*` environment variables (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD) matching Replit Secrets. Password reset emails now send successfully via Gmail SMTP.
+*   **Password Reset Flow Verified:** Complete end-to-end testing confirmed - email delivery, token generation, password update, and login with new password all working correctly.
+*   **Production Deployment Configured:** Added Gunicorn deployment configuration with gevent workers for Socket.IO compatibility. Uses autoscale deployment target with frontend build step.
+*   **Important Note:** For production deployment, ensure `gevent` is installed as a Python dependency to support Flask-SocketIO with Gunicorn (eventlet is deprecated as of 2024).
+
 ## User Preferences
 No specific user preferences recorded yet. This section will be updated as development progresses.
 
